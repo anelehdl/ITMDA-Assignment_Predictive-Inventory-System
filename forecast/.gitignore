@@ -1,0 +1,23 @@
+# Ignore Python virtual environment
+.venv/
+venv/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Virtualenv (alternative names)
+.env/
+env/
+
+# IDE / Editor settings
+.vscode/
+.idea/
+*.swp
+

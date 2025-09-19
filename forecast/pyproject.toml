@@ -1,0 +1,20 @@
+[project]
+name = "demand-forecast"
+requires-python = ">=3.9"
+version = "2025.0.0"
+dependencies = [
+    "pyswarms",  
+    "lightgbm", 
+]
+
+[project.optional-dependencies]
+cuda = [
+    "torch==2.8.0+cu126", 
+]
+
+rocm = [
+    "torch==2.8.0+rocm6.4", 
+]
+cpu = [
+    "torch",
+]
