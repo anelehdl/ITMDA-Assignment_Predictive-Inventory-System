@@ -1,6 +1,13 @@
 # Setup Instructions
 
-Before installing, create and activate a separate Python virtual environment.
+## Before installing
+If you want to use the GPU instead of CPU AND have a compatible GPU install the needed libraries if not already installed. (but it should be available with your drivers)
+- Nvidia
+[CUDA](https://developer.nvidia.com/cuda-downloads)
+
+- AMD 
+[ROCm](https://rocm.docs.amd.com/en/latest/)
+
 
 ## 1. Create a virtual environment
 ```bash
