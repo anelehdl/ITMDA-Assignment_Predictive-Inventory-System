@@ -21,3 +21,5 @@ env/
 .idea/
 *.swp
 
+#Data
+forecast_data20242-025.xlsx
