@@ -17,5 +17,5 @@ source .venv/bin/activate
 ```
 ## 3. Install dependencies
 ```python
-python install_dependecies.py
+python install.py
 ```
