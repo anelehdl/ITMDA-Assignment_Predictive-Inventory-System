@@ -1,0 +1,194 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<style>
+    *{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    :root{
+        --primary: #4e73df;
+        --secondary: #858796;
+        --accent: #6f9bff;
+        --glass: rgba(255, 255, 255, 0.1);
+        --glass-border: rgba(255, 255, 255, 0.2);
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;       /*might go with system ui here*/
+        background: linear-gradient(120deg, var(--primary) 0%, var(--secondary) 40%, var(--accent) 80%);
+        color: white;
+        min-height: 100vh;
+        background-size: 400% 400%; /* allows for movement to be more smooth */
+        animation: bgShift 15s ease-in-out infinite; /* can increase for smoother transitions */
+        scroll-behavior:smooth;
+    }
+
+    @@keyframes bgShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    .hero{
+		height: 80vh; /*adjust as needed, this adjusts where the hero is positioned relative to screen vh*/
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        position: fixed;
+        transition: all 0.5s ease-in-out;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1;
+		pointer-events: none;
+    }
+    .hero-heading{
+        font-size:5rem;
+        text-shadow: 2px 4px 6px var(--glass-border);
+        transition: opacity 0.5s ease, transform 0.5s ease;
+	}
+    .dashboard-content{
+        max-width: 80%;     /*could use clamp here for now just getting basic styling*/
+        min-height: 100%;  /*ensures that it takes up the full content*/
+		margin: 0 auto;
+        padding: 5rem 5rem 5rem 5rem;
+		position: relative;
+        z-index: 2;
+		margin-top: 200vh;  /* push content below hero --kinda causing issues, managed to push it far enough that its easily scrollable slight issues with smaller screens*/
+        transition: all 0.5s ease-in-out;
+        transform: translateY(50px);
+		background:var(--glass);
+        border-radius: 100px;
+    }
+
+    .dashboard-content.appear {
+        opacity: 1;
+        transform: translateY(0);
+		}
+    .panel{
+        background:var(--glass);
+        backdrop-filter:blur(20px);
+        border: 1px solid var(--glass-border);
+		border-radius: 20px;
+		padding: 2rem;
+        margin-bottom: 3rem;
+        opacity: 0;
+        transform: translateY(200px);
+        transition: opacity 1s ease-in-out, transform 0.5s ease-in-out;
+
+    }
+
+    .panel.appear {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .panel:hover{
+        
+        transform: translateY(-5px);
+        
+    }
+
+    @@media (max-width: 768px) {
+        .hero-heading {
+            font-size: 3rem;
+        }
+    }
+</style>
+<section class="hero" id="hero">
+    <div class="text-center">
+        <h1 class="hero-heading" id="heroHeading">Welcome to the Nutec Dashboard</h1>
+    </div>
+</section>
+<section class="dashboard-content" id="dashboard">
+    <div class="panel">
+        <h2>Overview</h2>
+        <p>This is a placeholder for the dashboard content</p>
+    </div>
+    <div class="panel">
+        <h2>Recent Activity</h2>
+        <p>This admin viewed reports on this client etc</p>
+    </div>
+    <div class="panel">
+        <h2>Stock Metrics</h2>
+        <p>Stock Metrics per client</p>
+    </div>
+    <div class="panel">
+        <h2>Emergency Reports</h2>
+        <p>Predicted Emergency Reports</p>
+    </div>
+
+</section>
+<!--https://www.youtube.com/watch?v=huVJW23JHKQ for ref for the observer-->
+<script>
+    //to ensure always ontop with load
+    window.onload = function(){
+        window.scrollTo(0, 0);
+    }
+    window.onbeforeunload = function(){
+        window.scrollTo(0,0);
+    }
+    window.onunload = function(){
+        window.scrollTo(0,0);
+    }
+    
+	const hero = document.getElementById("hero");
+	const heroHeading = document.getElementById("heroHeading");
+    const panels = document.querySelectorAll(".panel");
+    const dashboard = document.getElementById("dashboard")
+    //fadout hero when scrolling
+    window.addEventListener('scroll', function(){
+        const scrollPosition = window.scrollY;
+		const heroHeight = window.innerHeight * 0.8;
+
+        //calc opacity based on scroll position
+        const opacity = 1 - (scrollPosition / (heroHeight * 0.5));
+		const translateY = scrollPosition * 0.3; // Adjust the multiplier for speed
+        
+        heroHeading.style.opacity = opacity;
+        heroHeading.style.transform = `translateY(${translateY}px)`;        /*use var for translating y, needed backticks not single quotes */
+
+        if(scrollPosition > heroHeight){
+			hero.style.opacity = 0;
+			hero.style.pointerEvents = 'none'; //disable interaction when faded out
+            hero.style.visibility = 'hidden';   //temp
+			
+            
+        }else{
+			hero.style.opacity = 1;
+            hero.style.visibility = 'visible';
+			
+        }
+    });
+
+    //fade in dashboard content on scroll
+    const appearOptions = ({
+        threshold:0.2,
+		rootMargin: "0px 0px -200px 0px"  //triggers before fully in view
+	});
+
+    const appearOnScroll = new IntersectionObserver
+    (function(entries, observer)
+    {
+        entries.forEach(entry=>{
+            if (entry.isIntersecting)
+            {
+                entry.target.classList.add('appear');
+                //observer.unobserve(entry.target);     //we want it to continuously watch
+            }else           //need to add a way to fadeout
+            {
+                entry.target.classList.remove('appear');
+            }                       
+        });
+    }, appearOptions);
+    //apply observer to each panel
+	panels.forEach(panel => {
+        
+        appearOnScroll.observe(panel);
+    });
+
+</script>

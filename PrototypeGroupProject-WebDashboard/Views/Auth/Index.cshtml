@@ -1,0 +1,116 @@
+﻿@{
+    ViewData["Title"] = "Login Page";
+}
+@model PrototypeGroupProject_WebDashboard.Models.DTO.LoginRequestDto
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    :root {
+        --primary: #4e73df;
+        --secondary: #858796;
+        --accent: #6f9bff;
+        --glass: rgba(255, 255, 255, 0.1);
+        --glass-border: rgba(255, 255, 255, 0.2);
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /*might go with system ui here*/
+        background: linear-gradient(120deg, var(--primary) 0%, var(--secondary) 40%, var(--accent) 80%);
+        color: white;
+        min-height: 100vh;
+        background-size: 400% 400%; /* allows for movement to be more smooth */
+        animation: bgShift 15s ease-in-out infinite; /* can increase for smoother transitions */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .hero-heading {
+        font-size: 3rem;
+        text-shadow: 2px 4px 6px var(--glass-border);
+        transition: opacity 0.5s ease, transform 0.5s ease;
+        pointer-events:none;
+    }
+    
+    .container{
+        width:80%;
+        background:var(--glass);
+        border-radius: 50px;
+        backdrop-filter:blur(20px);
+        -webkit-backdrop-filter:blur(20px);
+        transform: translateY(0px);
+        transition: all 0.5s ease-in-out;
+    }
+    .container:hover{
+        transform:translateY(-5px);
+        transition: all 0.5s ease-in-out;
+    }
+
+    .form-label{
+        font-size:2rem;
+        
+    }
+
+    .form-control, .btn-primary{
+        color:white;
+        background:var(--glass);
+        border: 1px solid var(--glass-border);
+        transform: translateY(0px);
+        transition: all 0.5s ease-in-out;
+        border-radius:20px;
+    }
+    .form-control:hover, .btn-primary:hover{
+        transform: translateY(-2px);
+        transition: all 0.5s ease-in-out;
+    }
+    .form-control:focus{
+        background:var(--glass-border);
+    }
+
+
+
+
+    @@keyframes bgShift {
+        0% {
+            background-position: 0% 50%;
+        }
+
+        50% {
+            background-position: 100% 50%;
+        }
+
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+</style>
+
+<div class="text-center">
+    <h1 class="hero-heading">Login</h1>
+</div>
+
+
+@if (ViewBag.Error is string e)
+{
+    <div class="alert alert-danger">@e</div>
+}
+
+<form asp-action="Index" method="post">
+    @Html.AntiForgeryToken()
+    <div class="mb-3">
+        <label asp-for="Username" class="form-label"></label>
+        <input asp-for="Username" class="form-control" />
+        <span asp-validation-for="Username" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Password" class="form-label"></label>
+        <input asp-for="Password" type="password" class="form-control" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+    <button class="btn btn-primary" type="submit">Login</button>
+</form>
