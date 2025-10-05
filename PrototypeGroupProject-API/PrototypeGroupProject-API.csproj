@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>PrototypeGroupProject_API</RootNamespace>
+    <UserSecretsId>2da48218-759d-4ccd-b94e-82a75a1f6667</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
