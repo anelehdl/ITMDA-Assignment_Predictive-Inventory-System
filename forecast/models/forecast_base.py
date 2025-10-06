@@ -39,11 +39,3 @@ class ForecastModel(ABC):
     @abstractmethod
     def predict(self, parameters: ParameterAdaptor) -> dict[str, float]:
         pass
-
-
-class Forecaster:
-    def __init__(self, model: ForecastModel):
-        self.model: ForecastModel = model
-
-    def predict(self, parameters: ParameterAdaptor) -> dict[str, float]:
-        return self.model.predict(parameters)

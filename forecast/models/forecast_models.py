@@ -7,7 +7,7 @@ import pandas as pd
 import numpy as np
 
 
-from .forecast_base import ParameterAdaptor, ForecastModel
+from forecast.models.forecast_base import ParameterAdaptor, ForecastModel
 
 
 class ClientItemAdaptor(ParameterAdaptor):
