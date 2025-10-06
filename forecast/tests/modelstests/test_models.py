@@ -1,4 +1,4 @@
-from models.forecast_models import DirectQuantileForecaster
+from forecast.models.forecast_models import DirectQuantileForecaster
 import unittest
 
 from unittest.mock import MagicMock, Mock, patch
