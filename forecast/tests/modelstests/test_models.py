@@ -1,4 +1,3 @@
-from sklearn.ensemble._hist_gradient_boosting.grower import PREDICTOR_RECORD_DTYPE
 from models.forecast_models import DirectQuantileForecaster
 import unittest
 
