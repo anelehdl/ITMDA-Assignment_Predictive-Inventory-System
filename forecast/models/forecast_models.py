@@ -3,7 +3,6 @@ from pathlib import Path
 from typing import Callable, Any
 from typing import override
 import joblib
-from joblib.externals.cloudpickle.cloudpickle import k
 import pandas as pd
 import numpy as np
 
@@ -78,7 +77,7 @@ def default_model_loader(path: str | Path):
 
 
 class DirectQuantileForecaster(ForecastModel):
-    def __init__(self, model_name: str, quantiles: list[int], horizon=1):
+    def __init__(self, model_name: str, quantiles: list[int], horizon: int = 1):
         self.model_name: str = model_name
         self.models: dict[str, Any] = {}
         self.quantiles: list[int] = quantiles

@@ -37,7 +37,7 @@ class ForecastModel(ABC):
         pass
 
     @abstractmethod
-    def predict(self, x_params: ParameterAdaptor) -> dict[str, float]:
+    def predict(self, parameters: ParameterAdaptor) -> dict[str, float]:
         pass
 
 
