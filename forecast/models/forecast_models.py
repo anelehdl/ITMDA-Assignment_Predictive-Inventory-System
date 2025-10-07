@@ -6,8 +6,8 @@ import joblib
 import pandas as pd
 import numpy as np
 
-
-from forecast.models.forecast_base import ParameterAdaptor, ForecastModel
+from forecast.config import settings
+from forecast.models import ParameterAdaptor, ForecastModel
 
 
 class ClientItemAdaptor(ParameterAdaptor):
@@ -70,7 +70,7 @@ class ClientItemAdaptor(ParameterAdaptor):
         self.input = df
 
 
-def default_model_loader(path: str | Path):
+def default_model_loader(path: str | Path = settings.models_dir):
     import joblib
 
     return joblib.load(path)
