@@ -6,19 +6,17 @@ dependencies = [
     "pandas",
     "openpyxl",
     "scikit-learn",
-    "lightning",
-    "pyswarms",  
-    "lightgbm", 
-    
+    "pyswarms",
+    "lightgbm",
 ]
 
 [project.optional-dependencies]
 cuda = [
-    "torch==2.8.0+cu126", 
+    "torch==2.8.0+cu126",
 ]
 
 rocm = [
-    "torch==2.8.0+rocm6.4", 
+    "torch==2.8.0+rocm6.4",
 ]
 cpu = [
     "torch",
