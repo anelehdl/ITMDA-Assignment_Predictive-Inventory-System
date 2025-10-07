@@ -21,9 +21,9 @@ class ClientItemAdaptor(ParameterAdaptor):
             "region",
             "area",
             # time series features if not sent from api should be calculated from the pickle data file (should be done outside class)
-            "qty_sold_log_lag1",
-            "qty_sold_log_lag5",
-            "qty_sold_log_lag10",
+            "qty_lag1",
+            "qty_lag5",
+            "qty_lag10",
             "rolling_mean_3",
             "rolling_std_3",
             "rolling_mean_5",
