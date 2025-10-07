@@ -7,20 +7,24 @@ import pandas as pd
 
 class ParameterAdaptor(ABC):
     def __init__(self, features: list[str]):
+        if 0 == len(features):
+            raise ValueError("There must be minimun 1 required feature")
+
         self.features: list[str] = features
         self.input: pd.DataFrame = pd.DataFrame()
 
     def __validate_rawdata(self, raw_data: pd.DataFrame):
         missing = [col for col in self.features if col not in raw_data.columns]
-        assert not missing, f"Missing required columns: {missing}"
+        if missing:
+            raise ValueError(f"Missing required columns: {missing}")
 
     def to_dataframe(self, raw_data={}) -> pd.DataFrame:
         if isinstance(raw_data, pd.DataFrame):
             self.__validate_rawdata(raw_data)
             return raw_data
 
-        df: pd.DataFrame = pd.DataFrame(raw_data)
-        self.__validate_rawdata(raw_data)
+        df = pd.DataFrame(raw_data)
+        self.__validate_rawdata(df)
         return df
 
     @abstractmethod
