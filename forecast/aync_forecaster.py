@@ -1,4 +1,4 @@
-from forecast.models.forecast_base import ForecastModel, ParameterAdaptor
+from forecast.models import ForecastModel, ParameterAdaptor
 import threading
 
 from typing import Type, Any
