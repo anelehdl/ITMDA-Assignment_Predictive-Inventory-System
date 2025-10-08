@@ -20,3 +20,6 @@ class AppSettings(BaseSettings):
                 data = json.load(f)
 
         return cls(**data)
+
+
+default_settings = AppSettings.from_json()
