@@ -6,7 +6,6 @@ import joblib
 import pandas as pd
 import numpy as np
 
-from forecast.config import settings
 from forecast.models import ParameterAdaptor, ForecastModel
 
 
@@ -70,14 +69,20 @@ class ClientItemAdaptor(ParameterAdaptor):
         self.input = df
 
 
-def default_model_loader(path: str | Path = settings.models_dir):
+def default_model_loader(path: str | Path):
     import joblib
 
     return joblib.load(path)
 
 
+def load_dataset(path: str | Path) -> pd.DataFrame:
+    df: pd.DataFrame = pd.read_parquet(path)
+    return df
+
+
 class DirectQuantileForecaster(ForecastModel):
     def __init__(self, model_name: str, quantiles: list[int], horizon: int = 1):
+        super().__init__()
         self.model_name: str = model_name
         self.models: dict[str, Any] = {}
         self.quantiles: list[int] = quantiles
