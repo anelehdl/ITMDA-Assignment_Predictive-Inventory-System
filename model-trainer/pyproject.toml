@@ -1,0 +1,15 @@
+[project]
+name = "demand-forecast"
+requires-python = ">=3.9"
+version = "2025.0.0"
+dependencies = [
+    "pandas",
+    "numpy",
+    "json",
+    "pydantic_settings",
+    "openpyxl",
+    "scikit-learn",
+    "pyswarms",
+    "lightgbm",
+
+]
