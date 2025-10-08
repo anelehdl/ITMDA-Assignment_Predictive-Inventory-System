@@ -6,6 +6,7 @@ dependencies = [
     "pandas",
     "numpy",
     "json",
+    "joblib",
     "pydantic_settings",
     "openpyxl",
     "scikit-learn",
