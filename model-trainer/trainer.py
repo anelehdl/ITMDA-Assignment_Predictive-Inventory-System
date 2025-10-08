@@ -3,6 +3,7 @@ from .trainer_base import Dataset, Trainer
 from .util import target_feature_split
 from pathlib import Path
 from typing import Any, Callable
+from config import default_settings as settings
 
 import lightgbm as lgb
 import joblib
@@ -33,6 +34,7 @@ class QuantileClientItemLGBM(Trainer):
                 "num_leaves": 31,
                 "verbose": -1,
                 "seed": 42,
+                "device_type": settings.train_hardware_pref,
             }
             if model_params is None
             else model_params
