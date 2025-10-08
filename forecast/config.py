@@ -1,11 +1,12 @@
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings
+from pydantic import Field
+from pathlib import Path
 
 
 class PackageSettings(BaseSettings):
-    models_dir: str = "./predict/models"
-    log_level: str = "INFO"
-
-    model_config = SettingsConfigDict(env_prefix="PRD")
+    model_dir: Path = Field(default=Path.cwd() / "predict" / "models", env="MOD_DIR")
+    data_dir: Path = Field(default=Path.cwd() / "predict" / "data", env="DATA_DIR")
+    log_level: str = Field(default="INFO", env="LOG_LEVEL")
 
 
 settings = PackageSettings()
