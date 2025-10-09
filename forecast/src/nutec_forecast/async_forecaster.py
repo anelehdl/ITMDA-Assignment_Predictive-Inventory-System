@@ -1,5 +1,4 @@
-from nutec_forecast.models import ForecastModel, ParameterAdaptor
-import threading
+from .models import ForecastModel, ParameterAdaptor
 
 from typing import Type, Any
 import asyncio
