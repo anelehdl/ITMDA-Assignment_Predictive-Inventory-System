@@ -1,0 +1,16 @@
+[project]
+name = "nutec-forecast-service"
+version = "2025.0.1"
+description = "Nutec predicition microservice"
+authors = [
+]
+# readme = "README.md"
+requires-python = ">=3.9"
+
+dependencies = [
+    "fastapi>=0.99",
+    "uvicorn[standard]>=0.23",
+    "nutec-forecast @ file://./libs/nutec_forecast"
+]
+
+]
