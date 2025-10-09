@@ -3,11 +3,23 @@ using Core.Models.DTO;
 using Infrastructure.Data;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using MongoDB.Driver.Core.Misc;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace Infrastructure.Services
 {
+
+    /// <summary>
+    /// Unified User Service to manage both Staff and Client users
+    /// it provides a single interface for user management operations
+    /// Key responsibilities:
+    /// - retrieve users from both collections
+    /// - create new staff memebers with authentication
+    /// - create new clients with optional authentication
+    /// - delete users from either collection
+    /// </summary>
+
     public class UnifiedUserService
     {
         private readonly MongoDBContext _context;
@@ -19,27 +31,38 @@ namespace Infrastructure.Services
             _roleService = roleService;
         }
 
+
         /// <summary>
-        /// Get all users from both Staff and Client collections with optional filtering
+        /// Get all users from both Staff and Client collections;
+        /// returns unified DTO list that combines both user types;
+        /// and also supports filtering by user type, role, and search term.
         /// </summary>
+        
         public async Task<List<UnifiedUserDto>> GetAllUsersAsync(UserFilterDto? filter = null)
         {
             var unifiedUsers = new List<UnifiedUserDto>();
 
-            // Get Staff users if not filtered to Client only
+
+            // ============================================================
+            // RETRIEVE STAFF USERS
+            // ============================================================
+
+            //get staff members if not filtered to Client only
             if (string.IsNullOrEmpty(filter?.UserType) || filter.UserType == "Staff")
             {
+                //get all staff members from the database
                 var staffMembers = await _context.StaffCollection.Find(_ => true).ToListAsync();
 
                 foreach (var staff in staffMembers)
                 {
+                    //get role information
                     var role = await _roleService.GetRoleByIdAsync(staff.RoleId.ToString());
 
-                    // Apply role filter
+                    //apply role filter if specified
                     if (filter?.RoleId != null && staff.RoleId.ToString() != filter.RoleId)
                         continue;
 
-                    // Apply search filter
+                    //apply search filter (firstname or email)
                     if (!string.IsNullOrEmpty(filter?.SearchTerm))
                     {
                         var searchLower = filter.SearchTerm.ToLower();
@@ -48,6 +71,7 @@ namespace Infrastructure.Services
                             continue;
                     }
 
+                    //add to unified user list with "Staff" type
                     unifiedUsers.Add(new UnifiedUserDto
                     {
                         Id = staff.Id.ToString(),
@@ -61,20 +85,27 @@ namespace Infrastructure.Services
                 }
             }
 
-            // Get Client users if not filtered to Staff only
+
+            // ============================================================
+            // RETRIEVE CLIENT USERS
+            // ============================================================
+
+            //get clients if not filtered to Staff only
             if (string.IsNullOrEmpty(filter?.UserType) || filter.UserType == "Client")
             {
+                //get all clients from the database
                 var clients = await _context.ClientCollection.Find(_ => true).ToListAsync();
 
                 foreach (var client in clients)
                 {
+                    //get role information
                     var role = await _roleService.GetRoleByIdAsync(client.RoleId.ToString());
 
-                    // Apply role filter
+                    //apply role filter if specified
                     if (filter?.RoleId != null && client.RoleId.ToString() != filter.RoleId)
                         continue;
 
-                    // Apply search filter
+                    //apply search filter (searches user_code or username)
                     if (!string.IsNullOrEmpty(filter?.SearchTerm))
                     {
                         var searchLower = filter.SearchTerm.ToLower();
@@ -83,6 +114,7 @@ namespace Infrastructure.Services
                             continue;
                     }
 
+                    //add client to unified user list with "Client" type
                     unifiedUsers.Add(new UnifiedUserDto
                     {
                         Id = client.Id.ToString(),
@@ -98,14 +130,23 @@ namespace Infrastructure.Services
             return unifiedUsers;
         }
 
+
+
         /// <summary>
-        /// Get specific user by ID and type (Staff or Client)
+        ///Get a specific user by ID and type (Staff or Client);
+        ///returns unified DTO regardless of user type.
         /// </summary>
+        
         public async Task<UnifiedUserDto?> GetUserByIdAsync(string userId, string userType)
         {
+            //converts string ID to Mongo ObjectId
             if (!ObjectId.TryParse(userId, out var objectId))
                 return null;
 
+
+            // ============================================================
+            // RETRIEVE STAFF USER
+            // ============================================================
             if (userType == "Staff")
             {
                 var staff = await _context.StaffCollection
@@ -128,7 +169,10 @@ namespace Infrastructure.Services
                     RoleId = staff.RoleId.ToString()
                 };
             }
-            else // Client
+            // ============================================================
+            // RETRIEVE CLIENT USER
+            // ============================================================
+            else
             {
                 var client = await _context.ClientCollection
                     .Find(c => c.Id == objectId)
@@ -151,12 +195,20 @@ namespace Infrastructure.Services
             }
         }
 
+
+
         /// <summary>
-        /// Create a new Staff user with authentication
+        ///Creates a new Staff user with authentication;
+        ///validates the role, checks for duplicates, creates auth records,
+        ///and inserts staff records in the database.
         /// </summary>
+
         public async Task<string> CreateStaffUserAsync(CreateStaffDto createStaff)
         {
-            // Validate role exists and is not "client"
+            // ============================================================
+            // STEP 1: Validate Role
+            // ============================================================
+            //ensure the role exists and is not "client" (staff can't have client role)
             var role = await _roleService.GetRoleByIdAsync(createStaff.RoleId);
             if (role == null)
             {
@@ -168,7 +220,9 @@ namespace Infrastructure.Services
                 throw new ArgumentException("Cannot assign client role to staff user");
             }
 
-            // Check if email already exists in Staff collection
+            // ============================================================
+            // STEP 2: Check for duplicate email
+            // ============================================================
             var existingStaff = await _context.StaffCollection
                 .Find(s => s.Email == createStaff.Email)
                 .FirstOrDefaultAsync();
@@ -178,7 +232,10 @@ namespace Infrastructure.Services
                 throw new InvalidOperationException("Staff user with this email already exists");
             }
 
-            // Create authentication record
+            // ============================================================
+            // STEP 3: Create Authentication Record
+            // ============================================================
+            //hash the password and generate salt and store in auth collection
             var (hashedPassword, salt) = HashPassword(createStaff.Password);
             var auth = new Authentication
             {
@@ -188,33 +245,46 @@ namespace Infrastructure.Services
             };
             await _context.AuthenticationCollection.InsertOneAsync(auth);
 
-            // Create staff record
+            // ============================================================
+            // STEP 4: Create Staff Record
+            // ============================================================
+            //link to the authentication record via AuthId
             var staff = new Staff
             {
                 FirstName = createStaff.FirstName,
                 Email = createStaff.Email,
                 Phone = createStaff.Phone,
                 RoleId = ObjectId.Parse(createStaff.RoleId),
-                AuthId = auth.Id
+                AuthId = auth.Id //link to auth record
             };
             await _context.StaffCollection.InsertOneAsync(staff);
 
             return staff.Id.ToString();
         }
 
+
+
         /// <summary>
-        /// Create a new Client user with optional authentication
+        ///Create a new Client user with optional authentication;
+        ///automatically assigns "client role;
+        ///authentication is only created if password is provided.
         /// </summary>
+        
         public async Task<string> CreateClientUserAsync(CreateClientDto createClient)
         {
-            // Get client role automatically
+            // ============================================================
+            // STEP 1: Get Client Role
+            // ============================================================
+            //automatically assigns "client" role
             var clientRole = await _roleService.GetRoleByNameAsync("client");
             if (clientRole == null)
             {
                 throw new InvalidOperationException("Client role not found in database. Please ensure 'client' role exists.");
             }
 
-            // Check if user_code already exists
+            // ============================================================
+            // STEP 2: Check for Duplicate UserCode
+            // ============================================================
             var existingClient = await _context.ClientCollection
                 .Find(c => c.UserCode == createClient.UserCode)
                 .FirstOrDefaultAsync();
@@ -224,7 +294,11 @@ namespace Infrastructure.Services
                 throw new InvalidOperationException($"Client with user code '{createClient.UserCode}' already exists");
             }
 
-            // Create auth record ONLY if password is provided
+            // ============================================================
+            // STEP 3: Create Authentication Record (Optional)
+            // ============================================================
+            //only creates auth if password is provided;
+            //this allows clients without login access (data-only clients)
             ObjectId? authId = null;
             if (!string.IsNullOrEmpty(createClient.Password))
             {
@@ -239,28 +313,40 @@ namespace Infrastructure.Services
                 authId = auth.Id;
             }
 
-            // Create client record
+            // ============================================================
+            // STEP 4: Create Client Record
+            // ============================================================
             var client = new Client
             {
                 UserCode = createClient.UserCode,
                 Username = createClient.Username,
-                RoleId = clientRole.Id
+                RoleId = clientRole.Id //automatically assigns "client" role
             };
             await _context.ClientCollection.InsertOneAsync(client);
 
             return client.Id.ToString();
         }
 
+
+
         /// <summary>
-        /// Delete user (works for both Staff and Client)
+        ///Delete user (works for both Staff and Client)
+        ///for staff: also deletes associated authentication record
         /// </summary>
+
         public async Task<bool> DeleteUserAsync(string userId, string userType)
         {
+            //convert string ID to Mongo ObjectId
             if (!ObjectId.TryParse(userId, out var objectId))
                 return false;
 
+
+            // ============================================================
+            // DELETE STAFF USER
+            // ============================================================
             if (userType == "Staff")
             {
+                //find staff member
                 var staff = await _context.StaffCollection
                     .Find(s => s.Id == objectId)
                     .FirstOrDefaultAsync();
@@ -268,18 +354,22 @@ namespace Infrastructure.Services
                 if (staff == null)
                     return false;
 
-                // Delete authentication record
+                //delete associated authentication record
                 await _context.AuthenticationCollection
                     .DeleteOneAsync(a => a.Id == staff.AuthId);
 
-                // Delete staff record
+                //delete staff record
                 var result = await _context.StaffCollection
                     .DeleteOneAsync(s => s.Id == objectId);
 
                 return result.DeletedCount > 0;
             }
-            else // Client
+            // ============================================================
+            // DELETE CLIENT USER
+            // ============================================================
+            else
             {
+                //find client
                 var client = await _context.ClientCollection
                     .Find(c => c.Id == objectId)
                     .FirstOrDefaultAsync();
@@ -287,7 +377,8 @@ namespace Infrastructure.Services
                 if (client == null)
                     return false;
 
-                // Delete client record
+                //delete client record
+                //may not have associated auth record (if created without password)
                 var result = await _context.ClientCollection
                     .DeleteOneAsync(c => c.Id == objectId);
 
@@ -295,19 +386,27 @@ namespace Infrastructure.Services
             }
         }
 
+
+
         /// <summary>
-        /// Hash password using SHA256 with salt
+        ///Hash password using SHA256 with a random salt;
+        ///returns hashed password and salt as base64 strings (needed for verification).
         /// </summary>
+
         private (string hashedPassword, string salt) HashPassword(string password)
         {
             using (var rng = RandomNumberGenerator.Create())
             {
-                // Generate random salt
+                // ============================================================
+                // STEP 1: Generate Random Salt
+                // ============================================================
                 byte[] saltBytes = new byte[32];
                 rng.GetBytes(saltBytes);
                 string salt = Convert.ToBase64String(saltBytes);
 
-                // Hash password with salt
+                // ============================================================
+                // STEP 2: Hash Password + Salt
+                // ============================================================
                 using (var sha256 = SHA256.Create())
                 {
                     var saltedPassword = password + salt;

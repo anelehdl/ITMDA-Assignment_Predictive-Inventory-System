@@ -5,13 +5,20 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
+
     /// <summary>
-    /// API Controller for unified user management (Staff and Clients)
-    /// Admin-only access required for all endpoints
+    /// API Controller provides the REST API endpoints for managing both staff and client users;
+    /// all endpoints require admin role authorization.
+    /// Key features:
+    /// - view all users
+    /// - view specific user details
+    /// - create new staff or client users
+    /// - delete users
     /// </summary>
+
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "admin")]
+    [Authorize(Roles = "admin")] //all endpoints require admin role
     public class UnifiedUserManagementController : ControllerBase
     {
         private readonly UnifiedUserService _unifiedUserService;
@@ -28,6 +35,12 @@ namespace API.Controllers
             _logger = logger;
         }
 
+
+        /// <summary>
+        ///GET /api/unifiedusermanagement/users;
+        ///retrieves all users (both staff and clients) with optional filtering.
+        /// </summary>
+
         [HttpGet("users")]
         public async Task<IActionResult> GetAllUsers([FromQuery] UserFilterDto? filter)
         {
@@ -35,6 +48,7 @@ namespace API.Controllers
             {
                 _logger.LogInformation("Getting all users with filters: {@Filter}", filter);
 
+                //retieve users from both Staff and CLient collections
                 var users = await _unifiedUserService.GetAllUsersAsync(filter);
 
                 return Ok(users);
@@ -46,10 +60,12 @@ namespace API.Controllers
             }
         }
 
+
         /// <summary>
-        /// Get specific staff user by ID
+        ///GET /api/unifiedusermanagement/users/staff/{id};
+        ///retrieves specific staff user by ID.
         /// </summary>
-        /// <returns>Staff user details</returns>
+
         [HttpGet("users/staff/{id}")]
         public async Task<IActionResult> GetStaffUser(string id)
         {
@@ -57,6 +73,7 @@ namespace API.Controllers
             {
                 _logger.LogInformation("Getting staff user with ID: {Id}", id);
 
+                //reteive staff user by ID
                 var user = await _unifiedUserService.GetUserByIdAsync(id, "Staff");
 
                 if (user == null)
@@ -73,10 +90,12 @@ namespace API.Controllers
             }
         }
 
+
         /// <summary>
-        /// Get specific client user by ID
+        ///GET /api/unifiedusermanagement/users/client/{id};
+        ///retrieves specific client user by ID.
         /// </summary>
-        /// <returns>Client user details</returns>
+
         [HttpGet("users/client/{id}")]
         public async Task<IActionResult> GetClientUser(string id)
         {
@@ -84,6 +103,7 @@ namespace API.Controllers
             {
                 _logger.LogInformation("Getting client user with ID: {Id}", id);
 
+                //reteive client user by ID
                 var user = await _unifiedUserService.GetUserByIdAsync(id, "Client");
 
                 if (user == null)
@@ -100,16 +120,21 @@ namespace API.Controllers
             }
         }
 
+
         /// <summary>
-        /// Create a new staff user
+        ///POST /api/unifiedusermanagement/users/staff;
+        ///creates new staff user with authentication.
         /// </summary>
-        /// <returns>Created user ID and success message</returns>
+
         [HttpPost("users/staff")]
         public async Task<IActionResult> CreateStaff([FromBody] CreateStaffDto createStaff)
         {
             try
             {
-                // Validate required fields
+
+                // ============================================================
+                // STEP 1: Validate Required Fields
+                // ============================================================
                 if (string.IsNullOrEmpty(createStaff.FirstName) ||
                     string.IsNullOrEmpty(createStaff.Email) ||
                     string.IsNullOrEmpty(createStaff.Phone) ||
@@ -121,10 +146,17 @@ namespace API.Controllers
 
                 _logger.LogInformation("Creating staff user with email: {Email}", createStaff.Email);
 
+                // ============================================================
+                // STEP 2: Create Staff User
+                // ============================================================
+                //service handles: role valdation, duplicate check, auth creation, staff creation
                 var userId = await _unifiedUserService.CreateStaffUserAsync(createStaff);
 
                 _logger.LogInformation("Staff user created successfully with ID: {UserId}", userId);
 
+                // ============================================================
+                // STEP 3: Return Success Response
+                // ============================================================
                 return Ok(new
                 {
                     UserId = userId,
@@ -134,11 +166,13 @@ namespace API.Controllers
             }
             catch (InvalidOperationException ex)
             {
+                //handle duplicate email error
                 _logger.LogWarning(ex, "Conflict while creating staff user");
                 return Conflict(new { Error = ex.Message });
             }
             catch (ArgumentException ex)
             {
+                //handle invalid role error
                 _logger.LogWarning(ex, "Invalid argument while creating staff user");
                 return BadRequest(new { Error = ex.Message });
             }
@@ -149,16 +183,21 @@ namespace API.Controllers
             }
         }
 
+
         /// <summary>
-        /// Create a new client user
+        ///POST /api/unifiedusermanagement/users/client;
+        ///creates a new client user with optional authentication.
         /// </summary>
-        /// <returns>Created user ID and success message</returns>
+
         [HttpPost("users/client")]
         public async Task<IActionResult> CreateClient([FromBody] CreateClientDto createClient)
         {
             try
             {
-                // Validate required fields (only userCode and username are required)
+                // ============================================================
+                // STEP 1: Validate Required Fields
+                // ============================================================
+                //only UserCode and Username are required (!for now!)
                 if (string.IsNullOrEmpty(createClient.UserCode) ||
                     string.IsNullOrEmpty(createClient.Username))
                 {
@@ -167,20 +206,28 @@ namespace API.Controllers
 
                 _logger.LogInformation("Creating client user with code: {UserCode}", createClient.UserCode);
 
+                // ============================================================
+                // STEP 2: Create Client User
+                // ============================================================
+                //service handles: role assignment, duplicate check, optional auth creation
                 var userId = await _unifiedUserService.CreateClientUserAsync(createClient);
 
                 _logger.LogInformation("Client user created successfully with ID: {UserId}", userId);
 
+                // ============================================================
+                // STEP 3: Return Success Response
+                // ============================================================
                 return Ok(new
                 {
                     UserId = userId,
                     Message = "Client user created successfully",
                     UserType = "Client",
-                    HasAuthentication = !string.IsNullOrEmpty(createClient.Password)
+                    HasAuthentication = !string.IsNullOrEmpty(createClient.Password) //indicates if login enabled
                 });
             }
             catch (InvalidOperationException ex)
             {
+                //handle duplicate user code or missing client role
                 _logger.LogWarning(ex, "Conflict while creating client user");
                 return Conflict(new { Error = ex.Message });
             }
@@ -191,10 +238,12 @@ namespace API.Controllers
             }
         }
 
+
         /// <summary>
-        /// Delete a staff user
+        ///DELETE /api/unifiedusermanagement/users/staff/{id};
+        ///deletes a staff user by ID and their authentication record.
         /// </summary>
-        /// <returns>Success message</returns>
+
         [HttpDelete("users/staff/{id}")]
         public async Task<IActionResult> DeleteStaff(string id)
         {
@@ -202,6 +251,7 @@ namespace API.Controllers
             {
                 _logger.LogInformation("Deleting staff user with ID: {Id}", id);
 
+                //delete staff user and auth record
                 var result = await _unifiedUserService.DeleteUserAsync(id, "Staff");
 
                 if (!result)
@@ -220,10 +270,12 @@ namespace API.Controllers
             }
         }
 
+
         /// <summary>
-        /// Delete a client user
+        ///DELETE /api/unifiedusermanagement/users/client/{id};
+        ///deletes a client user by ID.
         /// </summary>
-        /// <returns>Success message</returns>
+
         [HttpDelete("users/client/{id}")]
         public async Task<IActionResult> DeleteClient(string id)
         {
@@ -231,6 +283,7 @@ namespace API.Controllers
             {
                 _logger.LogInformation("Deleting client user with ID: {Id}", id);
 
+                //delete client user
                 var result = await _unifiedUserService.DeleteUserAsync(id, "Client");
 
                 if (!result)
@@ -249,11 +302,12 @@ namespace API.Controllers
             }
         }
 
+
         /// <summary>
-        /// Get all roles
-        /// Returns both all roles and staff-specific roles (excludes client role for staff creation)
+        ///GET /api/unifiedusermanagement/roles;
+        ///retrieves all available roles for staff and clients.
         /// </summary>
-        /// <returns>Object with AllRoles and StaffRoles lists</returns>
+
         [HttpGet("roles")]
         public async Task<IActionResult> GetAllRoles()
         {
@@ -261,8 +315,12 @@ namespace API.Controllers
             {
                 _logger.LogInformation("Getting all roles");
 
+                // ============================================================
+                // STEP 1: Retreive All Roles
+                // ============================================================
                 var roles = await _roleService.GetAllRolesAsync();
 
+                //map to DTOs (convert ObjectId to string)
                 var allRoles = roles.Select(r => new RoleDto
                 {
                     Id = r.Id.ToString(),
@@ -271,10 +329,17 @@ namespace API.Controllers
                     Permissions = r.Permissions
                 }).ToList();
 
-                // Filter out client role for staff creation
-                // (staff should only be assigned admin or staff roles)
+                // ============================================================
+                // STEP 2: Filter Staff Roles
+                // ============================================================
+                //staff members can have any role except "Client"
                 var staffRoles = allRoles.Where(r => r.Name.ToLower() != "client").ToList();
 
+                // ============================================================
+                // STEP 3: Return Both Lists
+                // ============================================================
+                //AllRoles: for general reference
+                //StaffRoles: for creating staff users
                 return Ok(new
                 {
                     AllRoles = allRoles,
