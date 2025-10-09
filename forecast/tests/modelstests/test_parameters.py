@@ -1,4 +1,5 @@
-from forecast.models import ParameterAdaptor, ClientItemAdaptor
+from typing_extensions import override
+from nutec_forecast.models import ParameterAdaptor, ClientItemAdaptor
 
 import pandas as pd
 import numpy as np
@@ -10,7 +11,8 @@ class MockParameter(ParameterAdaptor):
     def __init__(self, feats):
         super().__init__(feats)
 
-    def transform(self):
+    @override
+    def transform(self, parameter):
         pass
 
 
