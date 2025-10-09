@@ -1,4 +1,4 @@
-from forecast.models import DirectQuantileForecaster
+from nutec_forecast.models import DirectQuantileForecaster
 import unittest
 
 from unittest.mock import MagicMock, Mock, patch

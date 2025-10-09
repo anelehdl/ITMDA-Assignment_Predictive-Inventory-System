@@ -1,4 +1,4 @@
-from forecast.models.aync_forecaster import AsyncForcaster
+from nutec_forecast import AsyncForcaster
 import unittest
 from unittest.mock import MagicMock, patch
 
