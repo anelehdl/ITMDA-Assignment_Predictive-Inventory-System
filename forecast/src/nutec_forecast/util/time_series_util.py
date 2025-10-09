@@ -1,4 +1,3 @@
-from pydoc import cli
 import pandas as pd
 
 __time_series_features = [
@@ -23,14 +22,14 @@ def get_client_item_time_series_features(
     if missing_features:
         raise ValueError(f"Missing required features in dataframe: {missing_features}")
 
+    missing_features = [col for col in __time_series_features if col not in df.columns]
+    if missing_features:
+        raise ValueError(f"Missing required features in dataframe: {missing_features}")
+
     group = df[(df["cust_id"] == client_name) & (df["item"] == item_code)]
 
     if group.empty:
         raise ValueError(f"No data for client={client_name} and item={item_code}")
-
-    missing_features = [col for col in __time_series_features if col not in df.columns]
-    if missing_features:
-        raise ValueError(f"Missing required features in dataframe: {missing_features}")
 
     latest_features = group[__time_series_features].iloc[-1]
     return latest_features.to_dict()

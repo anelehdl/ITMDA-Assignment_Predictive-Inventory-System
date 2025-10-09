@@ -6,7 +6,7 @@ import joblib
 import pandas as pd
 import numpy as np
 
-from forecast.models import ParameterAdaptor, ForecastModel
+from nutec_forecast.models import ParameterAdaptor, ForecastModel
 
 
 class ClientItemAdaptor(ParameterAdaptor):

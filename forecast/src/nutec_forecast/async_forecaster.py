@@ -1,4 +1,4 @@
-from forecast.models import ForecastModel, ParameterAdaptor
+from nutec_forecast.models import ForecastModel, ParameterAdaptor
 import threading
 
 from typing import Type, Any

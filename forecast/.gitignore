@@ -23,3 +23,5 @@ env/
 
 #Data
 forecast_data20242-025.xlsx
+data_understanding.ipynb
+product_demand.ipynb
