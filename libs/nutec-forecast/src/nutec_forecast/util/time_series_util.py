@@ -33,3 +33,13 @@ def get_client_item_time_series_features(
 
     latest_features = group[__time_series_features].iloc[-1]
     return latest_features.to_dict()
+
+
+def get_item_info(df: pd.DataFrame, item_code: str):
+    group = df[(df["item"] == item_code)]
+
+    if group.empty:
+        raise ValueError(f"No data for item={item_code}")
+
+    features = group[["container", "color"]].iloc[0]
+    return features.to_dict()
