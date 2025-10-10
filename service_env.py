@@ -10,11 +10,12 @@ class ServiceEnviroment(BaseSettings):
     host: str = Field(default="localhost", env="HOST")
     port: str = Field(default="8420", env="PORT")
 
-    service_name: str = Field(default="predict-service", env="SRV_NAME")
+    service_name: str = Field(default="predict-service", env="PNAME")
     data_dir: Path = Field(default="predict-service", env="DATA_DIR")
 
     data_host: str = Field(default="localhost", env="DHOST")
     data_port: str = Field(default="8520", env="DPORT")
+    data_service: str = Field(default="forecast", env="DNAME")
 
 
 def register_service(
@@ -31,7 +32,6 @@ def register_service(
         service_id=service_id,
         address=host,
         port=port,
-        tags=["forecast-cached-features"],
         check=consul.Check.tcp(host, port, interval="10s"),
     )
     return service_id

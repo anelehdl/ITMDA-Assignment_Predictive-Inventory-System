@@ -8,6 +8,8 @@ authors = [
 requires-python = ">=3.9"
 
 dependencies = [
+    "consul",
+    "requests",
     "fastapi>=0.99",
     "uvicorn[standard]>=0.23",
     "pydantic",
