@@ -23,7 +23,7 @@ class ParameterAdaptor(ABC):
             self.__validate_rawdata(raw_data)
             return raw_data
 
-        df = pd.DataFrame(raw_data)
+        df = pd.DataFrame([raw_data])
         self.__validate_rawdata(df)
         return df
 
@@ -31,8 +31,9 @@ class ParameterAdaptor(ABC):
     def transform(self, parameters):
         pass
 
+    @abstractmethod
     def parameters(self) -> pd.DataFrame:
-        return self.input
+        pass
 
 
 class ForecastModel(ABC):
