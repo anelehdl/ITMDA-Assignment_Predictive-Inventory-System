@@ -5,17 +5,20 @@ from pydantic import BaseSettings, Field
 from pathlib import Path
 from typing import Any
 
+PROJECT_ROOT = Path(__file__).parent.parent
+
 
 class ServiceEnviroment(BaseSettings):
     host: str = Field(default="localhost", env="HOST")
     port: str = Field(default="8420", env="PORT")
 
     service_name: str = Field(default="predict-service", env="PNAME")
-    data_dir: Path = Field(default="predict-service", env="DATA_DIR")
+    data_dir: Path = Field(default=PROJECT_ROOT / "data", env="DATA_DIR")
+    models_dir: Path = Field(default=PROJECT_ROOT / "models", env="MODEL_DIR")
 
     data_host: str = Field(default="localhost", env="DHOST")
     data_port: str = Field(default="8520", env="DPORT")
-    data_service: str = Field(default="forecast", env="DNAME")
+    data_service: str = Field(default="data-service", env="DNAME")
 
 
 def register_service(
