@@ -8,10 +8,11 @@ authors = [
 requires-python = ">=3.9"
 
 dependencies = [
-    "consul",
+    "python-consul",
     "requests",
     "fastapi>=0.99",
     "uvicorn[standard]>=0.23",
     "pydantic",
+    "pydantic-settings",
     "nutec-forecast @ file:///${PROJECT_ROOT}/libs/nutec-forecast"
 ]
