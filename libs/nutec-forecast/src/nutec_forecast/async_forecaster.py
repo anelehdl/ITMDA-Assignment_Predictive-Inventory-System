@@ -1,18 +1,31 @@
 from .models import ForecastModel, ParameterAdaptor
 
-from typing import Type, Any
+from pathlib import Path
+from typing import Callable, Type, Any
 import asyncio
 from asyncio import Queue
 
 
 class AsyncForcaster:
-    def __init__(self, model_cls: Type, model_count: int = 3, *args, **kwargs):
+    def __init__(
+        self,
+        model_cls: Type,
+        loader: Callable[[str | Path], Any],
+        model_count: int = 3,
+        *args,
+        **kwargs,
+    ):
         self.count: int = model_count
         self.model_queue: Queue = Queue(maxsize=model_count)
+        self.model_loader = loader
 
         for _ in range(model_count):
             model = model_cls(*args, **kwargs)
             self.model_queue.put_nowait(model)
+
+    def load(self, path: str | Path):
+        for model in self.model_queue:
+            model.load(path, self.model_loader)
 
     async def predict(
         self, params: ParameterAdaptor, timeout: float = 5.0
