@@ -3,7 +3,11 @@ from turtle import resetscreen
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import Dict, Any
-from nutec_forecast.models import ClientItemAdaptor, DirectQuantileForecaster
+from nutec_forecast.models import (
+    ClientItemAdaptor,
+    DirectQuantileForecaster,
+    lgb_loader,
+)
 from nutec_forecast import AsyncForecaster
 from nutec_forecast.util.time_series_util import get_client_item_time_series_features
 from pathlib import Path
@@ -15,6 +19,12 @@ import requests
 import datetime
 
 settings = ServiceEnviroment()
+
+
+def loader(path: str | Path):
+    return lgb_loader(path)
+
+
 forecaster = AsyncForecaster(DirectQuantileForecaster)
 register = consul.Consul(host="localhost", port=8500)
 

@@ -1,9 +1,9 @@
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 import consul
 
-from pydantic import BaseSettings, Field
+from pydantic import Field
 from pathlib import Path
-from typing import Any
+from typing import Any, Dict
 
 PROJECT_ROOT = Path(__file__).parent.parent
 
@@ -22,7 +22,7 @@ class ServiceEnviroment(BaseSettings):
 
 
 def register_service(
-    name, host, port, unique_id=1, consul_params: dict[str, Any] | None = None
+    name, host, port, unique_id=1, consul_params: Dict[str, Any] | None = None
 ):
     if not consul_params:
         consul_params = {"host": "localhost", "port": 8500}
@@ -34,7 +34,7 @@ def register_service(
         name=name,
         service_id=service_id,
         address=host,
-        port=port,
-        check=consul.Check.tcp(host, port, interval="10s"),
+        port=int(port),
+        check=consul.Check.http(f"http://{host}:{port}/health", interval="10s"),
     )
     return service_id

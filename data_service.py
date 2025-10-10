@@ -1,13 +1,12 @@
-from pyexpat import features
-from threading import local
 from service_env import ServiceEnviroment, register_service
+from typing import Dict, Any
 
 from nutec_forecast.util.time_series_util import (
     get_client_item_time_series_features,
     get_item_info,
 )
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseMode
+from pydantic import BaseModel
 
 import dataclasses
 import pandas as pd
@@ -28,7 +27,9 @@ class FeatureRequest(BaseModel):
 service_id = 42
 settings = ServiceEnviroment()
 settings.host = "localhost"
-local_data = CachedFeatures(data=pd.read_parquet("data.parquet"))
+local_data = CachedFeatures(
+    data=pd.read_feather(f"{settings.data_dir}/cached_features.feather")
+)
 app = FastAPI(title=settings.service_name)
 
 
@@ -59,9 +60,9 @@ async def get_cached_time_features(request: FeatureRequest):
 
 
 @app.get("/item/{item_id}")
-async def get_item(item_id):
+async def get_item(item_id: str):
     try:
-        info = get_item_info(local_data, item_id)
+        info = get_item_info(local_data.data, item_id)
     except ValueError as ve:
         raise HTTPException(status_code=404, detail={"error": str(ve)})
     return info
