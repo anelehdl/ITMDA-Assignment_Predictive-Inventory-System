@@ -1,4 +1,5 @@
 from pkgutil import get_data
+from turtle import resetscreen
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import Dict, Any
@@ -14,6 +15,9 @@ import requests
 import datetime
 
 settings = ServiceEnviroment()
+forecaster = AsyncForecaster(DirectQuantileForecaster)
+register = consul.Consul(host="localhost", port=8500)
+
 app = FastAPI(title=settings.service_name)
 
 
@@ -22,11 +26,9 @@ class PredictRequest(BaseModel):
     client_name: str
     customer_code: str
     region: str
+    area: str
     price: float
     currency: str
-
-
-register = consul.Consul(host="localhost", port=8500)
 
 
 @app.on_event("startup")
@@ -55,20 +57,32 @@ def get_data_service():
     return f"http://{address}:{port}"
 
 
-def get_cached_features(client, item):
+def get_cached_features(client_id, item_id):
     service = get_data_service()
     endpoint = f"{service}/time-features"
 
-    data = {"item": item, "client_name": client}
-    resp = requests.post(endpoint, json=data)
+    data = {"item": item_id, "client_name": client_id}
+    resp_time = requests.post(endpoint, json=data)
 
-    if 200 != resp.status_code:
+    if 200 != resp_time.status_code:
         raise HTTPException(
-            status_code=resp.status_code,
-            detail={"error": "unable to retreive cached features"},
+            status_code=resp_time.status_code,
+            detail={"error": "unable to retreive cached time features"},
+        )
+    resp_item = requests.get(f"{service}/item/{item_id}")
+
+    if 200 != resp_item.status_code:
+        raise HTTPException(
+            status_code=resp_item.status_code,
+            detail={"error": "unable to retreive cached item features"},
         )
 
-    return resp.json()
+    time_features = resp_time.json()
+
+    item_features = resp_item.json()
+
+    combined = {**time_features, **item_features}
+    return combined
 
 
 @app.post("/predict", response_model=Dict[str, Any])
@@ -76,7 +90,7 @@ async def forecast_endpoint(request: PredictRequest):
     """Endpoint that cleans and prepares the data for the forecaster."""
     try:
         # Calculate time-series features
-        time_series_features = get_cached_features(request.client_name, request.item)
+        cached_features = get_cached_features(request.client_name, request.item)
 
         # Prepare parameters with ClientItemAdaptor
         adaptor = ClientItemAdaptor()
@@ -87,15 +101,11 @@ async def forecast_endpoint(request: PredictRequest):
             "cust_id": request.client_name,
             "price": request.price,
             "region": request.region,
-            "area": data["Area"].iloc[0] if not data.empty else "unknown",
-            "color": data["Colour"].iloc[0] if not data.empty else "unknown",
-            "container": data["Container"].iloc[0] if not data.empty else "unknown",
+            "area": request.area,
             "currency": request.trade_currency,
-            **time_series_features,
+            **cached_features,
         }
         adaptor.transform(params)
-        prepared_data = adaptor.parameters()
-
         result = forecaster.predict(adaptor)
 
         return result
