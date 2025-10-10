@@ -36,7 +36,7 @@ app = FastAPI(title=settings.service_name)
 @app.on_event("startup")
 def startup_event():
     reg_id = register_service(
-        name="feature-cache-service",
+        name=settings.data_service,
         host=settings.host,
         port=settings.port,
         unique_id=service_id,
