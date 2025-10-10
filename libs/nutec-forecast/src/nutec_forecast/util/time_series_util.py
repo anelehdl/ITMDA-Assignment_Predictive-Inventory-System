@@ -4,6 +4,7 @@ __time_series_features = [
     "qty_lag1",
     "qty_lag5",
     "qty_lag10",
+    "qty_lag20",
     "rolling_mean_3",
     "rolling_std_3",
     "rolling_mean_5",
