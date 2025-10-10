@@ -1,3 +1,4 @@
+from pathlib import Path
 from service_env import ServiceEnviroment, register_service
 from typing import Dict, Any
 
@@ -27,8 +28,9 @@ class FeatureRequest(BaseModel):
 service_id = 42
 settings = ServiceEnviroment()
 settings.host = "localhost"
+print(f"{settings.data_dir}/cached_features.feather")
 local_data = CachedFeatures(
-    data=pd.read_feather(f"{settings.data_dir}/cached_features.feather")
+    data=pd.read_feather(Path(settings.data_dir) / "cached_features.feather")
 )
 app = FastAPI(title=settings.service_name)
 

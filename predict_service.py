@@ -9,7 +9,7 @@ from nutec_forecast.models import (
     DirectQuantileForecaster,
     lgb_loader,
 )
-from nutec_forecast import AsyncForcaster
+from nutec_forecast import AsyncForecaster
 from nutec_forecast.util.time_series_util import get_client_item_time_series_features
 from pathlib import Path
 from service_env import ServiceEnviroment, register_service
@@ -17,7 +17,7 @@ from service_env import ServiceEnviroment, register_service
 import consul
 import random
 import requests
-import datetime
+from datetime import date
 
 
 class PredictServiceEnviroment(BaseSettings):
@@ -27,13 +27,13 @@ class PredictServiceEnviroment(BaseSettings):
 settings = ServiceEnviroment()
 forecast_settings = PredictServiceEnviroment()
 
-forecaster = AsyncForcaster(
+forecaster = AsyncForecaster(
     DirectQuantileForecaster,
     loader=lgb_loader,
-    model_name=settings.service_name,
-    quantiles=forecast_settings.direct_quantiles,
+    model_name="Qhorizon1",
+    quantiles=[10, 50, 70, 90],
 )
-forecaster.load(settings.models_dir)
+forecaster.load(settings.models_dir / "quantile_forecast")
 register = consul.Consul(host="localhost", port=8500)
 
 app = FastAPI(title=settings.service_name)
@@ -64,15 +64,17 @@ def health():
     return 200
 
 
+# TODO: Fix service discovery for data-service
 def get_data_service():
-    services = register.health.service(settings.data_service, passing=True)[1]
-    if not services:
-        raise HTTPException(f"No healthy instances of data service")
+    # services = register.health.service(settings.data_service, passing=True)[1]
 
-    svc = random.choice(services)
-    address = svc["Service"]["Address"]
-    port = svc["Service"]["Port"]
-    return f"http://{address}:{port}"
+    # if not services:
+    #     raise HTTPException(f"No healthy instances of data service {services}")
+
+    # svc = random.choice(services)
+    # address = svc["Service"]["Address"]
+    # port = svc["Service"]["Port"]
+    return f"http://localhost:8520"
 
 
 def get_cached_features(client_id, item_id):
@@ -114,18 +116,19 @@ async def forecast_endpoint(request: PredictRequest):
         adaptor = ClientItemAdaptor()
         params = {
             "item": request.item,
-            "date": datetime.now(),
+            "date": date.today(),
             "cust_code": request.customer_code,
             "cust_id": request.client_name,
             "price": request.price,
             "region": request.region,
             "area": request.area,
-            "currency": request.trade_currency,
+            "currency": request.currency,
             **cached_features,
         }
-        adaptor.transform(params)
-        result = forecaster.predict(adaptor)
 
+        adaptor.transform(params)
+
+        result = await forecaster.predict(adaptor)
         return result
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=repr(e))
