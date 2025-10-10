@@ -1,14 +1,15 @@
 from pkgutil import get_data
 from turtle import resetscreen
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-from typing import Dict, Any
+from pydantic import BaseModel, Field
+from pydantic_settings import BaseSettings
+from typing import Dict, Any, List
 from nutec_forecast.models import (
     ClientItemAdaptor,
     DirectQuantileForecaster,
     lgb_loader,
 )
-from nutec_forecast import AsyncForecaster
+from nutec_forecast import AsyncForcaster
 from nutec_forecast.util.time_series_util import get_client_item_time_series_features
 from pathlib import Path
 from service_env import ServiceEnviroment, register_service
@@ -18,14 +19,21 @@ import random
 import requests
 import datetime
 
+
+class PredictServiceEnviroment(BaseSettings):
+    direct_quantiles: List[int] = Field(default_factory=list, env="QUANTILES")
+
+
 settings = ServiceEnviroment()
+forecast_settings = PredictServiceEnviroment()
 
-
-def loader(path: str | Path):
-    return lgb_loader(path)
-
-
-forecaster = AsyncForecaster(DirectQuantileForecaster)
+forecaster = AsyncForcaster(
+    DirectQuantileForecaster,
+    loader=lgb_loader,
+    model_name=settings.service_name,
+    quantiles=forecast_settings.direct_quantiles,
+)
+forecaster.load(settings.models_dir)
 register = consul.Consul(host="localhost", port=8500)
 
 app = FastAPI(title=settings.service_name)
