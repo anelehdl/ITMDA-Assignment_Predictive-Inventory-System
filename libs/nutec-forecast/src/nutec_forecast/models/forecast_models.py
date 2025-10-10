@@ -96,9 +96,9 @@ class DirectQuantileForecaster(ForecastModel):
     def load(self, path: str | Path, loader: Callable[[str | Path], Any] | None = None):
         if loader is None:
             loader = default_model_loader
-
+        path = Path(path)
         for key in self.models:
-            self.models[key] = loader(path)
+            self.models[key] = loader(path / f"{self.model_name}_{key}")
 
     @override
     def predict(self, parameters: ParameterAdaptor) -> dict[str, float]:
