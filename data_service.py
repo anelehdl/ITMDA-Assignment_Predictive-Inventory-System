@@ -52,7 +52,7 @@ def health():
 async def get_cached_time_features(request: FeatureRequest):
     try:
         features = get_client_item_time_series_features(
-            local_data, request.client_name, request.item
+            local_data.data, request.client_name, request.item
         )
     except ValueError as ve:
         raise HTTPException(status_code=404, detail={"error": str(ve)})
