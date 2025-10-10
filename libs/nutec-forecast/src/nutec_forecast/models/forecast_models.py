@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from pyexpat import features
 from typing import Callable, Any
 from typing import override
 import joblib
@@ -15,7 +16,7 @@ class ClientItemAdaptor(ParameterAdaptor):
         required_features = [
             "item",
             "date",
-            "cust_name",
+            "cust_id",
             "cust_code",
             "price",
             "region",
@@ -33,12 +34,13 @@ class ClientItemAdaptor(ParameterAdaptor):
             "days_since_client_purchase",
             "days_since_client_item_purchase",
         ]
-        self.features: list[str] = []
         super().__init__(required_features)
 
     @override
     def transform(self, parameters):
         df = self.to_dataframe(parameters)
+        print(df.head())
+        df["date"] = pd.to_datetime(df["date"])
         df["item"] = df["item"].astype("category")
         df["region"] = df["region"].astype("category")
         df["area"] = df["area"].astype("category")
@@ -68,6 +70,42 @@ class ClientItemAdaptor(ParameterAdaptor):
 
         df["price"] = np.log1p(df["price"])
         self.input = df
+        self.forecast_features = [
+            "cust_code",
+            "price",
+            "cust_id",
+            "item",
+            "currency",
+            "region",
+            "category",
+            "day_sin",
+            "day_cos",
+            "month",
+            "dayofweek_cos",
+            "dayofweek_sin",
+            "dayofyear_sin",
+            "dayofyear_cos",
+            "quarter_sin",
+            "quarter_cos",
+            "qty_lag1",
+            "qty_lag5",
+            "qty_lag10",
+            "qty_lag20",
+            "rolling_mean_3",
+            "rolling_std_3",
+            "rolling_mean_5",
+            "rolling_std_5",
+            "rolling_mean_10",
+            "rolling_std_10",
+            "days_since_client_purchase",
+            "days_since_client_item_purchase",
+        ]
+
+        print(self.forecast_features)
+
+    @override
+    def parameters(self) -> pd.DataFrame:
+        return self.input[self.forecast_features]
 
 
 def default_model_loader(path: str | Path):
@@ -116,11 +154,15 @@ class DirectQuantileForecaster(ForecastModel):
     @override
     def predict(self, parameters: ParameterAdaptor) -> dict[str, float]:
         features = parameters.parameters()
-
-        quant_predictions: dict[str, float] = {
-            q_str: model.predict(features)[0] for q_str, model in self.models.items()
-        }
-
+        print(features)
+        print("GOT PARAMETERS")
+        quant_predictions: dict[str, float] = {}
+        try:
+            for q_str, model in self.models.items():
+                quant_predictions[q_str] = model.predict(features)[0]
+        except Exception as e:
+            print(e)
+        print(quant_predictions)
         for key, q in quant_predictions.items():
             quant_predictions[key] = np.expm1(q)
 
