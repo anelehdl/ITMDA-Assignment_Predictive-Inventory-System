@@ -7,6 +7,7 @@ import pandas as pd
 import numpy as np
 
 from nutec_forecast.models import ParameterAdaptor, ForecastModel
+import lightgbm as lgb
 
 
 class ClientItemAdaptor(ParameterAdaptor):
@@ -75,6 +76,11 @@ def default_model_loader(path: str | Path):
     return joblib.load(path)
 
 
+def lgb_loader(path: str | Path):
+    file = Path(path).with_suffix(".json")
+    return lgb.Booster(model_file=file)
+
+
 def load_dataset(path: str | Path) -> pd.DataFrame:
     df: pd.DataFrame = pd.read_parquet(path)
     return df
@@ -94,11 +100,18 @@ class DirectQuantileForecaster(ForecastModel):
 
     @override
     def load(self, path: str | Path, loader: Callable[[str | Path], Any] | None = None):
+        """
+        Loads all quantile models under directory in path
+        Parameters:
+            path: the directory where models are stored
+            loader: a callable function that handles the loading of the specific model_name.
+            Note a model name is passed but file extenstion is left out explixitly to allow the loader to handle the types of models loaded
+        """
         if loader is None:
-            loader = default_model_loader
-
+            loader = lgb_loader
+        path = Path(path)
         for key in self.models:
-            self.models[key] = loader(path)
+            self.models[key] = loader(path / f"{self.model_name}_{key}")
 
     @override
     def predict(self, parameters: ParameterAdaptor) -> dict[str, float]:
