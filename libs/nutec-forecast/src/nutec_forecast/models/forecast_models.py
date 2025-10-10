@@ -94,6 +94,13 @@ class DirectQuantileForecaster(ForecastModel):
 
     @override
     def load(self, path: str | Path, loader: Callable[[str | Path], Any] | None = None):
+        """
+        Loads all quantile models under directory in path
+        Parameters:
+            path: the directory where models are stored
+            loader: a callable function that handles the loading of the specific model_name.
+            Note a model name is passed but file extenstion is left out explixitly to allow the loader to handle the types of models loaded
+        """
         if loader is None:
             loader = default_model_loader
         path = Path(path)
