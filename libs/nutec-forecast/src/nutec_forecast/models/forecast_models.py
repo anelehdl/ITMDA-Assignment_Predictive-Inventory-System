@@ -1,6 +1,5 @@
 from pathlib import Path
 
-from pyexpat import features
 from typing import Callable, Any
 from typing import override
 import joblib
@@ -39,7 +38,6 @@ class ClientItemAdaptor(ParameterAdaptor):
     @override
     def transform(self, parameters):
         df = self.to_dataframe(parameters)
-        print(df.head())
         df["date"] = pd.to_datetime(df["date"])
         df["item"] = df["item"].astype("category")
         df["region"] = df["region"].astype("category")
@@ -101,8 +99,6 @@ class ClientItemAdaptor(ParameterAdaptor):
             "days_since_client_item_purchase",
         ]
 
-        print(self.forecast_features)
-
     @override
     def parameters(self) -> pd.DataFrame:
         return self.input[self.forecast_features]
@@ -154,15 +150,11 @@ class DirectQuantileForecaster(ForecastModel):
     @override
     def predict(self, parameters: ParameterAdaptor) -> dict[str, float]:
         features = parameters.parameters()
-        print(features)
-        print("GOT PARAMETERS")
         quant_predictions: dict[str, float] = {}
-        try:
-            for q_str, model in self.models.items():
-                quant_predictions[q_str] = model.predict(features)[0]
-        except Exception as e:
-            print(e)
-        print(quant_predictions)
+
+        for q_str, model in self.models.items():
+            quant_predictions[q_str] = model.predict(features)[0]
+
         for key, q in quant_predictions.items():
             quant_predictions[key] = np.expm1(q)
 
