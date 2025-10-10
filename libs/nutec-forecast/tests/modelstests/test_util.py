@@ -1,6 +1,7 @@
 from nutec_forecast.util.time_series_util import (
     get_client_item_time_series_features,
     __time_series_features,
+    get_item_info,
 )
 import unittest
 import pandas as pd
@@ -11,6 +12,8 @@ class UtilTests(unittest.TestCase):
         self.df = pd.DataFrame(
             {
                 "cust_id": ["A", "A", "B"],
+                "color": ["RED", "RED", "BLUE"],
+                "container": ["bag", "bag", "box"],
                 "item": ["X", "X", "Y"],
                 "qty_lag1": [1, 2, 3],
                 "qty_lag5": [0.5, 0.6, 0.7],
@@ -25,6 +28,10 @@ class UtilTests(unittest.TestCase):
                 "days_since_client_item_purchase": [0, 1, 2],
             }
         )
+        self.df["item"] = self.df["item"].astype("category")
+        self.df["color"] = self.df["color"].astype("category")
+        self.df["container"] = self.df["container"].astype("category")
+        self.df["cust_id"] = self.df["cust_id"].astype("category")
 
     def test_normal_case(self):
         result = get_client_item_time_series_features(self.df, "A", "X")
@@ -52,3 +59,9 @@ class UtilTests(unittest.TestCase):
         with self.assertRaises(ValueError) as cm:
             get_client_item_time_series_features(df_missing_ts, "A", "X")
         self.assertIn("Missing required features in dataframe", str(cm.exception))
+
+    def test_get_item_info(self):
+        item = "X"
+        info = get_item_info(self.df, item)
+        expected = {"container": "bag", "color": "RED"}
+        self.assertEqual(info, expected)
