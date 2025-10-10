@@ -26,7 +26,10 @@ def get_client_item_time_series_features(
     if missing_features:
         raise ValueError(f"Missing required features in dataframe: {missing_features}")
 
-    group = df[(df["cust_id"] == client_name) & (df["item"] == item_code)]
+    group = df[
+        (df["cust_id"].astype(str) == client_name)
+        & (df["item"].astype(str) == item_code)
+    ]
 
     if group.empty:
         raise ValueError(f"No data for client={client_name} and item={item_code}")
@@ -36,7 +39,7 @@ def get_client_item_time_series_features(
 
 
 def get_item_info(df: pd.DataFrame, item_code: str):
-    group = df[(df["item"] == item_code)]
+    group = df[(df["item"].astype(str) == item_code)]
 
     if group.empty:
         raise ValueError(f"No data for item={item_code}")
