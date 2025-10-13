@@ -39,8 +39,8 @@ app = FastAPI(title=settings.service_name)
 def startup_event():
     reg_id = register_service(
         name=settings.data_service,
-        host=settings.host,
-        port=settings.port,
+        host=settings.data_host,
+        port=settings.data_port,
         unique_id=service_id,
     )
 
