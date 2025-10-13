@@ -1,5 +1,3 @@
-from pkgutil import get_data
-from turtle import resetscreen
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings
@@ -20,8 +18,10 @@ import requests
 from datetime import date
 
 
+# TODO: Fix or replace
 class PredictServiceEnviroment(BaseSettings):
     direct_quantiles: List[int] = Field(default_factory=list, env="QUANTILES")
+    predict_horizon: int = Field(default_factory=1, env="PHORIZON")
 
 
 settings = ServiceEnviroment()
@@ -30,7 +30,7 @@ forecast_settings = PredictServiceEnviroment()
 forecaster = AsyncForecaster(
     DirectQuantileForecaster,
     loader=lgb_loader,
-    model_name="Qhorizon1",
+    model_name=f"Qhorizon{forecast_settings.predict_horizon}",
     quantiles=[10, 50, 70, 90],
 )
 forecaster.load(settings.models_dir / "quantile_forecast")
@@ -56,6 +56,7 @@ def startup_event():
         host=settings.host,
         port=settings.port,
         unique_id=1,
+        tags=[f"h{forecast_settings.predict_horizon}"],
     )
 
 
