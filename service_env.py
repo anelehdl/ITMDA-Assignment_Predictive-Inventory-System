@@ -22,7 +22,12 @@ class ServiceEnviroment(BaseSettings):
 
 
 def register_service(
-    name, host, port, unique_id=1, consul_params: Dict[str, Any] | None = None
+    name,
+    host,
+    port,
+    unique_id=1,
+    tags=[],
+    consul_params: Dict[str, Any] | None = None,
 ):
     if not consul_params:
         consul_params = {"host": "localhost", "port": 8500}
@@ -36,5 +41,6 @@ def register_service(
         address=host,
         port=int(port),
         check=consul.Check.http(f"http://{host}:{port}/health", interval="10s"),
+        tags=tags,
     )
     return service_id
