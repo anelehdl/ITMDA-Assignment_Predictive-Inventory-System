@@ -10,7 +10,12 @@ from nutec_forecast.models import (
 from nutec_forecast import AsyncForecaster
 from nutec_forecast.util.time_series_util import get_client_item_time_series_features
 from pathlib import Path
-from service_env import ServiceEnviroment, register_service
+from service_env import (
+    ServiceEnviroment,
+    register_service,
+    get_services,
+    service_host_port,
+)
 
 import consul
 import random
@@ -18,10 +23,9 @@ import requests
 from datetime import date
 
 
-# TODO: Fix or replace
 class PredictServiceEnviroment(BaseSettings):
     direct_quantiles: List[int] = Field(default_factory=list, env="QUANTILES")
-    predict_horizon: int = Field(default_factory=1, env="PHORIZON")
+    predict_horizon: int = Field(default=1, env="PHORIZON")
 
 
 settings = ServiceEnviroment()
@@ -52,7 +56,7 @@ class PredictRequest(BaseModel):
 @app.on_event("startup")
 def startup_event():
     reg_id = register_service(
-        name=f"predict-{settings.service_name}",
+        name=f"{settings.service_name}",
         host=settings.host,
         port=settings.port,
         unique_id=1,
@@ -67,15 +71,14 @@ def health():
 
 # TODO: Fix service discovery for data-service
 def get_data_service():
-    # services = register.health.service(settings.data_service, passing=True)[1]
+    services = get_services("data-service")
 
-    # if not services:
-    #     raise HTTPException(f"No healthy instances of data service {services}")
+    if not services:
+        raise HTTPException(f"No healthy instances of data service")
 
-    # svc = random.choice(services)
-    # address = svc["Service"]["Address"]
-    # port = svc["Service"]["Port"]
-    return f"http://localhost:8520"
+    svc = random.choice(services)
+    host, port = service_host_port(svc)
+    return f"http://{host}:{port}"
 
 
 def get_cached_features(client_id, item_id):
