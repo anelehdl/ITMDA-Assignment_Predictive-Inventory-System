@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 
 namespace DummyApp.Infrastructure.Configuration
 {
-    public static class ServiceCollectionExtensions
+    public static class ServiceCollectionExtensions  
     {
         public static IServiceCollection AddInfrastructure(
             this IServiceCollection services,
@@ -24,6 +24,9 @@ namespace DummyApp.Infrastructure.Configuration
                 return new MongoDBContext(settings);
             });
 
+            //need to add services here if want DI for them if doing it this way
+            //ie
+            //services.AddScoped<IAuthenticationService, AuthenticationService>();
             return services;
         }
     }

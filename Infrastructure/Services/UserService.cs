@@ -60,8 +60,8 @@ namespace Infrastructure.Services
 
             return staff.Id.ToString();
         }
-
-        private (string hashedPassword, string salt) HashPassword(string password)
+        //https://www.scottbrady.io/aspnet-identity/improving-the-aspnet-core-identity-password-hasher -- blog for ref
+        private (string hashedPassword, string salt) HashPassword(string password)          //this can be stronger thinking using sha512 or bcrypt or we can mitigate this completely by using IPasswordHasher, this way we dont store our salt and hash in db, its managed by identity
         {
             using (var rng = System.Security.Cryptography.RandomNumberGenerator.Create())
             {

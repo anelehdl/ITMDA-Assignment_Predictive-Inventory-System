@@ -1,7 +1,11 @@
-﻿using Core.Models.DTO;
+﻿using Core.Interfaces;
+using Core.Models;
+using Core.Models.DTO;
 using Infrastructure.Data;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -20,15 +24,17 @@ namespace Infrastructure.Services
     /// - includes user claims in tokens
     /// </summary>
 
-    public class AuthenticationService
+    public class AuthenticationService //: IAuthenticationService      //need to add the interface IAuthenticationService here
     {
         private readonly MongoDBContext _context;
-        private readonly IConfiguration _configuration;
+        //private readonly IConfiguration _configuration;           //refactored not needed
+        private readonly JwtSettings _jwtSettings;      //adding jwt settings for key creation, using options pattern
 
-        public AuthenticationService(MongoDBContext context, IConfiguration configuration)
+        public AuthenticationService(MongoDBContext context, IOptions<JwtSettings> jwtOptions)
         {
             _context = context;
-            _configuration = configuration;
+            _jwtSettings = jwtOptions.Value;
+            //_configuration = configuration;
         }
 
 
@@ -80,7 +86,7 @@ namespace Infrastructure.Services
                 // ============================================================
                 // STEP 3: Verify Password
                 // ============================================================
-                //hash the password with stored salt and compare
+                //hash the password with stored salt and compare        //thinking of updating to use better hashing algo ie bcrypt or IPasswordHasher
                 bool isPasswordValid = VerifyPassword(password, auth.HashedPassword, auth.Salt);
 
                 //if password does not match, return failure response
@@ -119,6 +125,7 @@ namespace Infrastructure.Services
                     FirstName = staff.FirstName,
                     Role = role?.Name ?? "Unknown",
                     Token = token //JWT token for API calls
+                    
                 };
             }
             catch (Exception ex)
@@ -132,18 +139,24 @@ namespace Infrastructure.Services
         }
 
 
+
         /// <summary>
         ///Generates a JWT token for the authenticated user,
         ///token contains user claims and is signed with a secret key.
         /// </summary>
 
-        private string GenerateJwtToken(Core.Models.Staff staff, string role)
+        private string GenerateJwtToken(Staff staff, string role)       //could incorperate expiry time here, need to look into it a bit more
         {
-            //create security key from secret in appsettings.json
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-            
-            //create signing credentials using HMAC SHA256 algorithm
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+            //first check to see if configuration values are present
+            if (string.IsNullOrEmpty(_jwtSettings.SecretKey))
+            {
+                throw new InvalidOperationException("JWT Secret Key is not configured.");       //throw exception
+            }
+            //create security key from secret in appsettings.json       //refactoring to use options pattern
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.SecretKey));
+
+            //create signing credentials using HMAC SHA256 algorithm        //changing to use 512 bit key
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512);
 
             // ============================================================
             // DEFINE TOKEN CLAIMS
@@ -159,16 +172,17 @@ namespace Infrastructure.Services
             // ============================================================
             // CREATE JWT TOKEN
             // ============================================================
-            var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt:Audience"],
+            var tokenDescriptor = new JwtSecurityToken(
+                issuer: _jwtSettings.Issuer,
+                audience: _jwtSettings.Audience,
                 claims: claims,
-                expires: DateTime.Now.AddHours(24),
+                expires: DateTime.Now.AddMinutes(30),     //shortened for better security might even reduce further     //apparently its best to use utc time not sure why
                 signingCredentials: credentials //digital signature
             );
 
             //serialize token to string format
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            var token = new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
+            return token;
         }
 
 
@@ -177,7 +191,7 @@ namespace Infrastructure.Services
         ///uses SHA256 hashing algorithm.
         /// </summary>
 
-        private bool VerifyPassword(string enteredPassword, string storedHash, string storedSalt)
+        private bool VerifyPassword(string enteredPassword, string storedHash, string storedSalt)       //can improve security here by using better algo ie bcrypt or IPasswordHasher, and need to use it here if i change
         {
             using (var sha256 = SHA256.Create())
             {
@@ -192,5 +206,94 @@ namespace Infrastructure.Services
                 return computedHash == storedHash;
             }
         }
+
+        /// <summary>
+        /// Implementing the interface methods
+        /// </summary>
+        //currently they are not being used, but will be needed for user management (CRUD operations)
+        public async Task<Authentication?> ValidateUserAsync(string username, string password)
+        {
+            //trying staff by email first
+            var staff = await _context
+                .StaffCollection
+                .Find(s => s.Email == username)
+                .FirstOrDefaultAsync();
+            if (staff != null)
+            {
+                var auth = await _context.AuthenticationCollection
+                    .Find(a => a.Id == staff.AuthId)
+                    .FirstOrDefaultAsync();
+                if (auth != null && VerifyPassword(password, auth.HashedPassword, auth.Salt))
+                {
+                    return auth;
+                }
+            }
+            //fallback if false will look how to handle later
+            return null;
+        }
+
+        public async Task<Authentication?> GetUserByIdAsync(string userId)
+        {
+            //converting to oid
+            if(!ObjectId.TryParse(userId, out var objectId))
+            {
+                return null; //invalid id format
+            }
+            //checking user id
+            var auth =  _context.AuthenticationCollection
+                .Find(a => a.Id == objectId)      //need to convert to ObjectId     --done
+                .FirstOrDefaultAsync();
+            return await auth;
+        }
+
+        public Task<Authentication?> GetUserByUsernameAsync(string username)
+        {
+            var auth =  _context.AuthenticationCollection
+                .Find(a => a.AuthID == username)        //not sure here     need to test
+                .FirstOrDefaultAsync();
+            return auth;        //nullable warning need to handle in controller    
+        }
+
+        
+        public async Task<bool> CreateUserAsync(Authentication user)
+        {
+            var existingUser = _context.AuthenticationCollection
+                .Find(a => a.AuthID == user.AuthID)
+                .FirstOrDefaultAsync().Result;
+            if (existingUser != null)
+            {
+                await _context.AuthenticationCollection.InsertOneAsync(user);
+                return true;
+            }
+            return false; //user already exists need to handle this in controller
+
+        }
+
+        public async Task<bool> UpdateUserAsync(string userId, Authentication user)
+        {
+            if(!ObjectId.TryParse(userId, out var objectId))
+            {
+                return false; //invalid id format
+            }
+            //user.Id = objectId; //ensure the id is set correctly      //think redundant
+            //updating user record
+            var result = await _context.AuthenticationCollection
+                .ReplaceOneAsync(a => a.Id == objectId, user);
+            //need to check if modified count is 1      //gpt (not 100% sure of this, or how this works)
+            return result.ModifiedCount == 1;
+        }
+
+        public async Task<bool> DeleteUserAsync(string userId)
+        {
+            if(!ObjectId.TryParse(userId, out var objectId))
+            {
+                return false; //invalid id format need to handle in controller
+            }
+            var result = await _context.AuthenticationCollection
+                .DeleteOneAsync(a => a.Id == objectId);
+            //added(not 100% of how this is done)
+            return result.DeletedCount == 1;    //keeping track
+        }
+        
     }
 }

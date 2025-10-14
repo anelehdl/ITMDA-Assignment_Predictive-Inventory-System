@@ -22,3 +22,12 @@ public class ForecastCollectionNames
     public string ForecastCache { get; set; }
     public string Prediction { get; set; }
 }
+
+public class JwtSettings
+{
+    public string SecretKey { get; set; }       //token
+    public string Issuer { get; set; }
+    public string Audience { get; set; }
+    public int ExpiryMinutes { get; set; }
+
+}

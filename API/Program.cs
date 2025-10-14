@@ -2,6 +2,7 @@ using DummyApp.Infrastructure.Configuration;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using System.Net.WebSockets;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,13 +18,15 @@ builder.Services.AddSwaggerGen();
 //Registering the Infrastructure services (MongoDB, business services)
 builder.Services.AddInfrastructure(builder.Configuration);
 
+// Bind JwtSettings for IOptions<JwtSettings>
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 
 //Registering the business services with a Scoped lifetime
 //Scoped lifetime for web applications where each request gets its own instance 
 //of the service, ensuring that services are not shared across requests (one instance
 //per HTTP request).
 
-builder.Services.AddScoped<AuthenticationService>(); //handles user login/authentication
+builder.Services.AddScoped<AuthenticationService>(); //handles user login/authentication        //might need to add interface here ie <IAuthenticationService, AuthenticationService> for better practice       //concrete 
 builder.Services.AddScoped<UserService>(); //user management (CRUD)
 builder.Services.AddScoped<RoleService>(); //role-based access control
 builder.Services.AddScoped<UnifiedUserService>(); //combined client and staff user management
@@ -34,6 +37,14 @@ builder.Services.AddScoped<InventoryService>(); //stock metrics and inventory da
 // ============================================================
 // JWT AUTHENTICATION CONFIGURATION
 // ============================================================
+//Configuring JWT authentication to secure the API endpoints.
+//adding var for "Jwt:Key", "Jwt:Issuer" etc for better practice/clarity
+
+var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+var secretKey = jwtSettings["SecretKey"];     //might need getvalue<string>
+var issuer = jwtSettings["Issuer"];
+var audience = jwtSettings["Audience"];
+var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey!));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -44,10 +55,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+            ValidIssuer = issuer,
+            ValidAudience = audience,
+            IssuerSigningKey = signingKey
+            //think you can add role here also
         };
     });
 
