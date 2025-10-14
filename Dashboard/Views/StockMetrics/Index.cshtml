@@ -12,16 +12,16 @@
     }
 
     .panel {
-        background: var(--glass);
+        background: var(--bg2);
         backdrop-filter: blur(20px);
-        border: 1px solid var(--glass-border);
+        border: 1px solid var(--bg1);
         border-radius: 20px;
         padding: 2rem;
         margin-bottom: 2rem;
     }
 
     .back-link {
-        color: rgba(255, 255, 255, 0.8);
+        color: var(--back-link);
         text-decoration: none;
         margin-bottom: 1rem;
         display: inline-block;
@@ -39,7 +39,7 @@
     }
 
     .stat-card {
-        background: rgba(255, 255, 255, 0.1);
+        background: var(--bg2);
         padding: 1.5rem;
         border-radius: 15px;
         text-align: center;
@@ -54,7 +54,7 @@
         font-size: 2.5rem;
         font-weight: bold;
         margin-bottom: 0.5rem;
-        background: linear-gradient(135deg, #fff, rgba(255, 255, 255, 0.7));
+        background: linear-gradient(135deg, white, #ffffffb3);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -77,24 +77,24 @@
         .client-table td {
             padding: 1rem;
             text-align: left;
-            border-bottom: 1px solid var(--glass-border);
+            border-bottom: 1px solid var(--bg1);
         }
 
         .client-table th {
             font-weight: 600;
-            background: rgba(255, 255, 255, 0.1);
+            background: var(--bg2);
             text-transform: uppercase;
             font-size: 0.875rem;
             letter-spacing: 1px;
         }
 
         .client-table tr:hover {
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--bg5);
         }
 
     .btn-glass {
-        background: rgba(255, 255, 255, 0.2);
-        border: 1px solid var(--glass-border);
+        background: var(--bg1);
+        border: 1px solid var(--bg1);
         color: white;
         padding: 0.5rem 1rem;
         border-radius: 10px;
@@ -106,13 +106,13 @@
     }
 
         .btn-glass:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: var(--bg4);
             transform: translateY(-2px);
             color: white;
         }
 
     .chart-container {
-        background: rgba(255, 255, 255, 0.05);
+        background: var(--bg5);
         padding: 2rem;
         border-radius: 15px;
         margin-top: 2rem;
@@ -126,7 +126,7 @@
     }
 
     .sku-item {
-        background: rgba(255, 255, 255, 0.1);
+        background: var(--bg2);
         padding: 1rem;
         border-radius: 10px;
         text-align: center;
@@ -150,8 +150,8 @@
     }
 
     .alert-glass {
-        background: rgba(220, 53, 69, 0.2);
-        border: 1px solid rgba(220, 53, 69, 0.4);
+        background: var(--alert-d1);
+        border: 1px solid var(--alert-d2);
         border-radius: 10px;
         padding: 1rem;
         margin-bottom: 1rem;
@@ -160,7 +160,7 @@
 
     .progress-bar {
         height: 8px;
-        background: rgba(255, 255, 255, 0.2);
+        background: var(--bg1);
         border-radius: 4px;
         margin-top: 0.5rem;
         overflow: hidden;
@@ -187,7 +187,6 @@
 
     @if (Model != null)
     {
-        <!-- Overview Stats -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-number">@Model.TotalClients</div>
@@ -207,7 +206,6 @@
             </div>
         </div>
 
-        <!-- SKU Distribution -->
         <div class="panel">
             <h2 class="mb-3">SKU Distribution</h2>
             <div class="sku-list">
@@ -222,7 +220,6 @@
             </div>
         </div>
 
-        <!-- Top Clients -->
         <div class="panel">
             <h2 class="mb-3">Top Clients by Usage</h2>
 
@@ -285,7 +282,6 @@
 
 @section Scripts {
     <script>
-        // Add any interactive features here
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Stock Metrics Dashboard Loaded');
         });

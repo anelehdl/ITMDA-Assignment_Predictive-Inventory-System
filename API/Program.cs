@@ -24,9 +24,8 @@ builder.Services.AddInfrastructure(builder.Configuration);
 //per HTTP request).
 
 builder.Services.AddScoped<AuthenticationService>(); //handles user login/authentication
-builder.Services.AddScoped<UserService>(); //user management (CRUD)
 builder.Services.AddScoped<RoleService>(); //role-based access control
-builder.Services.AddScoped<UnifiedUserService>(); //combined client and staff user management
+builder.Services.AddScoped<UnifiedUserService>(); //combined client and staff user management (CRUD)
 builder.Services.AddScoped<InventoryService>(); //stock metrics and inventory data
 
 

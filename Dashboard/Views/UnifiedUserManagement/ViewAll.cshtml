@@ -8,13 +8,13 @@
         padding: 2rem;
         max-width: 1400px;
         margin: 0 auto;
-        padding-top: 30rem;
+        padding-top: 40rem;
     }
 
     .panel {
-        background: var(--glass);
+        background: var(--bg2);
         backdrop-filter: blur(20px);
-        border: 1px solid var(--glass-border);
+        border: 1px solid var(--bg1);
         border-radius: 20px;
         padding: 2rem;
         margin-bottom: 2rem;
@@ -30,26 +30,26 @@
     .search-input {
         flex: 1;
         min-width: 200px;
-        background: rgba(255, 255, 255, 0.15);
-        border: 1px solid var(--glass-border);
+        background: var(--bg3);
+        border: 1px solid var(--bg1);
         color: white;
         padding: 0.75rem;
         border-radius: 10px;
     }
 
         .search-input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
+            color: var(--form-c1);
         }
 
         .search-input:focus {
-            background: rgba(255, 255, 255, 0.2);
+            background: var(--bg1);
             outline: none;
             border-color: white;
         }
 
     .filter-select {
-        background: rgba(255, 255, 255, 0.15);
-        border: 1px solid var(--glass-border);
+        background: var(--bg3);
+        border: 1px solid var(--bg1);
         color: white;
         padding: 0.75rem;
         border-radius: 10px;
@@ -62,8 +62,8 @@
         }
 
     .btn-glass {
-        background: rgba(255, 255, 255, 0.2);
-        border: 1px solid var(--glass-border);
+        background: var(--bg2);
+        border: 1px solid var(--bg1);
         color: white;
         padding: 0.75rem 1.5rem;
         border-radius: 10px;
@@ -76,7 +76,7 @@
     }
 
         .btn-glass:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: var(--bg4);
             transform: translateY(-2px);
             color: white;
         }
@@ -91,16 +91,16 @@
         .user-table td {
             padding: 1rem;
             text-align: left;
-            border-bottom: 1px solid var(--glass-border);
+            border-bottom: 1px solid var(--bg1);
         }
 
         .user-table th {
             font-weight: 600;
-            background: rgba(255, 255, 255, 0.1);
+            background: var(--bg2);
         }
 
         .user-table tr:hover {
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--bg5);
         }
 
     .role-badge {
@@ -109,18 +109,18 @@
         border-radius: 12px;
         font-size: 0.875rem;
         font-weight: 600;
-        background: rgba(78, 115, 223, 0.3);
-        border: 1px solid rgba(78, 115, 223, 0.5);
+        background: var(--btn-p1);
+        border: 1px solid var(--btn-p2);
     }
 
         .role-badge.admin {
-            background: rgba(220, 53, 69, 0.3);
-            border: 1px solid rgba(220, 53, 69, 0.5);
+            background: var(--btn-d1);
+            border: 1px solid var(--btn-d2);
         }
 
         .role-badge.client {
-            background: rgba(40, 167, 69, 0.3);
-            border: 1px solid rgba(40, 167, 69, 0.5);
+            background: var(--c-badge1);
+            border: 1px solid var(--c-badge2);
         }
 
     .type-badge {
@@ -129,35 +129,35 @@
         border-radius: 12px;
         font-size: 0.875rem;
         font-weight: 600;
-        background: rgba(111, 155, 255, 0.3);
-        border: 1px solid rgba(111, 155, 255, 0.5);
+        background: var(--btn-p1);
+        border: 1px solid var(--btn-p2);
     }
 
         .type-badge.client-type {
-            background: rgba(40, 167, 69, 0.3);
-            border: 1px solid rgba(40, 167, 69, 0.5);
+            background: var(--c-badge1);
+            border: 1px solid var(--c-badge2);
         }
 
     .alert-glass {
-        background: rgba(255, 255, 255, 0.2);
-        border: 1px solid var(--glass-border);
+        background: var(--bg2);
+        border: 1px solid var(--bg1);
         border-radius: 10px;
         padding: 1rem;
         margin-bottom: 1rem;
     }
 
     .alert-success {
-        background: rgba(40, 167, 69, 0.2);
-        border-color: rgba(40, 167, 69, 0.4);
+        background: var(--alert-s1);
+        border-color: var(--alert-s1);
     }
 
     .alert-danger {
-        background: rgba(220, 53, 69, 0.2);
-        border-color: rgba(220, 53, 69, 0.4);
+        background: var(--alert-d1);
+        border-color: var(--alert-d2);
     }
 
     .back-link {
-        color: rgba(255, 255, 255, 0.8);
+        color: var(--back-link);
         text-decoration: none;
         margin-bottom: 1rem;
         display: inline-block;
@@ -175,7 +175,7 @@
     }
 
     .stat-card {
-        background: rgba(255, 255, 255, 0.1);
+        background: var(--bg2);
         padding: 1.5rem;
         border-radius: 15px;
         text-align: center;

@@ -12,16 +12,16 @@
     }
 
     .panel {
-        background: var(--glass);
+        background: var(--bg2);
         backdrop-filter: blur(20px);
-        border: 1px solid var(--glass-border);
+        border: 1px solid var(--bg1);
         border-radius: 20px;
         padding: 2rem;
         margin-bottom: 2rem;
     }
 
     .back-link {
-        color: rgba(255, 255, 255, 0.8);
+        color: var(--back-link);
         text-decoration: none;
         margin-bottom: 1rem;
         display: inline-block;
@@ -55,7 +55,7 @@
     }
 
     .stat-card {
-        background: rgba(255, 255, 255, 0.1);
+        background: var(--bg2);
         padding: 1.5rem;
         border-radius: 15px;
         text-align: center;
@@ -82,16 +82,16 @@
         .orders-table td {
             padding: 1rem;
             text-align: left;
-            border-bottom: 1px solid var(--glass-border);
+            border-bottom: 1px solid var(--bg1);
         }
 
         .orders-table th {
             font-weight: 600;
-            background: rgba(255, 255, 255, 0.1);
+            background: var(--bg2);
         }
 
         .orders-table tr:hover {
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--bg5);
         }
 
     .sku-breakdown {
@@ -102,7 +102,7 @@
     }
 
     .sku-card {
-        background: rgba(255, 255, 255, 0.1);
+        background: var(--bg2);
         padding: 1rem;
         border-radius: 10px;
         text-align: center;
@@ -121,16 +121,16 @@
     }
 
     .alert-glass {
-        background: rgba(220, 53, 69, 0.2);
-        border: 1px solid rgba(220, 53, 69, 0.4);
+        background: var(--alert-d1);
+        border: 1px solid var(--alert-d2);
         border-radius: 10px;
         padding: 1rem;
         margin-bottom: 1rem;
     }
 
     .warning-badge {
-        background: rgba(255, 193, 7, 0.3);
-        border: 1px solid rgba(255, 193, 7, 0.5);
+        background: var(--alert-w1);
+        border: 1px solid var(--alert-w2);
         padding: 0.25rem 0.75rem;
         border-radius: 12px;
         font-size: 0.875rem;
@@ -139,8 +139,8 @@
     }
 
     .success-badge {
-        background: rgba(40, 167, 69, 0.3);
-        border: 1px solid rgba(40, 167, 69, 0.5);
+        background: var(--alert-s3);
+        border: 1px solid var(--alert-s4);
         padding: 0.25rem 0.75rem;
         border-radius: 12px;
         font-size: 0.875rem;
@@ -192,7 +192,6 @@
             }
         </div>
 
-        <!-- SKU Breakdown -->
         <div class="panel">
             <h2 class="mb-3">Product Breakdown</h2>
             @if (Model.SkuBreakdown != null && Model.SkuBreakdown.Any())
@@ -214,7 +213,6 @@
             }
         </div>
 
-        <!-- Recent Orders -->
         <div class="panel">
             <h2 class="mb-3">Recent Orders</h2>
             @if (Model.RecentOrders != null && Model.RecentOrders.Any())

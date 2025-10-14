@@ -5,16 +5,16 @@
 }
 
 <style>
-    .management-container {
+.management-container {
         padding: 2rem;
         max-width: 1400px;
         margin: 0 auto;
     }
 
     .panel {
-        background: var(--glass);
+        background: var(--bg2);
         backdrop-filter: blur(20px);
-        border: 1px solid var(--glass-border);
+        border: 1px solid var(--bg1);
         border-radius: 20px;
         padding: 2rem;
         margin-bottom: 2rem;
@@ -28,26 +28,26 @@
 
     .search-input {
         flex: 1;
-        background: rgba(255, 255, 255, 0.15);
-        border: 1px solid var(--glass-border);
+        background: var(--bg3);
+        border: 1px solid var(--bg1);
         color: white;
         padding: 0.75rem;
         border-radius: 10px;
     }
 
         .search-input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
+            color: var(--form-c1);
         }
 
         .search-input:focus {
-            background: rgba(255, 255, 255, 0.2);
+            background: var(--bg1);
             outline: none;
             border-color: white;
         }
 
     .btn-glass {
-        background: rgba(255, 255, 255, 0.2);
-        border: 1px solid var(--glass-border);
+        background: var(--bg1);
+        border: 1px solid var(--bg1);
         color: white;
         padding: 0.75rem 1.5rem;
         border-radius: 10px;
@@ -60,29 +60,29 @@
     }
 
         .btn-glass:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: var(--bg4);
             transform: translateY(-2px);
             color: white;
         }
 
     .btn-primary {
-        background: rgba(78, 115, 223, 0.3);
-        border: 1px solid rgba(78, 115, 223, 0.5);
+        background: var(--btn-p1);
+        border: 1px solid var(--btn-p2);
     }
 
         .btn-primary:hover {
-            background: rgba(78, 115, 223, 0.5);
+            background: var(--btn-p2);
         }
 
     .btn-danger {
-        background: rgba(220, 53, 69, 0.3);
-        border: 1px solid rgba(220, 53, 69, 0.5);
+        background: var(--btn-d1);
+        border: 1px solid var(--btn-d2);
         padding: 0.5rem 1rem;
         font-size: 0.875rem;
     }
 
         .btn-danger:hover {
-            background: rgba(220, 53, 69, 0.5);
+            background: var(--btn-d2);
         }
 
     .user-table {
@@ -95,16 +95,16 @@
         .user-table td {
             padding: 1rem;
             text-align: left;
-            border-bottom: 1px solid var(--glass-border);
+            border-bottom: 1px solid var(--bg1);
         }
 
         .user-table th {
             font-weight: 600;
-            background: rgba(255, 255, 255, 0.1);
+            background: var(--bg2);
         }
 
         .user-table tr:hover {
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--bg5);
         }
 
     .role-badge {
@@ -113,31 +113,31 @@
         border-radius: 12px;
         font-size: 0.875rem;
         font-weight: 600;
-        background: rgba(78, 115, 223, 0.3);
-        border: 1px solid rgba(78, 115, 223, 0.5);
+        background: var(--btn-p1);
+        border: 1px solid var(--btn-p2);
     }
 
         .role-badge.admin {
-            background: rgba(220, 53, 69, 0.3);
-            border: 1px solid rgba(220, 53, 69, 0.5);
+            background: var(--btn-d1);
+            border: 1px solid var(--btn-d1);
         }
 
     .alert-glass {
-        background: rgba(255, 255, 255, 0.2);
-        border: 1px solid var(--glass-border);
+        background: var(--bg1);
+        border: 1px solid var(--bg1);
         border-radius: 10px;
         padding: 1rem;
         margin-bottom: 1rem;
     }
 
     .alert-success {
-        background: rgba(40, 167, 69, 0.2);
-        border-color: rgba(40, 167, 69, 0.4);
+        background: var(--alert-s1);
+        border-color: var(--alert-s2);
     }
 
     .alert-danger {
-        background: rgba(220, 53, 69, 0.2);
-        border-color: rgba(220, 53, 69, 0.4);
+        background: var(--alert-d1);
+        border-color: var(--alert-d2);
     }
 
     .modal {
@@ -148,7 +148,7 @@
         top: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.5);
+        background: var(--bg6);
         backdrop-filter: blur(10px);
     }
 
@@ -158,7 +158,7 @@
         padding: 2rem;
         border-radius: 20px;
         max-width: 600px;
-        border: 1px solid var(--glass-border);
+        border: 1px solid var(--bg1);
     }
 
     .close {
@@ -186,27 +186,27 @@
 
     .form-control {
         width: 100%;
-        background: rgba(255, 255, 255, 0.15);
-        border: 1px solid var(--glass-border);
+        background: var(--bg3);
+        border: 1px solid var(--bg1);
         color: white;
         padding: 0.75rem;
         border-radius: 8px;
     }
 
         .form-control::placeholder {
-            color: rgba(255, 255, 255, 0.6);
+            color: var(--form-c1);
         }
 
         .form-control:focus {
-            background: rgba(255, 255, 255, 0.2);
+            background: var(--bg1);
             outline: none;
             border-color: white;
         }
 
     .form-select {
         width: 100%;
-        background: rgba(255, 255, 255, 0.15);
-        border: 1px solid var(--glass-border);
+        background: var(--bg3);
+        border: 1px solid var(--bg1);
         color: white;
         padding: 0.75rem;
         border-radius: 8px;
@@ -223,7 +223,7 @@
     }
 
     .back-link {
-        color: rgba(255, 255, 255, 0.8);
+        color: var(--back-link);
         text-decoration: none;
         margin-bottom: 1rem;
         display: inline-block;
@@ -313,7 +313,6 @@
     </div>
 </div>
 
-<!-- Create Staff Modal -->
 <div id="createModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeCreateModal()">&times;</span>
@@ -351,7 +350,6 @@
     </div>
 </div>
 
-<!-- Delete Confirmation Form (Hidden) -->
 <form id="deleteForm" method="post" style="display: none;">
     @Html.AntiForgeryToken()
 </form>
@@ -374,7 +372,6 @@
             }
         }
 
-        // Close modal when clicking outside
         window.onclick = function (event) {
             const modal = document.getElementById('createModal');
             if (event.target == modal) {
