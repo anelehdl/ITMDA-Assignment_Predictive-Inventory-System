@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, Field
+from pydantic import Field
 from pydantic_settings import BaseSettings
 from typing import Dict, Any, List
 from nutec_forecast.models import (
@@ -21,6 +21,7 @@ import consul
 import random
 import requests
 from datetime import date
+from prediction_requests import ClientItemPRequest
 
 
 class PredictServiceEnviroment(BaseSettings):
@@ -38,19 +39,7 @@ forecaster = AsyncForecaster(
     quantiles=[10, 50, 70, 90],
 )
 forecaster.load(settings.models_dir / "quantile_forecast")
-register = consul.Consul(host="localhost", port=8500)
-
 app = FastAPI(title=settings.service_name)
-
-
-class PredictRequest(BaseModel):
-    item: str
-    client_name: str
-    customer_code: str
-    region: str
-    area: str
-    price: float
-    currency: str
 
 
 @app.on_event("startup")
@@ -110,7 +99,7 @@ def get_cached_features(client_id, item_id):
 
 
 @app.post("/predict", response_model=Dict[str, Any])
-async def forecast_endpoint(request: PredictRequest):
+async def forecast_endpoint(request: ClientItemPRequest):
     """Endpoint that cleans and prepares the data for the forecaster."""
     try:
         # Calculate time-series features
