@@ -212,7 +212,6 @@
 <section class="dashboard-content" id="dashboard">
     @if (isAuthenticated)
     {
-        <!-- Dashboard Panels for Authenticated Users -->
         <div class="panel">
             <h2>
                 Welcome back, @User.Identity.Name!
@@ -270,9 +269,8 @@
             <p>Predicted Emergency Reports</p>
         </div>
     }
-    else
+    else //login panel if user not authenticated
     {
-        <!-- Login Panel for Unauthenticated Users -->
         <div class="panel login-panel">
             <h2 class="text-center mb-4">Login to Continue</h2>
             <p class="text-center mb-4">Please sign in to access your dashboard</p>
