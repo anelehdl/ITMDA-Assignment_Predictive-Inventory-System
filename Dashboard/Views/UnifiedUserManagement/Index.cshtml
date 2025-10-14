@@ -10,9 +10,9 @@
     }
 
     .panel {
-        background: var(--glass);
+        background: var(--bg2);
         backdrop-filter: blur(20px);
-        border: 1px solid var(--glass-border);
+        border: 1px solid var(--bg1);
         border-radius: 20px;
         padding: 2rem;
         margin-bottom: 2rem;
@@ -31,8 +31,8 @@
     }
 
     .management-card {
-        background: linear-gradient(135deg, rgba(78, 115, 223, 0.2), rgba(111, 155, 255, 0.2));
-        border: 2px solid rgba(78, 115, 223, 0.3);
+        background: linear-gradient(135deg, #4e73df33, #6f9be133);
+        border: 2px solid var(--btn-p1);
         border-radius: 20px;
         padding: 2rem;
         transition: all 0.3s ease;
@@ -40,12 +40,12 @@
 
         .management-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 24px var(--shadow1);
         }
 
         .management-card.client-card {
-            background: linear-gradient(135deg, rgba(40, 167, 69, 0.2), rgba(72, 187, 120, 0.2));
-            border-color: rgba(40, 167, 69, 0.3);
+            background: linear-gradient(135deg, var(--alert-s1), #48bb7833);
+            border-color: var(--c-badge1);
         }
 
     .card-icon {
@@ -65,8 +65,8 @@
     }
 
     .btn-glass {
-        background: rgba(255, 255, 255, 0.2);
-        border: 1px solid var(--glass-border);
+        background: var(--bg1);
+        border: 1px solid var(--bg1);
         color: white;
         padding: 0.75rem 1.5rem;
         border-radius: 10px;
@@ -79,14 +79,14 @@
     }
 
         .btn-glass:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: var(--bg4);
             transform: translateY(-2px);
             color: white;
         }
 
     .alert-glass {
-        background: rgba(255, 255, 255, 0.2);
-        border: 1px solid var(--glass-border);
+        background: var(--bg1);
+        border: 1px solid var(--bg1);
         border-radius: 10px;
         padding: 1rem;
         margin-bottom: 1rem;
@@ -94,17 +94,30 @@
     }
 
     .alert-success {
-        background: rgba(40, 167, 69, 0.2);
-        border-color: rgba(40, 167, 69, 0.4);
+        background: var(--alert-s1);
+        border-color: var(--alert-s1);
     }
 
     .alert-danger {
-        background: rgba(220, 53, 69, 0.2);
-        border-color: rgba(220, 53, 69, 0.4);
+        background: var(--alert-d1);
+        border-color: var(--alert-d2);
     }
+
+    .back-link {
+        color: var(--back-link);
+        text-decoration: none;
+        margin-bottom: 1rem;
+        display: inline-block;
+    }
+
+        .back-link:hover {
+            color: white;
+        }
 </style>
 
 <div class="management-container">
+    <a asp-controller="Home" asp-action="Index" class="back-link">← Back to Dashbboard</a>
+
     <h1 class="mb-4">User Management</h1>
 
     @if (TempData["Success"] != null)
@@ -127,7 +140,6 @@
     </div>
 
     <div class="management-grid">
-        <!-- Staff Management Card -->
         <div class="management-card">
             <div class="card-title">Staff Management</div>
             <div class="card-description">
@@ -138,22 +150,20 @@
             </a>
         </div>
 
-        <!-- Client Management Card -->
         <div class="management-card client-card">
             <div class="card-title">Client Management</div>
             <div class="card-description">
-                View and manage external clients, track company information, and control account status
+                View and manage external clients and track client information
             </div>
             <a asp-action="ViewClients" class="btn-glass">
                 View Client Users
             </a>
         </div>
 
-        <!-- All Users Card -->
         <div class="management-card">
             <div class="card-title">All Users</div>
             <div class="card-description">
-                View combined list of all users in the system with advanced filtering and search capabilities
+                View combined list of all users in the system with filtering and search capabilities
             </div>
             <a asp-action="ViewAll" class="btn-glass">
                 View All Users

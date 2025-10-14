@@ -10,14 +10,6 @@
         box-sizing: border-box;
     }
 
-    :root {
-        --primary: #4e73df;
-        --secondary: #858796;
-        --accent: #6f9bff;
-        --glass: rgba(255, 255, 255, 0.1);
-        --glass-border: rgba(255, 255, 255, 0.2);
-    }
-
     body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         background: linear-gradient(120deg, var(--primary) 0%, var(--secondary) 40%, var(--accent) 80%);
@@ -59,7 +51,7 @@
 
     .hero-heading {
         font-size: 5rem;
-        text-shadow: 2px 4px 6px var(--glass-border);
+        text-shadow: 2px 4px 6px var(--bg1);
         transition: opacity 0.5s ease, transform 0.5s ease;
     }
 
@@ -73,7 +65,7 @@
         margin-top: 200vh;
         transition: all 0.5s ease-in-out;
         transform: translateY(50px);
-        background: var(--glass);
+        background: var(--bg2);
         border-radius: 100px;
     }
 
@@ -83,9 +75,9 @@
         }
 
     .panel {
-        background: var(--glass);
+        background: var(--bg2);
         backdrop-filter: blur(20px);
-        border: 1px solid var(--glass-border);
+        border: 1px solid var(--bg1);
         border-radius: 20px;
         padding: 2rem;
         margin-bottom: 3rem;
@@ -105,8 +97,8 @@
 
     /* User Management Panel Specific Styles */
     .user-management-panel {
-        background: linear-gradient(135deg, rgba(220, 53, 69, 0.2), rgba(111, 155, 255, 0.2));
-        border: 2px solid rgba(220, 53, 69, 0.3);
+        background: linear-gradient(135deg, var(--alert-d1), #6f9bff33);
+        border: 2px solid var(--btn-d1);
     }
 
     .panel-actions {
@@ -117,8 +109,8 @@
     }
 
     .btn-glass {
-        background: rgba(255, 255, 255, 0.2);
-        border: 1px solid var(--glass-border);
+        background: var(--bg1);
+        border: 1px solid var(--bg1);
         color: white;
         padding: 0.75rem 1.5rem;
         border-radius: 10px;
@@ -129,43 +121,42 @@
     }
 
         .btn-glass:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: var(--glass-hover);
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 12px var(--shadow2);
             color: white;
         }
 
     .btn-primary-glass {
-        background: rgba(78, 115, 223, 0.3);
-        border: 1px solid rgba(78, 115, 223, 0.5);
+        background: var(--btn-p1);
+        border: 1px solid var(--btn-p2);
     }
 
         .btn-primary-glass:hover {
-            background: rgba(78, 115, 223, 0.5);
+            background: var(--btn-p2);
         }
 
-    /* Login Panel Styles */
     .login-panel {
         max-width: 500px;
         margin: 0 auto;
     }
 
         .login-panel .form-control {
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid var(--glass-border);
+            background: var(--bg3);
+            border: 1px solid var(--bg1);
             color: white;
             padding: 0.75rem;
         }
 
             .login-panel .form-control::placeholder {
-                color: rgba(255, 255, 255, 0.6);
+                color: var(--form-c1);
             }
 
             .login-panel .form-control:focus {
-                background: rgba(255, 255, 255, 0.2);
+                background: var(--bg1);
                 border-color: white;
                 color: white;
-                box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
+                box-shadow: 0 0 0 0.2rem var(--shadow1);
             }
 
         .login-panel .btn-light {
@@ -177,9 +168,9 @@
         }
 
             .login-panel .btn-light:hover {
-                background: rgba(255, 255, 255, 0.9);
+                background: var(--panel-bg);
                 transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+                box-shadow: 0 4px 12px var(--shadow2);
             }
 
     .role-badge {
@@ -188,13 +179,13 @@
         border-radius: 12px;
         font-size: 0.875rem;
         font-weight: 600;
-        background: rgba(220, 53, 69, 0.3);
-        border: 1px solid rgba(220, 53, 69, 0.5);
+        background: var(--btn-d1);
+        border: 1px solid var(--btn-d2);
     }
 
         .role-badge.staff {
-            background: rgba(111, 155, 255, 0.3);
-            border: 1px solid rgba(111, 155, 255, 0.5);
+            background: var(--s-badge1);
+            border: 1px solid var(--s-badge2);
         }
 
     @@media (max-width: 768px) {
@@ -222,7 +213,6 @@
 <section class="dashboard-content" id="dashboard">
     @if (isAuthenticated)
     {
-        <!-- Dashboard Panels for Authenticated Users -->
         <div class="panel">
             <h2>
                 Welcome back, @User.Identity.Name!
@@ -280,7 +270,7 @@
             <p>Predicted Emergency Reports</p>
         </div>
     }
-    else
+    else //login panel if user not authenticated
     {
         <!-- Login Panel for Unauthenticated Users -->
         <div class="panel login-panel mb-4">
@@ -307,11 +297,6 @@
                     <small style="color: rgba(255, 255, 255, 0.7);">Don't have an account? <a href="#" class="text-white">Contact Admin</a></small>
                 </div>
             </form>
-        </div>
-
-        <div class="panel">
-            <h2>Why Login?</h2>
-            <p>Access real-time dashboard metrics, view reports, and manage your stock efficiently.</p>
         </div>
     }
 </section>

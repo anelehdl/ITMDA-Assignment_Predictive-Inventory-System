@@ -14,14 +14,14 @@
         public string? UserCode { get; set; }
         public string? Username { get; set; }
 
-        // Common fields
+        // Fields in common
         public string RoleName { get; set; }
         public string RoleId { get; set; }
     }
 
     public class UserFilterDto
     {
-        public string? UserType { get; set; } // "Staff" or "Client"
+        public string? UserType { get; set; }
         public string? RoleId { get; set; }
         public string? SearchTerm { get; set; }
     }
