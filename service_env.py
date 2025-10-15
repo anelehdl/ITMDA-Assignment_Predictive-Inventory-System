@@ -1,6 +1,7 @@
 from fastapi import HTTPException
 from pydantic_settings import BaseSettings
 import consul
+import os
 
 from pydantic import Field
 from pathlib import Path
@@ -31,7 +32,10 @@ def register_service(
     consul_params: Dict[str, Any] | None = None,
 ):
     if not consul_params:
-        consul_params = {"host": "localhost", "port": 8500}
+        consul_params = {
+            "host": os.getenv("CONSUL_HOST", "localhost"),
+            "port": int(os.getenv("CONSUL_PORT", 8500)),
+        }
 
     c = consul.Consul(**consul_params)
     service_id = f"{name}_{port}_{unique_id}"
