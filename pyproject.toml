@@ -5,13 +5,12 @@ description = "Nutec predicition microservice"
 authors = [
 ]
 # readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.12"
 
 dependencies = [
     "python-consul",
     "requests",
     "fastapi>=0.99",
-    "uvicorn[standard]>=0.23",
     "pydantic",
     "pydantic-settings",
     "nutec-forecast @ file:///${PROJECT_ROOT}/libs/nutec-forecast"
