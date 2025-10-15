@@ -18,7 +18,7 @@ namespace API.Controllers
 
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "admin")] //all endpoints require admin role
+    //[Authorize(Roles = "admin")] //all endpoints require admin role
     public class UnifiedUserManagementController : ControllerBase
     {
         private readonly IUnifiedUserService _unifiedUserService;

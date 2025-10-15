@@ -12,7 +12,7 @@ namespace Core.Models
         public string AuthID { get; set; }
 
         [MongoDB.Bson.Serialization.Attributes.BsonElement("salt")]
-        public string Salt { get; set; }
+        public string? Salt { get; set; }
 
         [MongoDB.Bson.Serialization.Attributes.BsonElement("hashed_password")]
         public string HashedPassword { get; set; }

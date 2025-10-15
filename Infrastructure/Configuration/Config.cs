@@ -1,10 +1,10 @@
 ﻿public class MongoDBSettings
 {
-    public string ConnectionString { get; set; }
-    public string DatabaseName { get; set; }
-    public string ForecastDatabaseName { get; set; }
-    public CollectionNames CollectionNames { get; set; }
-    public ForecastCollectionNames ForecastCollectionNames { get; set; }
+    public required string ConnectionString { get; set; }
+    public required string DatabaseName { get; set; }
+    public required string ForecastDatabaseName { get; set; }
+    public required CollectionNames CollectionNames { get; set; }
+    public required ForecastCollectionNames ForecastCollectionNames { get; set; }
 }
 
 public class CollectionNames
