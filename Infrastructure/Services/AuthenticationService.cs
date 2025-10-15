@@ -88,7 +88,7 @@ namespace Infrastructure.Services
                 // ============================================================
                 //hash the password with IPasswordHasher
                 //thinking of updating to use better hashing algo ie bcrypt or IPasswordHasher
-                var verificationResult = _passwordHasher.VerifyHashedPassword(null!, auth.HashedPassword, password);
+                var verificationResult = _passwordHasher.VerifyHashedPassword(new object(), auth.HashedPassword, password);
 
                 //checks if password verification succeeded
                 if (verificationResult == PasswordVerificationResult.Failed)
@@ -308,17 +308,6 @@ namespace Infrastructure.Services
 
 
         }
-
-
-
-
-        /// <summary>
-        ///Implementing RefreshToken functionality
-        /// </summary>
-        
-
-
-
 
         /// <summary>
         /// Implementing the interface methods

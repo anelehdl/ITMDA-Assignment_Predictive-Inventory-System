@@ -25,7 +25,7 @@ namespace Infrastructure.Services
     {
         private readonly MongoDBContext _context;
         private readonly IRoleService _roleService;     //refactored to use interface
-        private readonly IPasswordHasher<object> _passwordHasher = new PasswordHasher<object>(); //new password hasher
+        private readonly IPasswordHasher<object> _passwordHasher;       //provided by di
 
         public UnifiedUserService(MongoDBContext context, IRoleService roleService, IPasswordHasher<object> passwordHasher)
         {
@@ -239,7 +239,7 @@ namespace Infrastructure.Services
             // STEP 3: Create Authentication Record
             // ============================================================
             //hash the password and generate salt and store in auth collection
-            var hashedPassword = _passwordHasher.HashPassword(null!, createStaff.Password); //requires two parameters -> what would the first one be? temporarily added a null! value
+            var hashedPassword = _passwordHasher.HashPassword(new object(), createStaff.Password); //requires two parameters -> what would the first one be? temporarily added a null! value        //updated to use new object() as usually the first parameter is the user object, but we don't have one here yet we are using a generic object coz of various user types
             var auth = new Authentication
             {
                 AuthID = Guid.NewGuid().ToString(),
@@ -305,7 +305,7 @@ namespace Infrastructure.Services
             ObjectId? authId = null;
             if (!string.IsNullOrEmpty(createClient.Password))
             {
-                var hashedPassword = _passwordHasher.HashPassword(null!, createClient.Password);
+                var hashedPassword = _passwordHasher.HashPassword(new object(), createClient.Password);
                 var auth = new Authentication
                 {
                     AuthID = Guid.NewGuid().ToString(),
@@ -390,38 +390,6 @@ namespace Infrastructure.Services
         }
 
 
-
-        /// <summary>
-        ///Hash password using SHA256 with a random salt;
-        ///returns hashed password and salt as base64 strings (needed for verification).
-        /// </summary>
-
-        private (string hashedPassword, string salt) HashPassword(string password)
-        {
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                // ============================================================
-                // STEP 1: Generate Random Salt
-                // ============================================================
-                byte[] saltBytes = new byte[32];
-                rng.GetBytes(saltBytes);
-                string salt = Convert.ToBase64String(saltBytes);
-
-                // ============================================================
-                // STEP 2: Hash Password + Salt
-                // ============================================================
-                using (var sha256 = SHA256.Create())
-                {
-                    var saltedPassword = password + salt;
-                    var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(saltedPassword));
-                    string hashed = Convert.ToBase64String(hashBytes);
-
-                    return (hashed, salt);
-                }
-            }
-        }
-
-
         // ============================================================
         // Updating Staff Users
         // ============================================================
@@ -488,11 +456,11 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(updateStaff.NewPassword))
             {
                 //hash new password
-                var (hashedPassword, salt) = HashPassword(updateStaff.NewPassword);
+                var hashedPassword = _passwordHasher.HashPassword(new object(), updateStaff.NewPassword);
                 //update auth record
                 var authUpdate = Builders<Authentication>.Update
                     .Set(a => a.HashedPassword, hashedPassword)
-                    .Set(a => a.Salt, salt);
+                    .Set(a => a.Salt, string.Empty); // clear legacy salt;
 
                 await _context.AuthenticationCollection.UpdateOneAsync(
                     a => a.Id == staff.AuthId,
@@ -512,5 +480,6 @@ namespace Infrastructure.Services
             // MatchedCount==1 is enough; ModifiedCount can be 0 if values are same
             return result.MatchedCount == 1;
         }
+
     }
 }
