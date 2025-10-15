@@ -1,4 +1,5 @@
-﻿using Core.Models.DTO;
+﻿using Core.Interfaces;
+using Core.Models.DTO;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,12 +11,10 @@ namespace API.Controllers
     [Authorize(Roles = "admin,staff")]
     public class StockMetricsController : ControllerBase
     {
-        private readonly InventoryService _inventoryService;
+        private readonly IInventoryService _inventoryService;
         private readonly ILogger<StockMetricsController> _logger;
 
-        public StockMetricsController(
-            InventoryService inventoryService,
-            ILogger<StockMetricsController> logger)
+        public StockMetricsController(IInventoryService inventoryService, ILogger<StockMetricsController> logger)
         {
             _inventoryService = inventoryService;
             _logger = logger;

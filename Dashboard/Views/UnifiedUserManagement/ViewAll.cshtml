@@ -30,11 +30,12 @@
     .search-input {
         flex: 1;
         min-width: 200px;
-        background: var(--bg3);
-        border: 1px solid var(--bg1);
+        background: var(--bg2);
+        border: 1px solid var(--bg5);
         color: white;
         padding: 0.75rem;
         border-radius: 10px;
+        transition: all 0.5s ease-in-out;
     }
 
         .search-input::placeholder {
@@ -42,24 +43,33 @@
         }
 
         .search-input:focus {
-            background: var(--bg1);
+            background: var(--bg4);
             outline: none;
-            border-color: white;
+            border-color: var(--glass-border);
         }
 
     .filter-select {
-        background: var(--bg3);
+        background: var(--bg2);
         border: 1px solid var(--bg1);
         color: white;
         padding: 0.75rem;
         border-radius: 10px;
         min-width: 150px;
+        transition: all 0.3s ease-in-out;
+        cursor: pointer;
     }
 
         .filter-select option {
-            background: var(--primary);
+            background: var(--btn-p2);
             color: white;
+            border-radius: 10px;
         }
+
+        .filter-select:hover{
+            transform: translateY(-2px);
+            background: var(--bg4);
+        }
+        
 
     .btn-glass {
         background: var(--bg2);
@@ -180,6 +190,7 @@
         padding: 1.5rem;
         border-radius: 15px;
         text-align: center;
+        transition: all 0.3s ease;
         
     }
 
@@ -187,13 +198,17 @@
             font-size: 2.5rem;
             font-weight: bold;
             margin-bottom: 0.5rem;
-            
+            pointer-events:none;
         }
 
         .stat-card .stat-label {
             opacity: 0.9;
             font-size: 0.875rem;
-            
+            pointer-events:none;
+        }
+
+        .stat-card:hover{
+            transform: translateY(-5px);
         }
 </style>
 

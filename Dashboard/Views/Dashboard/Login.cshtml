@@ -1,5 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Login Page";
+    var reason = Context.Request.Query["reason"].ToString();
 }
 @model Core.Models.DTO.LoginRequestDto
 
@@ -168,6 +169,18 @@
 
 <div class="login-container">
     <div class="login-panel">
+        @if (reason == "expired")
+        {
+            <div class="alert" style="background: var(--alert-w1); border:1px solid var(--alert-w2); color:white; margin-bottom:1rem;">
+                Your session expired. Please sign in again.
+            </div>
+        }
+        else if (reason == "unauthorized")
+        {
+            <div class="alert" style="background: var(--alert-d1); border:1px solid var(--alert-d2); color:white; margin-bottom:1rem;">
+                Please sign in to continue.
+            </div>
+        }
         <h1 class="text-center">Login to Continue</h1>
         <p class="text-center">Please sign in to access your dashboard</p>
 

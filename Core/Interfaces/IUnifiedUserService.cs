@@ -1,9 +1,19 @@
 ﻿using Core.Models;
+using Core.Models.DTO;
 
 namespace Core.Interfaces
 {
-    public interface IUserService
+    public interface IUnifiedUserService
     {
+        Task<List<UnifiedUserDto>> GetAllUsersAsync(UserFilterDto? filter = null);
+        Task<UnifiedUserDto?> GetUserByIdAsync(string userId, string userType);
+        Task<string> CreateStaffUserAsync(CreateStaffDto createStaff);
+        Task<string> CreateClientUserAsync(CreateClientDto createClient);
+        Task<bool> DeleteUserAsync(string userId, string userType);
+
+
+
+        /*refactoring to make interfaces more focused and reduce concrete class dependencies
         // Get operations
         Task<Staff?> GetUserByIdAsync(string userId);
         Task<Staff?> GetUserByUsernameAsync(string username);
@@ -15,5 +25,7 @@ namespace Core.Interfaces
         Task<bool> CreateUserAsync(Staff user);
         Task<bool> UpdateUserAsync(string userId, Staff user);
         Task<bool> DeleteUserAsync(string userId);
+        */
     }
+
 }
