@@ -1,19 +1,24 @@
 from pathlib import Path
 from typing import Dict, Any
-from service_env import ServiceEnviroment, get_services, service_host_port
+from service_env import ServiceEnvironment, get_services, service_host_port
 from prediction_requests import ClientItemPRequest
 from fastapi import FastAPI, HTTPException
 
 import requests
 
 service_id = 10
-settings = ServiceEnviroment()
+settings = ServiceEnvironment()
 app = FastAPI(title=settings.service_name)
 
 
 # get the specific prediction model based on tag e.g h1 tag to get horizon=1 model.
 def get_model_service_owner(model_tag):
-    services = get_services("predict-service", tag=model_tag)
+    services = get_services(
+        "predict_service",
+        tag=model_tag,
+        consul_host=settings.consul_host,
+        consul_port=int(settings.consul_port),
+    )
     if not services:
         raise HTTPException(f"No healthy instances of prediction service [{model_tag}]")
     return services[0]

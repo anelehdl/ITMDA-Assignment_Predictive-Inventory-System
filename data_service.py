@@ -1,5 +1,5 @@
 from pathlib import Path
-from service_env import ServiceEnviroment, register_service
+from service_env import ServiceEnvironment, register_service
 from typing import Dict, Any
 
 from nutec_forecast.util.time_series_util import (
@@ -11,7 +11,7 @@ from pydantic import BaseModel
 
 import dataclasses
 import pandas as pd
-
+import os
 from dataclasses import dataclass
 
 
@@ -26,8 +26,7 @@ class FeatureRequest(BaseModel):
 
 
 service_id = 42
-settings = ServiceEnviroment()
-print(f"{settings.data_dir}/cached_features.feather")
+settings = ServiceEnvironment()
 local_data = CachedFeatures(
     data=pd.read_feather(Path(settings.data_dir) / "cached_features.feather")
 )
@@ -38,7 +37,7 @@ app = FastAPI(title=settings.service_name)
 def startup_event():
     reg_id = register_service(
         name=settings.service_name,
-        host=settings.host,
+        host=settings.service_addr,
         port=settings.port,
         unique_id=service_id,
     )

@@ -11,7 +11,7 @@ from nutec_forecast import AsyncForecaster
 from nutec_forecast.util.time_series_util import get_client_item_time_series_features
 from pathlib import Path
 from service_env import (
-    ServiceEnviroment,
+    ServiceEnvironment,
     register_service,
     get_services,
     service_host_port,
@@ -20,16 +20,17 @@ from service_env import (
 import consul
 import random
 import requests
+import os
 from datetime import date
 from prediction_requests import ClientItemPRequest
 
 
-class PredictServiceEnviroment(BaseSettings):
-    direct_quantiles: List[int] = Field(default_factory=list, env="QUANTILES")
-    predict_horizon: int = Field(default=1, env="PHORIZON")
+class PredictServiceEnviroment:
+    def __init__(self) -> None:
+        self.predict_horizon: int = os.environ.get("PHORIZON", 1)
 
 
-settings = ServiceEnviroment()
+settings = ServiceEnvironment()
 forecast_settings = PredictServiceEnviroment()
 
 forecaster = AsyncForecaster(
@@ -44,9 +45,10 @@ app = FastAPI(title=settings.service_name)
 
 @app.on_event("startup")
 def startup_event():
+    print(f"HORIZON: {forecast_settings.predict_horizon}")
     reg_id = register_service(
         name=f"{settings.service_name}",
-        host=settings.host,
+        host=settings.service_addr,
         port=settings.port,
         unique_id=1,
         tags=[f"h{forecast_settings.predict_horizon}"],
@@ -60,7 +62,12 @@ def health():
 
 # TODO: Fix service discovery for data-service
 def get_data_service():
-    services = get_services("data-service")
+    services = get_services(
+        "data_service",
+        consul_host=settings.consul_host,
+        consul_port=int(settings.consul_port),
+    )
+    print(services)
 
     if not services:
         raise HTTPException(f"No healthy instances of data service")
