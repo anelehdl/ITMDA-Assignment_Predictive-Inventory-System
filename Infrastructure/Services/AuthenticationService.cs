@@ -2,6 +2,7 @@
 using Core.Models;
 using Core.Models.DTO;
 using Infrastructure.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Bson;
@@ -27,11 +28,13 @@ namespace Infrastructure.Services
     {
         private readonly MongoDBContext _context;
         private readonly JwtSettings _jwtSettings;      //adding jwt settings for key creation, using options pattern
+        private readonly IPasswordHasher<object> _passwordHasher;
 
-        public AuthenticationService(MongoDBContext context, IOptions<JwtSettings> jwtOptions)
+        public AuthenticationService(MongoDBContext context, IOptions<JwtSettings> jwtOptions, IPasswordHasher<object> passwordHasher)
         {
             _context = context;
             _jwtSettings = jwtOptions.Value;
+            _passwordHasher = passwordHasher;
         }
 
 
@@ -83,11 +86,12 @@ namespace Infrastructure.Services
                 // ============================================================
                 // STEP 3: Verify Password
                 // ============================================================
-                //hash the password with stored salt and compare        //thinking of updating to use better hashing algo ie bcrypt or IPasswordHasher
-                bool isPasswordValid = VerifyPassword(password, auth.HashedPassword, auth.Salt);
+                //hash the password with IPasswordHasher
+                //thinking of updating to use better hashing algo ie bcrypt or IPasswordHasher
+                var verificationResult = _passwordHasher.VerifyHashedPassword(null!, auth.HashedPassword, password);
 
-                //if password does not match, return failure response
-                if (!isPasswordValid)
+                //checks if password verification succeeded
+                if (verificationResult == PasswordVerificationResult.Failed)
                 {
                     return new LoginResponseDto
                     {
@@ -307,26 +311,6 @@ namespace Infrastructure.Services
 
 
 
-        /// <summary>
-        ///Verifies a password against a stored hash and salt,
-        ///uses SHA256 hashing algorithm.
-        /// </summary>
-
-        private bool VerifyPassword(string enteredPassword, string storedHash, string storedSalt)       //can improve security here by using better algo ie bcrypt or IPasswordHasher, and need to use it here if i change
-        {
-            using (var sha256 = SHA256.Create())
-            {
-                //combine entered password with stored salt
-                var saltedPassword = enteredPassword + storedSalt;
-
-                //hash the salted password
-                var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(saltedPassword));
-                var computedHash = Convert.ToBase64String(hashBytes);
-
-                //compare computed hash with stored hash
-                return computedHash == storedHash;
-            }
-        }
 
         /// <summary>
         ///Implementing RefreshToken functionality
@@ -354,9 +338,16 @@ namespace Infrastructure.Services
                 var auth = await _context.AuthenticationCollection
                     .Find(a => a.Id == staff.AuthId)
                     .FirstOrDefaultAsync();
-                if (auth != null && VerifyPassword(password, auth.HashedPassword, auth.Salt))
+                
+                if (auth != null)
                 {
-                    return auth;
+                    //verify password with IPasswordHasher
+                    var verificationResult = _passwordHasher.VerifyHashedPassword(null!, auth.HashedPassword, password);
+
+                    if (verificationResult != PasswordVerificationResult.Failed)
+                    {
+                        return auth; //successful authentication
+                    }
                 }
             }
             //fallback if false will look how to handle later

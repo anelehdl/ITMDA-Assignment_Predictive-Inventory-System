@@ -85,14 +85,14 @@ var app = builder.Build();
 
 
 
-    // ============================================================
-    // MIDDLEWARE PIPELINE CONFIGURATION
-    // ============================================================
+// ============================================================
+// MIDDLEWARE PIPELINE CONFIGURATION
+// ============================================================
 
-    //Middleware components are executed in the order they are added, the
-    //sequence matters.
+//Middleware components are executed in the order they are added, the
+//sequence matters.
 
-    if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();

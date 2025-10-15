@@ -1,6 +1,7 @@
 ﻿using Core.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -32,6 +33,7 @@ namespace DummyApp.Infrastructure.Configuration
             //Update Refactoring to use interfaces for better abstraction and testability and reduce use of concrete classes
             //services.AddScoped<AuthenticationService>(); //handles user login/authentication      //refactored to interface below
 
+            services.AddScoped<IPasswordHasher<object>, PasswordHasher<object>>(); //password hashing and verification
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<IRoleService, RoleService>(); //role-based access control        //refactored to interface
             services.AddScoped<IUnifiedUserService, UnifiedUserService>(); //combined client and staff user management (CRUD)            //refactored to interface

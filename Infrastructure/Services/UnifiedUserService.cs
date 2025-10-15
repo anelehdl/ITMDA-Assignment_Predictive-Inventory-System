@@ -2,6 +2,7 @@
 using Core.Models;
 using Core.Models.DTO;
 using Infrastructure.Data;
+using Microsoft.AspNetCore.Identity;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System.Security.Cryptography;
@@ -24,11 +25,13 @@ namespace Infrastructure.Services
     {
         private readonly MongoDBContext _context;
         private readonly IRoleService _roleService;     //refactored to use interface
+        private readonly IPasswordHasher<object> _passwordHasher = new PasswordHasher<object>(); //new password hasher
 
-        public UnifiedUserService(MongoDBContext context, IRoleService roleService)
+        public UnifiedUserService(MongoDBContext context, IRoleService roleService, IPasswordHasher<object> passwordHasher)
         {
             _context = context;
             _roleService = roleService;
+            _passwordHasher = passwordHasher;
         }
 
 
@@ -236,12 +239,12 @@ namespace Infrastructure.Services
             // STEP 3: Create Authentication Record
             // ============================================================
             //hash the password and generate salt and store in auth collection
-            var (hashedPassword, salt) = HashPassword(createStaff.Password);
+            var hashedPassword = _passwordHasher.HashPassword(null!, createStaff.Password); //requires two parameters -> what would the first one be? temporarily added a null! value
             var auth = new Authentication
             {
                 AuthID = Guid.NewGuid().ToString(),
-                Salt = salt,
-                HashedPassword = hashedPassword
+                HashedPassword = hashedPassword,
+                Salt = string.Empty //left empty for backwards compatibility
             };
             await _context.AuthenticationCollection.InsertOneAsync(auth);
 
@@ -302,12 +305,12 @@ namespace Infrastructure.Services
             ObjectId? authId = null;
             if (!string.IsNullOrEmpty(createClient.Password))
             {
-                var (hashedPassword, salt) = HashPassword(createClient.Password);
+                var hashedPassword = _passwordHasher.HashPassword(null!, createClient.Password);
                 var auth = new Authentication
                 {
                     AuthID = Guid.NewGuid().ToString(),
-                    Salt = salt,
-                    HashedPassword = hashedPassword
+                    HashedPassword = hashedPassword,
+                    Salt = string.Empty //left empty for backwards compatibility
                 };
                 await _context.AuthenticationCollection.InsertOneAsync(auth);
                 authId = auth.Id;
