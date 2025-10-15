@@ -352,5 +352,56 @@ namespace API.Controllers
                 return StatusCode(500, new { Error = "An error occurred while retrieving roles", Details = ex.Message });
             }
         }
+
+        ///<summary>
+        ///PUT /api/unifiedusermanagement/users/staff/{id};
+        ///UpdateStaffUserAsync - Updates an existing staff user's details.
+        ///</summary>
+        ///
+
+        [HttpPut("users/staff/{id}")]
+        public async Task <IActionResult> UpdateStaff(string id, [FromBody] UpdateStaffDto updateStaff)
+        {
+            try
+            {
+                //simple check
+                if (updateStaff is null ||
+                    string.IsNullOrWhiteSpace(updateStaff.FirstName) &&
+                    string.IsNullOrWhiteSpace(updateStaff.Email) &&
+                    string.IsNullOrWhiteSpace(updateStaff.Phone) &&
+                    string.IsNullOrWhiteSpace(updateStaff.RoleId) &&
+                    string.IsNullOrWhiteSpace(updateStaff.NewPassword))
+                {
+                    return BadRequest(new { Error = "No fields provided to update" });
+                }
+
+                _logger.LogInformation("Updating staff user with ID: {Id}", id);
+                //update staff user details
+                var result = await _unifiedUserService.UpdateStaffUserAsync(id, updateStaff);
+                if (!result)
+                {
+                    return NotFound(new { Message = "Staff user not found or no changes made" });
+                }
+                _logger.LogInformation("Staff user updated successfully: {Id}", id);
+                return Ok(new { Message = "Staff user updated successfully" });
+            }
+            catch (ArgumentException ex)
+            {
+                //handle invalid role error
+                _logger.LogWarning(ex, "Invalid argument while updating staff user");
+                return BadRequest(new { Error = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                // duplicate email case from service
+                _logger.LogWarning(ex, "Conflict while updating staff user");
+                return Conflict(new { Error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating staff user with ID: {Id}", id);
+                return StatusCode(500, new { Error = "An error occurred while updating staff user", Details = ex.Message });
+            }
+        }
     }
 }

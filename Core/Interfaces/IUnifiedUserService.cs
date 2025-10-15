@@ -11,6 +11,8 @@ namespace Core.Interfaces
         Task<string> CreateClientUserAsync(CreateClientDto createClient);
         Task<bool> DeleteUserAsync(string userId, string userType);
 
+        //adding update for staff
+        Task<bool> UpdateStaffUserAsync(string userId, UpdateStaffDto updateStaff);
 
 
         /*refactoring to make interfaces more focused and reduce concrete class dependencies

@@ -8,6 +8,10 @@ namespace Core.Interfaces
         //login operation
         Task<LoginResponseDto> LoginAsync(string email, string password);
 
+        //adding regresh token and logout operations
+
+        Task<(string Token, string RefreshToken)> RefreshTokenAsync(string refreshToken);
+        Task LogoutAsync(string refreshToken);
 
 
         /*      Refactoring to make interfaces more focused and reduce concrete class dependencies

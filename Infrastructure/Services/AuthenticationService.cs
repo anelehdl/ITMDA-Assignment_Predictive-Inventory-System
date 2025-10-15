@@ -109,6 +109,21 @@ namespace Infrastructure.Services
                 // ============================================================
                 //create JWT token with user claims
                 var token = GenerateJwtToken(staff, role?.Name ?? "Unknown");
+                //generate refresh token
+                var refreshToken = GenerateRefreshToken();
+                var refreshHash = HashToken(refreshToken.Token);
+                //store refresh token hash in authentication record
+                var refreshEntry = new RefreshToken
+                {
+                    TokenId = refreshToken.TokenId,
+                    TokenHash = refreshHash,
+                    ExpiresAt = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenExpiryDays), 
+                    CreatedAt = DateTime.UtcNow
+                };
+                var update = Builders<Authentication>.Update
+                    .Push(a => a.RefreshTokens, refreshEntry);      //push to array
+                await _context.AuthenticationCollection.UpdateOneAsync(a => a.Id == auth.Id, update);       //update auth record with new refresh token
+
 
                 // ============================================================
                 // STEP 6: Return Success Response
@@ -121,8 +136,8 @@ namespace Infrastructure.Services
                     Email = staff.Email,
                     FirstName = staff.FirstName,
                     Role = role?.Name ?? "Unknown",
-                    Token = token //JWT token for API calls
-                    
+                    Token = token, //JWT token for API calls
+                    RefreshToken = refreshToken.Token           //plain refresh token for client to store securely
                 };
             }
             catch (Exception ex)
@@ -173,7 +188,7 @@ namespace Infrastructure.Services
                 issuer: _jwtSettings.Issuer,
                 audience: _jwtSettings.Audience,
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(30),     //shortened for better security might even reduce further     //apparently its best to use utc time not sure why
+                expires: DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiryMinutes),     //shortened for better security might even reduce further     //apparently its best to use utc time        //replacing to use within jwt settings to ensure central area to change
                 signingCredentials: credentials //digital signature
             );
 
@@ -181,6 +196,115 @@ namespace Infrastructure.Services
             var token = new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
             return token;
         }
+
+        //Generating A Refresh Token
+        // Helpers for refresh token issuance and validation
+        private (string TokenId, string Token) GenerateRefreshToken()
+        {
+            // TokenId to track rotation chain
+            var tokenId = Guid.NewGuid().ToString();
+            // 64 bytes crypto random
+            var bytes = RandomNumberGenerator.GetBytes(64);
+            var token = Convert.ToBase64String(bytes);
+            return (tokenId, token);
+        }
+
+        private string HashToken(string token)
+        {
+            using var sha512 = SHA512.Create();
+            var bytes = sha512.ComputeHash(Encoding.UTF8.GetBytes(token));
+            return Convert.ToBase64String(bytes);
+        }
+
+        public async Task LogoutAsync(string refreshToken)
+        {
+            if (string.IsNullOrEmpty(refreshToken))
+                return; // nothing to do if the client didn’t send one
+
+            var refreshHash = HashToken(refreshToken);
+
+            // Find authentication record that contains this refresh token
+            var auth = await _context.AuthenticationCollection
+                .Find(a => a.RefreshTokens.Any(rt => rt.TokenHash == refreshHash))
+                .FirstOrDefaultAsync();
+
+            if (auth == null)
+                return; // already invalid or doesn't exist
+
+            // Remove the matching refresh token
+            var update = Builders<Authentication>.Update
+                .PullFilter(a => a.RefreshTokens, rt => rt.TokenHash == refreshHash);
+
+            await _context.AuthenticationCollection.UpdateOneAsync(
+                a => a.Id == auth.Id,
+                update
+            );
+
+        }
+
+        public async Task<(string Token, string RefreshToken)> RefreshTokenAsync(string refreshToken)
+        {
+            if(string.IsNullOrEmpty(refreshToken))
+            {
+                throw new ArgumentException("Refresh token is required", nameof(refreshToken));
+            }
+
+            var refreshHash = HashToken(refreshToken);
+            //find auth record with matching refresh token hash
+            var auth = await _context.AuthenticationCollection
+                .Find(a => a.RefreshTokens.Any(rt => rt.TokenHash == refreshHash))
+                .FirstOrDefaultAsync();
+            if(auth == null)
+            {
+                throw new SecurityTokenException("Invalid refresh token");
+            }
+
+            var tokenEntry = auth.RefreshTokens.FirstOrDefault(rt => rt.TokenHash == refreshHash);
+
+            // Validate token existence and expiry
+            if (tokenEntry == null || tokenEntry.ExpiresAt <= DateTime.UtcNow)
+            {
+                throw new SecurityTokenException("Refresh token is invalid or expired");
+            }
+
+
+            //load user and role
+            var staff = await _context.StaffCollection
+                .Find(s => s.AuthId == auth.Id)
+                .FirstOrDefaultAsync();
+            if(staff == null)
+            {
+                throw new SecurityTokenException("User not found for the given refresh token");
+            }
+
+            var role = await _context.RolesCollection
+                .Find(r => r.Id == staff.RoleId)
+                .FirstOrDefaultAsync();
+
+            //issue new tokens
+            var newAccessToken = GenerateJwtToken(staff, role?.Name ?? "Unknown");
+
+            //rotate refresh token
+            var (newId, newToken) = GenerateRefreshToken();
+            var newHash = HashToken(newToken);
+
+            var update = Builders<Authentication>.Update
+                .PullFilter(a => a.RefreshTokens, rt => rt.TokenHash == refreshHash) //remove old token
+                .Push(a => a.RefreshTokens, new RefreshToken
+                {
+                    TokenId = newId,
+                    TokenHash = newHash,
+                    ExpiresAt = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenExpiryDays),
+                    CreatedAt = DateTime.UtcNow
+                }); //add new token
+            await _context.AuthenticationCollection.UpdateOneAsync(a => a.Id == auth.Id, update);
+
+            return (newAccessToken, newToken);
+
+
+
+        }
+
 
 
         /// <summary>
@@ -205,10 +329,19 @@ namespace Infrastructure.Services
         }
 
         /// <summary>
+        ///Implementing RefreshToken functionality
+        /// </summary>
+        
+
+
+
+
+        /// <summary>
         /// Implementing the interface methods
         /// </summary>
         //currently they are not being used, but will be needed for user management (CRUD operations)
-        //refactoring
+        //refactoring as not used right now
+        /*
         public async Task<Authentication?> ValidateUserAsync(string username, string password)
         {
             //trying staff by email first
@@ -229,7 +362,7 @@ namespace Infrastructure.Services
             //fallback if false will look how to handle later
             return null;
         }
-
+        
         public async Task<Authentication?> GetUserByIdAsync(string userId)
         {
             //converting to oid
@@ -292,6 +425,7 @@ namespace Infrastructure.Services
             //added(not 100% of how this is done)
             return result.DeletedCount == 1;    //keeping track
         }
-        
+        */
+
     }
 }

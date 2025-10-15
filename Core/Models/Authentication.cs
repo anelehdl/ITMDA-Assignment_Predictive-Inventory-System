@@ -16,5 +16,9 @@ namespace Core.Models
 
         [MongoDB.Bson.Serialization.Attributes.BsonElement("hashed_password")]
         public string HashedPassword { get; set; }
+
+        //updated to include refresh tokens
+        [MongoDB.Bson.Serialization.Attributes.BsonElement("refresh_tokens")]
+        public List<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
     }
 }

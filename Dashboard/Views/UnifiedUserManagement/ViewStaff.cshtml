@@ -233,6 +233,11 @@
         .back-link:hover {
             color: white;
         }
+
+    .btn-update{
+        font-size: 0.875rem;
+        width:fit-content;
+    }
 </style>
 
 <div class="management-container">
@@ -297,6 +302,10 @@
                             </td>
                             <td>
                                 <div class="action-buttons">
+                                    <button class="btn-glass btn-update"
+                                            onclick="openUpdateModal('@user.Id','@user.FirstName','@user.Email','@user.Phone','@user.RoleId')">
+                                        Update
+                                    </button>
                                     <button class="btn-glass btn-danger" onclick="confirmDelete('@user.Id', '@user.FirstName')">
                                         Delete
                                     </button>
@@ -351,6 +360,46 @@
     </div>
 </div>
 
+<div id="updateModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeUpdateModal()">&times;</span>
+        <h2 class="mb-4">Update Staff Member</h2>
+        <form asp-action="UpdateStaff" method="post" id="updateForm">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="Id" id="Update_Id" />
+            <div class="form-group">
+                <label class="form-label" for="Update_FirstName">First Name (optional)</label>
+                <input type="text" name="FirstName" id="Update_FirstName" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="Update_Email">Email (optional)</label>
+                <input type="email" name="Email" id="Update_Email" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="Update_Phone">Phone (optional)</label>
+                <input type="tel" name="Phone" id="Update_Phone" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="Update_Role">Role (optional)</label>
+                <select name="RoleId" id="Update_Role" class="form-select">
+                    <option value="">Select a role...</option>
+                    @foreach (var role in (List<Core.Models.DTO.RoleDto>)(ViewBag.StaffRoles ?? new List<Core.Models.DTO.RoleDto>()))
+                    {
+                        <option value="@role.Id">@role.Name - @role.Description</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="Update_NewPassword">New Password (optional)</label>
+                <input type="password" name="NewPassword" id="Update_NewPassword" class="form-control" placeholder="Leave blank to keep current password" />
+            </div>
+            <button type="submit" class="btn-glass btn-primary w-100">Save Changes</button>
+        </form>
+    </div>
+</div>
+
+
+
 <form id="deleteForm" method="post" style="display: none;">
     @Html.AntiForgeryToken()
 </form>
@@ -373,11 +422,39 @@
             }
         }
 
-        window.onclick = function (event) {
-            const modal = document.getElementById('createModal');
-            if (event.target == modal) {
-                closeCreateModal();
-            }
+        function openUpdateModal(id, firstName, email, phone, roleId) {
+            document.getElementById('Update_Id').value = id;
+            document.getElementById('Update_FirstName').value = firstName || '';
+            document.getElementById('Update_Email').value = email || '';
+            document.getElementById('Update_Phone').value = phone || '';
+            document.getElementById('Update_Role').value = roleId || '';
+            document.getElementById('Update_NewPassword').value = '';
+            document.getElementById('updateModal').style.display = 'block';
         }
+        function closeUpdateModal() {
+            document.getElementById('updateModal').style.display = 'none';
+        }
+
+                // Only close when clicking directly on the overlay, never from inside content this fixes the issue of windows onclick closing the modal when trying to drag content within the modal
+        (function modalClickGuards() {
+            const createModal = document.getElementById('createModal');
+            const updateModal = document.getElementById('updateModal');
+
+            if (createModal) {
+                createModal.addEventListener('click', function (e) {
+                    if (e.target === createModal) closeCreateModal();
+                });
+                const createContent = createModal.querySelector('.modal-content');
+                if (createContent) createContent.addEventListener('click', function (e) { e.stopPropagation(); });
+            }
+
+            if (updateModal) {
+                updateModal.addEventListener('click', function (e) {
+                    if (e.target === updateModal) closeUpdateModal();
+                });
+                const updateContent = updateModal.querySelector('.modal-content');
+                if (updateContent) updateContent.addEventListener('click', function (e) { e.stopPropagation(); });
+            }
+        })();
     </script>
 }

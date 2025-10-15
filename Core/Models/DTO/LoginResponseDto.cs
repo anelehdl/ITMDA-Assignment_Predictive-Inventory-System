@@ -9,5 +9,8 @@
         public string FirstName { get; set; }
         public string Role { get; set; }
         public string Token { get; set; }
+
+        //updating to include refresh token
+        public string? RefreshToken { get; set; }
     }
 }

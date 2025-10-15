@@ -4,7 +4,6 @@ using Core.Models.DTO;
 using Infrastructure.Data;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using MongoDB.Driver.Core.Misc;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -417,6 +416,98 @@ namespace Infrastructure.Services
                     return (hashed, salt);
                 }
             }
+        }
+
+
+        // ============================================================
+        // Updating Staff Users
+        // ============================================================
+
+        public async Task<bool> UpdateStaffUserAsync(string userId, UpdateStaffDto updateStaff)
+        {
+            //convert string ID to Mongo ObjectId
+            if (!ObjectId.TryParse(userId, out var objectId))
+                return false;
+            //find staff member
+            var staff = await _context.StaffCollection
+                .Find(s => s.Id == objectId)
+                .FirstOrDefaultAsync();
+            if(staff == null)
+                return false;
+            //prepare update
+            var updates = new List<UpdateDefinition<Staff>>();      //update definition within mongo db
+            var updateBuilder = Builders<Staff>.Update;
+
+            //check and add fields to update
+            //firstname
+            if (!string.IsNullOrEmpty(updateStaff.FirstName) && updateStaff.FirstName != staff.FirstName)
+            {
+                updates.Add(updateBuilder.Set(s => s.FirstName, updateStaff.FirstName));
+            }
+
+            //email - check for duplicates if changing
+            if (!string.IsNullOrEmpty(updateStaff.Email) && updateStaff.Email != staff.Email)
+            {
+                //check for duplicate email
+                var existingStaff = await _context.StaffCollection
+                    .Find(s => s.Email == updateStaff.Email && s.Id != staff.Id)
+                    .FirstOrDefaultAsync();
+                if (existingStaff != null)
+                {
+                    throw new InvalidOperationException("Another staff user with this email already exists");
+                }
+                updates.Add(updateBuilder.Set(s => s.Email, updateStaff.Email));
+            }
+
+            //phone
+            if (!string.IsNullOrEmpty(updateStaff.Phone) && updateStaff.Phone != staff.Phone)
+            {
+                updates.Add(updateBuilder.Set(s => s.Phone, updateStaff.Phone));
+            }
+
+            //role - validate new role if changing
+            if (!string.IsNullOrEmpty(updateStaff.RoleId) && updateStaff.RoleId != staff.RoleId.ToString())
+            {
+                //validate new role
+                var role = await _roleService.GetRoleByIdAsync(updateStaff.RoleId);
+                if (role == null)
+                {
+                    throw new ArgumentException("Invalid role specified");
+                }
+                if (role.Name.ToLower() == "client")
+                {
+                    throw new ArgumentException("Cannot assign client role to staff user");
+                }
+                updates.Add(updateBuilder.Set(s => s.RoleId, ObjectId.Parse(updateStaff.RoleId)));
+            }
+
+            //password - update authentication record if changing
+            if (!string.IsNullOrEmpty(updateStaff.NewPassword))
+            {
+                //hash new password
+                var (hashedPassword, salt) = HashPassword(updateStaff.NewPassword);
+                //update auth record
+                var authUpdate = Builders<Authentication>.Update
+                    .Set(a => a.HashedPassword, hashedPassword)
+                    .Set(a => a.Salt, salt);
+
+                await _context.AuthenticationCollection.UpdateOneAsync(
+                    a => a.Id == staff.AuthId,
+                    authUpdate
+                );
+            }
+
+            // No field changes -> still success
+            if (updates.Count == 0)
+                return true;
+
+            var result = await _context.StaffCollection.UpdateOneAsync(
+                s => s.Id == objectId,
+                updateBuilder.Combine(updates)
+            );
+
+            // MatchedCount==1 is enough; ModifiedCount can be 0 if values are same
+            return result.MatchedCount == 1;
         }
     }
 }

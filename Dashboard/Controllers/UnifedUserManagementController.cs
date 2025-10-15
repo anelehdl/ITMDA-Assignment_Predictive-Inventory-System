@@ -59,9 +59,16 @@ namespace Dashboard.Controllers
                     var rolesData = JsonSerializer.Deserialize<Dictionary<string, List<RoleDto>>>(rolesJson,
                         new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-                    ViewBag.StaffRoles = rolesData?["staffRoles"] ?? new List<RoleDto>();
-                    ViewBag.CurrentSearch = searchTerm;
-
+                    // using the correct key from API response "StaffRoles"
+                    if (rolesData != null && (rolesData.TryGetValue("StaffRoles", out var staffRoles) ||
+                                              rolesData.TryGetValue("staffRoles", out staffRoles)))
+                    {
+                        ViewBag.StaffRoles = staffRoles;
+                    }
+                    else
+                    {
+                        ViewBag.StaffRoles = new List<RoleDto>();
+                    }
                     return View(users ?? new List<UnifiedUserDto>());
                 }
 
@@ -316,6 +323,59 @@ namespace Dashboard.Controllers
             }
 
             return RedirectToAction(nameof(ViewClients));
+        }
+
+
+        // POST: /UnifiedUserManagement/UpdateStaff
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateStaff(UpdateStaffDto model)
+        {
+            try
+            {
+                var client = _httpClientFactory.CreateClient("DummyAPI");
+
+                var token = User.Claims.FirstOrDefault(c => c.Type == "Token")?.Value;
+                if (!string.IsNullOrEmpty(token))
+                {
+                    client.DefaultRequestHeaders.Authorization =
+                        new AuthenticationHeaderValue("Bearer", token);
+                }
+
+                var payload = new
+                {
+                    model.FirstName,
+                    model.Email,
+                    model.Phone,
+                    model.RoleId,
+                    NewPassword = string.IsNullOrWhiteSpace(model.NewPassword) ? null : model.NewPassword
+                };
+
+                var json = JsonSerializer.Serialize(payload, new JsonSerializerOptions
+                {
+                    DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+                });
+
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await client.PutAsync($"/api/unifiedusermanagement/users/staff/{model.Id}", content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["Success"] = "Staff user updated successfully";
+                }
+                else
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    TempData["Error"] = $"Failed to update staff user: {errorContent}";
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating staff user");
+                TempData["Error"] = "An error occurred while updating the staff user";
+            }
+
+            return RedirectToAction(nameof(ViewStaff));
         }
     }
 }
