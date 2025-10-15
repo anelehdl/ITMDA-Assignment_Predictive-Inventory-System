@@ -17,9 +17,9 @@ class ServiceEnviroment(BaseSettings):
     data_dir: Path = Field(default=PROJECT_ROOT / "data", env="DATA_DIR")
     models_dir: Path = Field(default=PROJECT_ROOT / "models", env="MODEL_DIR")
 
-    data_host: str = Field(default="localhost", env="DHOST")
-    data_port: str = Field(default="8520", env="DPORT")
-    data_service: str = Field(default="data-service", env="DNAME")
+    # data_host: str = Field(default="localhost", env="DHOST")
+    # data_port: str = Field(default="8520", env="DPORT")
+    # data_service: str = Field(default="data-service", env="DNAME")
 
 
 def register_service(

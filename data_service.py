@@ -27,7 +27,6 @@ class FeatureRequest(BaseModel):
 
 service_id = 42
 settings = ServiceEnviroment()
-settings.host = "localhost"
 print(f"{settings.data_dir}/cached_features.feather")
 local_data = CachedFeatures(
     data=pd.read_feather(Path(settings.data_dir) / "cached_features.feather")
@@ -38,9 +37,9 @@ app = FastAPI(title=settings.service_name)
 @app.on_event("startup")
 def startup_event():
     reg_id = register_service(
-        name=settings.data_service,
-        host=settings.data_host,
-        port=settings.data_port,
+        name=settings.service_name,
+        host=settings.host,
+        port=settings.port,
         unique_id=service_id,
     )
 
