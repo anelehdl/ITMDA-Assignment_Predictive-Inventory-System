@@ -1,0 +1,109 @@
+services:
+  consul:
+    image: consul:1.15
+    ports:
+      - "8500:8500"
+    command: "agent -dev -client=0.0.0.0"
+  # -----------------------------
+  # Data Service
+  # -----------------------------
+  data-service:
+    image: predict-service:latest
+    container_name: data-service
+    environment:
+      HOST: 0.0.0.0
+      PORT: 8520
+      PNAME: data_service
+      SERVICE_ADDRESS: data-service
+      DATA_DIR: /app/data
+      CONSUL_HOST: consul # external Consul host
+      CONSUL_PORT: 8500 # external Consul port
+    ports:
+      - "8520:8520"
+
+  # # -----------------------------
+  # # Model Service
+  # # -----------------------------
+  model-service:
+    image: predict-service:latest
+    container_name: model-service
+    environment:
+      HOST: 0.0.0.0
+      PORT: 8620
+      PNAME: model_service
+      SERVICE_ADDRESS: model-service
+      CONSUL_HOST: consul
+      CONSUL_PORT: 8500
+    ports:
+      - "8620:8620"
+
+  # -----------------------------
+  # Predict Services
+  # -----------------------------
+  predict-h1:
+    image: predict-service:latest
+    container_name: predict-h1
+    environment:
+      HOST: 0.0.0.0
+      PORT: 8421
+      PNAME: predict_service
+      SERVICE_ADDRESS: predict-h1
+      MODEL_DIR: /app/models
+      PHORIZON: 1
+      CONSUL_HOST: consul
+      CONSUL_PORT: 8500
+    ports:
+      - "8421:8421"
+    depends_on:
+      - data-service
+
+  predict-h5:
+    image: predict-service:latest
+    container_name: predict-h5
+    environment:
+      HOST: 0.0.0.0
+      PORT: 8425
+      PNAME: predict_service
+      SERVICE_ADDRESS: predict-h5
+      MODEL_DIR: /app/models
+      PHORIZON: 5
+      CONSUL_HOST: consul
+      CONSUL_PORT: 8500
+    ports:
+      - "8425:8425"
+    depends_on:
+      - data-service
+
+  predict-h10:
+    image: predict-service:latest
+    container_name: predict-h10
+    environment:
+      HOST: 0.0.0.0
+      PORT: 8430
+      PNAME: predict_service
+      SERVICE_ADDRESS: predict-h10
+      MODEL_DIR: /app/models
+      PHORIZON: 10
+      CONSUL_HOST: consul
+      CONSUL_PORT: 8500
+    ports:
+      - "8430:8430"
+    depends_on:
+      - data-service
+
+  predict-h20:
+    image: predict-service:latest
+    container_name: predict-h20
+    environment:
+      HOST: 0.0.0.0
+      PORT: 8440
+      PNAME: predict_service
+      SERVICE_ADDRESS: predict-h20
+      MODEL_DIR: /app/models
+      PHORIZON: 20
+      CONSUL_HOST: consul
+      CONSUL_PORT: 8500
+    ports:
+      - "8440:8440"
+    depends_on:
+      - data-service
