@@ -1,5 +1,5 @@
 ﻿using Core.Models.DTO;
-using Infrastructure.Services;
+using Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,13 +21,13 @@ namespace API.Controllers
     [Authorize(Roles = "admin")] //all endpoints require admin role
     public class UnifiedUserManagementController : ControllerBase
     {
-        private readonly UnifiedUserService _unifiedUserService;
-        private readonly RoleService _roleService;
+        private readonly IUnifiedUserService _unifiedUserService;
+        private readonly IRoleService _roleService;
         private readonly ILogger<UnifiedUserManagementController> _logger;
 
         public UnifiedUserManagementController(
-            UnifiedUserService unifiedUserService,
-            RoleService roleService,
+            IUnifiedUserService unifiedUserService,
+            IRoleService roleService,
             ILogger<UnifiedUserManagementController> logger)
         {
             _unifiedUserService = unifiedUserService;

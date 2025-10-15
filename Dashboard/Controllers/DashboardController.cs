@@ -3,6 +3,7 @@ using Dashboard.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace Dashboard.Controllers
@@ -112,11 +113,16 @@ namespace Dashboard.Controllers
             //create claims identity for cookie authentication
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
+            //parsing jwt on login
+            var handler = new JwtSecurityTokenHandler();        //this securely parses the jwt token to dashboard user
+            var jwt = handler.ReadJwtToken(result.Token);       //not sure if this is best prac
+
+
             //set cookie properties
             var authProperties = new AuthenticationProperties
             {
                 IsPersistent = true, //survives browser close
-                ExpiresUtc = DateTimeOffset.UtcNow.AddHours(24) //expiration
+                ExpiresUtc = jwt.ValidTo //expiration        //aligning with JWT, and ensuring that it cannot be used after JWT expires
             };
 
             // ============================================================

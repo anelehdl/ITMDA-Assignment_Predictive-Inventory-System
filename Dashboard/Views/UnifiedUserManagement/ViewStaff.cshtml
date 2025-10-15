@@ -29,10 +29,11 @@
     .search-input {
         flex: 1;
         background: var(--bg3);
-        border: 1px solid var(--bg1);
+        border: 1px solid var(--bg5);
         color: white;
         padding: 0.75rem;
         border-radius: 10px;
+        transition: all 0.5s ease-in-out;
     }
 
         .search-input::placeholder {
@@ -40,7 +41,7 @@
         }
 
         .search-input:focus {
-            background: var(--bg1);
+            background: var(--bg4);
             outline: none;
             border-color: white;
         }
@@ -149,12 +150,12 @@
         width: 100%;
         height: 100%;
         background: var(--bg6);
-        backdrop-filter: blur(10px);
+        /*backdrop-filter: blur(10px);*/        /*removed for performance issues*/
     }
 
     .modal-content {
-        background: linear-gradient(135deg, var(--primary), var(--secondary));
-        margin: 5% auto;
+        background: linear-gradient(145deg, var(--primary), var(--secondary));
+        margin: 5rem auto;
         padding: 2rem;
         border-radius: 20px;
         max-width: 600px;
@@ -320,24 +321,24 @@
         <form asp-action="CreateStaff" method="post">
             @Html.AntiForgeryToken()
             <div class="form-group">
-                <label class="form-label">First Name *</label>
-                <input type="text" name="FirstName" class="form-control" required />
+                <label class="form-label" for="FirstName">First Name *</label>
+                <input type="text" name="FirstName" id="FirstName" class="form-control" required />
             </div>
             <div class="form-group">
-                <label class="form-label">Email *</label>
-                <input type="email" name="Email" class="form-control" required />
+                <label class="form-label" for="Email">Email *</label>
+                <input type="email" name="Email" id="Email" class="form-control" required />
             </div>
             <div class="form-group">
-                <label class="form-label">Phone *</label>
-                <input type="tel" name="Phone" class="form-control" required />
+                <label class="form-label" for="Phone">Phone *</label>
+                <input type="tel" name="Phone" id="Phone" class="form-control" required />
             </div>
             <div class="form-group">
-                <label class="form-label">Password *</label>
-                <input type="password" name="Password" class="form-control" required />
+                <label class="form-label" for="Password">Password *</label>
+                <input type="password" name="Password" id="Password" class="form-control" required />
             </div>
             <div class="form-group">
-                <label class="form-label">Role *</label>
-                <select name="RoleId" class="form-select" required>
+                <label class="form-label" for="Role">Role *</label>
+                <select name="RoleId" id="Role" class="form-select" required>
                     <option value="">Select a role...</option>
                     @foreach (var role in staffRoles)
                     {

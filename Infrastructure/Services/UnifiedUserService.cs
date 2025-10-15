@@ -1,4 +1,5 @@
-﻿using Core.Models;
+﻿using Core.Interfaces;
+using Core.Models;
 using Core.Models.DTO;
 using Infrastructure.Data;
 using MongoDB.Bson;
@@ -20,12 +21,12 @@ namespace Infrastructure.Services
     /// - delete users from either collection
     /// </summary>
 
-    public class UnifiedUserService
+    public class UnifiedUserService : IUnifiedUserService
     {
         private readonly MongoDBContext _context;
-        private readonly RoleService _roleService;
+        private readonly IRoleService _roleService;     //refactored to use interface
 
-        public UnifiedUserService(MongoDBContext context, RoleService roleService)
+        public UnifiedUserService(MongoDBContext context, IRoleService roleService)
         {
             _context = context;
             _roleService = roleService;

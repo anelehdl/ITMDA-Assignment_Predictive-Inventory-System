@@ -1,11 +1,12 @@
-﻿using Core.Models;
+﻿using Core.Interfaces;
+using Core.Models;
 using Infrastructure.Data;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace Infrastructure.Services
 {
-    public class RoleService
+    public class RoleService : IRoleService
     {
         private readonly MongoDBContext _context;
 

@@ -14,9 +14,9 @@ using Microsoft.AspNetCore.Mvc;
 [Route("api/auth")] //base route /api/auth
 public class AuthApiController : ControllerBase
 {
-    private readonly AuthenticationService _authService;
+    private readonly IAuthenticationService _authService;           //using the interface instead of the concrete class for better abstraction
 
-    public AuthApiController(AuthenticationService authService)
+    public AuthApiController(IAuthenticationService authService)
     {
         _authService = authService;
     }

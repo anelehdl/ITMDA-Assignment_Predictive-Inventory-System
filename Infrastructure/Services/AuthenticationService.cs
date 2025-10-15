@@ -2,7 +2,6 @@
 using Core.Models;
 using Core.Models.DTO;
 using Infrastructure.Data;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Bson;
@@ -24,17 +23,15 @@ namespace Infrastructure.Services
     /// - includes user claims in tokens
     /// </summary>
 
-    public class AuthenticationService //: IAuthenticationService      //need to add the interface IAuthenticationService here
+    public class AuthenticationService : IAuthenticationService      //dependency injection in startup
     {
         private readonly MongoDBContext _context;
-        //private readonly IConfiguration _configuration;           //refactored not needed
         private readonly JwtSettings _jwtSettings;      //adding jwt settings for key creation, using options pattern
 
         public AuthenticationService(MongoDBContext context, IOptions<JwtSettings> jwtOptions)
         {
             _context = context;
             _jwtSettings = jwtOptions.Value;
-            //_configuration = configuration;
         }
 
 
@@ -176,7 +173,7 @@ namespace Infrastructure.Services
                 issuer: _jwtSettings.Issuer,
                 audience: _jwtSettings.Audience,
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(30),     //shortened for better security might even reduce further     //apparently its best to use utc time not sure why
+                expires: DateTime.UtcNow.AddMinutes(30),     //shortened for better security might even reduce further     //apparently its best to use utc time not sure why
                 signingCredentials: credentials //digital signature
             );
 
@@ -211,6 +208,7 @@ namespace Infrastructure.Services
         /// Implementing the interface methods
         /// </summary>
         //currently they are not being used, but will be needed for user management (CRUD operations)
+        //refactoring
         public async Task<Authentication?> ValidateUserAsync(string username, string password)
         {
             //trying staff by email first

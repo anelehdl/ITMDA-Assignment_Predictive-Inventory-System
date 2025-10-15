@@ -13,7 +13,7 @@
 
     .panel {
         background: var(--bg2);
-        backdrop-filter: blur(20px);
+        backdrop-filter: blur(20px);       
         border: 1px solid var(--bg1);
         border-radius: 20px;
         padding: 2rem;
@@ -31,10 +31,11 @@
         flex: 1;
         min-width: 200px;
         background: var(--bg3);
-        border: 1px solid var(--bg1);
+        border: 1px solid var(--bg5);
         color: white;
         padding: 0.75rem;
         border-radius: 10px;
+        transition: all 0.5s ease-in-out;
     }
 
         .search-input::placeholder {
@@ -42,7 +43,7 @@
         }
 
         .search-input:focus {
-            background: var(--bg1);
+            background: var(--bg4);
             outline: none;
             border-color: white;
         }
@@ -146,12 +147,12 @@
         width: 100%;
         height: 100%;
         background: var(--bg6);
-        backdrop-filter: blur(10px);
+        backdrop-filter: none;      /*removed for performance issues*/
     }
 
     .modal-content {
-        background: linear-gradient(135deg, var(--primary), var(--secondary));
-        margin: 5% auto;
+        background: linear-gradient(125deg, var(--primary), var(--secondary));          /*might look for better combo*/
+        margin: 5rem auto;
         padding: 2rem;
         border-radius: 20px;
         max-width: 600px;
@@ -307,18 +308,18 @@
         <form asp-action="CreateClient" method="post">
             @Html.AntiForgeryToken()
             <div class="form-group">
-                <label class="form-label">User Code *</label>
-                <input type="text" name="UserCode" class="form-control" required />
+                <label class="form-label" for="UserCode">User Code *</label>
+                <input type="text" name="UserCode" id="UserCode" class="form-control" required />
                 <div class="help-text">Unique identifier for the client</div>
             </div>
             <div class="form-group">
-                <label class="form-label">Username *</label>
-                <input type="text" name="Username" class="form-control" required />
+                <label class="form-label" for="Username">Username *</label>
+                <input type="text" name="Username" id="Username" class="form-control" required />
                 <div class="help-text">Display name for the client</div>
             </div>
             <div class="form-group">
-                <label class="form-label">Password (Optional)</label>
-                <input type="password" name="Password" class="form-control" />
+                <label class="form-label" for="Password">Password (Optional)</label>
+                <input type="password" name="Password" id="Password" class="form-control" />
                 <div class="help-text">Only provide if client needs login access</div>
             </div>
             <button type="submit" class="btn-glass btn-primary w-100">Create Client</button>

@@ -1,4 +1,5 @@
-﻿using Core.Models;
+﻿using Core.Interfaces;
+using Core.Models;
 using Core.Models.DTO;
 using Infrastructure.Data;
 using MongoDB.Bson;
@@ -17,7 +18,7 @@ namespace Infrastructure.Services
     /// - provides filtering
     /// </summary>
 
-    public class InventoryService
+    public class InventoryService : IInventoryService
     {
         private readonly MongoDBContext _context;
 

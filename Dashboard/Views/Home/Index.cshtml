@@ -84,6 +84,7 @@
         opacity: 0;
         transform: translateY(200px);
         transition: opacity 1s ease-in-out, transform 0.5s ease-in-out;
+
     }
 
         .panel.appear {
@@ -116,12 +117,12 @@
         border-radius: 10px;
         text-decoration: none;
         display: inline-block;
-        transition: all 0.3s ease;
+        transition: all 0.5s ease;
         font-weight: 500;
     }
 
         .btn-glass:hover {
-            background: var(--glass-hover);
+            background: var(--glass);         /*changing to glass as i think thats what it was supposed to be*/
             transform: translateY(-2px);
             box-shadow: 0 4px 12px var(--shadow2);
             color: white;
@@ -330,7 +331,7 @@
 
             //calc opacity based on scroll position
             const opacity = 1 - (scrollPosition / (heroHeight * 0.5));
-            const translateY = scrollPosition * 0.3;
+            const translateY = scrollPosition * 0.2;
 
             heroHeading.style.opacity = opacity;
             heroHeading.style.transform = `translateY(${translateY}px)`;
@@ -347,8 +348,8 @@
 
         //fade in dashboard content on scroll
         const appearOptions = ({
-            threshold: 0.2,
-            rootMargin: "0px 0px -200px 0px"
+            threshold: 0.15,        //reduced to trigger earlier
+            rootMargin: "0px 0px -100px 0px"        //reduced to ensure emergency reports loads
         });
 
         const appearOnScroll = new IntersectionObserver(

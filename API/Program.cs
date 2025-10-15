@@ -1,8 +1,13 @@
+using Core.Models;
+using Core.Models.DTO;
 using DummyApp.Infrastructure.Configuration;
+using Infrastructure.Data;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using MongoDB.Driver;
 using System.Net.WebSockets;
+using System.Security.Cryptography;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,7 +31,7 @@ builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSet
 //of the service, ensuring that services are not shared across requests (one instance
 //per HTTP request).
 
-builder.Services.AddScoped<AuthenticationService>(); //handles user login/authentication [maybe add IAuthenticationService interface later]
+builder.Services.AddScoped<AuthenticationService>(); //handles user login/authentication
 builder.Services.AddScoped<RoleService>(); //role-based access control
 builder.Services.AddScoped<UnifiedUserService>(); //combined client and staff user management (CRUD)
 builder.Services.AddScoped<InventoryService>(); //stock metrics and inventory data
@@ -91,14 +96,14 @@ var app = builder.Build();
 
 
 
-// ============================================================
-// MIDDLEWARE PIPELINE CONFIGURATION
-// ============================================================
+    // ============================================================
+    // MIDDLEWARE PIPELINE CONFIGURATION
+    // ============================================================
 
-//Middleware components are executed in the order they are added, the
-//sequence matters.
+    //Middleware components are executed in the order they are added, the
+    //sequence matters.
 
-if (app.Environment.IsDevelopment())
+    if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
