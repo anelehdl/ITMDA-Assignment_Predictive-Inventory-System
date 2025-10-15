@@ -10,17 +10,14 @@ from typing import Any, Dict
 PROJECT_ROOT = Path(__file__).parent
 
 
-class ServiceEnviroment(BaseSettings):
-    host: str = Field(default="localhost", env="HOST")
-    port: str = Field(default="8420", env="PORT")
-
-    service_name: str = Field(default="predict-service", env="PNAME")
-    data_dir: Path = Field(default=PROJECT_ROOT / "data", env="DATA_DIR")
-    models_dir: Path = Field(default=PROJECT_ROOT / "models", env="MODEL_DIR")
-
-    # data_host: str = Field(default="localhost", env="DHOST")
-    # data_port: str = Field(default="8520", env="DPORT")
-    # data_service: str = Field(default="data-service", env="DNAME")
+class ServiceEnvironment:
+    def __init__(self):
+        self.host = os.environ.get("HOST", "localhost")
+        self.port = os.environ.get("PORT", "8420")
+        self.service_name = os.environ.get("PNAME", "predict-service")
+        self.service_addr = os.environ.get("SERVICE_ADDRESS", "0.0.0.0")
+        self.data_dir = Path(os.environ.get("DATA_DIR", PROJECT_ROOT / "data"))
+        self.models_dir = Path(os.environ.get("MODEL_DIR", PROJECT_ROOT / "models"))
 
 
 def register_service(
