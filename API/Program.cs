@@ -26,7 +26,7 @@ builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSet
 //of the service, ensuring that services are not shared across requests (one instance
 //per HTTP request).
 
-builder.Services.AddScoped<AuthenticationService>(); //handles user login/authentication
+builder.Services.AddScoped<AuthenticationService>(); //handles user login/authentication [maybe add IAuthenticationService interface later]
 builder.Services.AddScoped<RoleService>(); //role-based access control
 builder.Services.AddScoped<UnifiedUserService>(); //combined client and staff user management (CRUD)
 builder.Services.AddScoped<InventoryService>(); //stock metrics and inventory data
