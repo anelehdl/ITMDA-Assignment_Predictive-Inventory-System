@@ -79,6 +79,33 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod()
               .AllowCredentials();
     });
+    options.AddPolicy("AllowMobileApp", policy =>
+    {
+        policy.AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowAnyOrigin(); //allows any mobile device
+
+        /*Could add:
+         policy.WithOrigins(
+            "http://10.0.2.2:5000",      //Android Emulator
+            "http://192.168.1.100:5000", //local IP for physical devices
+            "https://yourdomain.com")    // production domain
+        */
+    });
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.WithOrigins(
+            "https://localhost:7222", //dashboard https
+            "http://localhost:5169", //dashboard http
+            "https://localhost:5169") //dashboard alternative https)
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+
+        //for mobile app, added .SetIsOriginAllowed to allow any origin
+        policy.SetIsOriginAllowed(origin => true)
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
 });
 
 var app = builder.Build();
@@ -99,7 +126,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
 app.UseCors("AllowDashboard");
+app.UseCors("AllowMobileApp");
+
 app.UseAuthentication(); //validates JWT tokens
 app.UseAuthorization(); //checks user roles/permissions
 app.MapControllers(); //routes API requests to controller methods
