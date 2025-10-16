@@ -42,17 +42,17 @@ async def predict_h1(request: ClientItemPRequest):
 
 
 @app.post("/predict/h5", response_model=Dict[str, Any])
-async def predict_h1(request: ClientItemPRequest):
+async def predict_h5(request: ClientItemPRequest):
     return make_client_item_request(request, "h5")
 
 
 @app.post("/predict/h10", response_model=Dict[str, Any])
-async def predict_h1(request: ClientItemPRequest):
+async def predict_h10(request: ClientItemPRequest):
     return make_client_item_request(request, "h10")
 
 
 @app.post("/predict/h20", response_model=Dict[str, Any])
-async def predict_h1(request: ClientItemPRequest):
+async def predict_h20(request: ClientItemPRequest):
     return make_client_item_request(request, "h20")
 
 
