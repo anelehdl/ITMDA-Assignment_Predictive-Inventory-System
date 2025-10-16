@@ -54,3 +54,16 @@ async def predict_h1(request: ClientItemPRequest):
 @app.post("/predict/h20", response_model=Dict[str, Any])
 async def predict_h1(request: ClientItemPRequest):
     return make_client_item_request(request, "h20")
+
+
+# TODO: Replace with service discovery
+@app.get("/models", response=Dict[str, Any])
+async def get_models():
+    models = [
+        "h1",
+        "h5",
+        "h10",
+        "h20",
+    ]
+
+    return {"models": models}
