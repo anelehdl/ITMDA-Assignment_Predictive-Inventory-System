@@ -239,7 +239,7 @@ namespace Infrastructure.Services
             // STEP 3: Create Authentication Record
             // ============================================================
             //hash the password and generate salt and store in auth collection
-            var hashedPassword = _passwordHasher.HashPassword(new object(), createStaff.Password); //requires two parameters -> what would the first one be? temporarily added a null! value        //updated to use new object() as usually the first parameter is the user object, but we don't have one here yet we are using a generic object coz of various user types
+            var hashedPassword = _passwordHasher.HashPassword(new object(), createStaff.Password); //updated to use new object() as usually the first parameter is the user object, but we don't have one here yet we are using a generic object coz of various user types
             var auth = new Authentication
             {
                 AuthID = Guid.NewGuid().ToString(),
