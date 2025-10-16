@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Dict, Any
 from service_env import ServiceEnvironment, get_services, service_host_port
 from prediction_requests import ClientItemPRequest
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Response
 
 import requests
 
@@ -31,6 +31,17 @@ def make_client_item_request(request, model_tag):
         host, port = service_host_port(service)
         url = f"http://{host}:{port}/predict"
         response = requests.post(url, json=body)
+        return Response(
+            content=response.content,
+            status_code=response.status_code,
+            headers=dict(response.headers),
+            media_type=response.headers.get("content-type", "application/json"),
+        )
+
+    except requests.RequestException as e:
+        raise HTTPException(status_code=503, detail=f"Service unavailable: {e}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
         return response.json()
     except Exception as e:
         raise HTTPException(status_code=500, detail=repr(e))
