@@ -1,4 +1,3 @@
-from pathlib import Path
 from typing import Dict, Any
 from service_env import ServiceEnvironment, get_services, service_host_port
 from prediction_requests import ClientItemPRequest
@@ -37,14 +36,10 @@ def make_client_item_request(request, model_tag):
             headers=dict(response.headers),
             media_type=response.headers.get("content-type", "application/json"),
         )
-
     except requests.RequestException as e:
         raise HTTPException(status_code=503, detail=f"Service unavailable: {e}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-        return response.json()
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=repr(e))
 
 
 @app.post("/predict/h1", response_model=Dict[str, Any])
