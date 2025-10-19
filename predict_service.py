@@ -1,15 +1,11 @@
 from fastapi import FastAPI, HTTPException
-from pydantic import Field
-from pydantic_settings import BaseSettings
-from typing import Dict, Any, List
+from typing import Dict, Any
 from nutec_forecast.models import (
     ClientItemAdaptor,
     DirectQuantileForecaster,
     lgb_loader,
 )
 from nutec_forecast import AsyncForecaster
-from nutec_forecast.util.time_series_util import get_client_item_time_series_features
-from pathlib import Path
 from service_env import (
     ServiceEnvironment,
     register_service,
@@ -17,7 +13,6 @@ from service_env import (
     service_host_port,
 )
 
-import consul
 import random
 import requests
 import os
@@ -27,7 +22,7 @@ from prediction_requests import ClientItemPRequest
 
 class PredictServiceEnviroment:
     def __init__(self) -> None:
-        self.predict_horizon: int = os.environ.get("PHORIZON", 1)
+        self.predict_horizon: int = int(os.environ.get("PHORIZON", 1))
 
 
 settings = ServiceEnvironment()
@@ -45,7 +40,6 @@ app = FastAPI(title=settings.service_name)
 
 @app.on_event("startup")
 def startup_event():
-    print(f"HORIZON: {forecast_settings.predict_horizon}")
     reg_id = register_service(
         name=f"{settings.service_name}",
         host=settings.service_addr,
@@ -60,7 +54,6 @@ def health():
     return 200
 
 
-# TODO: Fix service discovery for data-service
 def get_data_service():
     services = get_services(
         "data_service",
