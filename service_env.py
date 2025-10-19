@@ -17,7 +17,6 @@ class ServiceEnvironment:
         self.consul_host = os.environ.get("CONSUL_HOST", "localhost")
         self.consul_port = os.environ.get("CONSUL_PORT", 8500)
         self.service_name = os.environ.get("PNAME", "predict-service")
-        self.service_name = os.environ.get("PNAME", "predict-service")
         self.service_addr = os.environ.get("SERVICE_ADDRESS", "0.0.0.0")
         self.data_dir = Path(os.environ.get("DATA_DIR", PROJECT_ROOT / "data"))
         self.models_dir = Path(os.environ.get("MODEL_DIR", PROJECT_ROOT / "models"))
