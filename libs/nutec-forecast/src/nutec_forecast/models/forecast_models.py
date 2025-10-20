@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from typing import Callable, Any
+from typing import Callable, Any 
 from typing import override
 import joblib
 import pandas as pd
@@ -42,7 +42,7 @@ class ClientItemAdaptor(ParameterAdaptor):
         super().__init__(required_features)
 
     @override
-    def transform(self, parameters: Dict[str, Any] | pd.DataFrame):
+    def transform(self, parameters: dict[str, Any] | pd.DataFrame):
         df = self.to_dataframe(parameters)
 
         df["date"] = pd.to_datetime(df["date"])
@@ -171,7 +171,7 @@ class DirectQuantileForecaster(ForecastModel):
             self.models[key] = loader(path / f"{self.model_name}_{key}")
 
     @override
-    def predict(self, parameters: ParameterAdaptor) -> dict[str, float]:
+    def predict(self, parameters: ParameterAdaptor) -> dict[str, Any]:
         """ Predicts output for parameters
 
         Quantiles use multiple loaded models (model per quantile) to predict output at each specified quantile 

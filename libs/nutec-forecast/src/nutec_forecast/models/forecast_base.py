@@ -5,7 +5,7 @@
 
 
 from abc import ABC, abstractmethod
-from typing import Callable, Any, Optional, Dict
+from typing import Callable, Any
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -55,7 +55,7 @@ class ParameterAdaptor(ABC):
         if missing:
             raise ValueError(f"Missing required columns: {missing}")
 
-    def to_dataframe(self, raw_data: Dict[str, Any] | pd.DataFrame) -> pd.DataFrame:
+    def to_dataframe(self, raw_data: dict[str, Any] | pd.DataFrame) -> pd.DataFrame:
         """ Transform input into dataframe
         
         A utility method to transform input parameters into a dataframe required for forecasters
@@ -76,7 +76,7 @@ class ParameterAdaptor(ABC):
         return df
 
     @abstractmethod
-    def transform(self, parameters: Dict[str, Any] | pd.DataFrame):
+    def transform(self, parameters: dict[str, Any] | pd.DataFrame):
         """ Transforms parameters into suitable format for forecaster
             
         Args:
@@ -112,7 +112,7 @@ class ForecastModel(ABC):
         pass
 
     @abstractmethod
-    def predict(self, parameters: ParameterAdaptor) -> dict[str, float]:
+    def predict(self, parameters: ParameterAdaptor) -> dict[str, Any]:
         """Makes a prediction output given input parameters
 
         Forecaster will use loaded model to make prediction given X input
