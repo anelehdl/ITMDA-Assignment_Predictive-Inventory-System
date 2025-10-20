@@ -5,7 +5,6 @@ from fastapi import FastAPI, HTTPException, Response
 
 import requests
 
-service_id = 10
 settings = ServiceEnvironment()
 app = FastAPI(title=settings.service_name)
 
@@ -26,6 +25,7 @@ def get_model_service_owner(model_tag):
 def make_client_item_request(request, model_tag):
     try:
         body = request.model_dump()
+        #if service is not found raise error to propaget to main caller
         service = get_model_service_owner(model_tag)
         host, port = service_host_port(service)
         url = f"http://{host}:{port}/predict"
@@ -38,8 +38,7 @@ def make_client_item_request(request, model_tag):
         )
     except requests.RequestException as e:
         raise HTTPException(status_code=503, detail=f"Service unavailable: {e}")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+
 
 
 @app.post("/predict/h1", response_model=Dict[str, Any])
@@ -63,7 +62,7 @@ async def predict_h20(request: ClientItemPRequest):
 
 
 # TODO: Replace with service discovery
-@app.get("/models", response=Dict[str, Any])
+@app.get("/models", response_model=Dict[str, Any])
 async def get_models():
     models = [
         "h1",

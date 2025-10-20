@@ -15,6 +15,7 @@ import os
 from dataclasses import dataclass
 
 
+#ensure data is read only from dataset
 @dataclass(frozen=True)
 class CachedFeatures:
     data: pd.DataFrame
@@ -32,15 +33,21 @@ local_data = CachedFeatures(
 )
 app = FastAPI(title=settings.service_name)
 
-
 @app.on_event("startup")
 def startup_event():
+    
+    #consul registration
     reg_id = register_service(
-        name=settings.service_name,
+        name=f"{settings.service_name}",
+        #using service_addr for address given by docker
         host=settings.service_addr,
         port=settings.port,
-        unique_id=service_id,
+        consul_params={
+            "host": settings.consul_host,
+            "port": settings.consul_port
+        }
     )
+
 
 
 @app.get("/health")
@@ -50,6 +57,8 @@ def health():
 
 @app.post("/time-features", response_model=Dict[str, Any])
 async def get_cached_time_features(request: FeatureRequest):
+    """Endpoint to get time series related features for forecasting. 
+    """
     try:
         features = get_client_item_time_series_features(
             local_data.data, request.client_name, request.item
@@ -61,6 +70,8 @@ async def get_cached_time_features(request: FeatureRequest):
 
 @app.get("/item/{item_id}")
 async def get_item(item_id: str):
+    """ Endpoint to get category related features for item.
+    """
     try:
         info = get_item_info(local_data.data, item_id)
     except ValueError as ve:
