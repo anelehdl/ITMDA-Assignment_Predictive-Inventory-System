@@ -121,7 +121,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//only redirects to https for non-http ports
+if(!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
+
+//app.UseHttpsRedirection();
 
 app.UseCors("AllowDashboard");
 app.UseCors("AllowMobileApp");
