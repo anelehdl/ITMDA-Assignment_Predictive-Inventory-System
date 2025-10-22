@@ -29,14 +29,15 @@ class PredictServiceEnviroment:
 
 settings = ServiceEnvironment()
 forecast_settings = PredictServiceEnviroment()
-logger = logging.getLogger(f"{__name__}_{forecast_settings.predict_horizon}")
-logger = logging.basicConfig(
+logging.basicConfig(
     level=logging.INFO,
     filename="prediction_service.log",
     filemode="a",
     format='%(asctime)s - %(levelname)s - %(message)s',  
     datefmt='%Y-%m-%d %H:%M:%S'  
 )
+
+logger = logging.getLogger(f"{__name__}_{forecast_settings.predict_horizon}")
 forecaster = AsyncForecaster(
     DirectQuantileForecaster,
     loader=lgb_loader,

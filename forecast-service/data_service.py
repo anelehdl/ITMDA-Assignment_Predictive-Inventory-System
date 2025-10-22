@@ -26,14 +26,14 @@ class FeatureRequest(BaseModel):
     item: str
     client_name: str
 
-logger = logging.getLogger(__name__)
-logger = logging.basicConfig(
+logging.basicConfig(
     level=logging.INFO,
     filename="data_service.log",
     filemode="a",
     format='%(asctime)s - %(levelname)s - %(message)s',  
     datefmt='%Y-%m-%d %H:%M:%S'  
 )
+logger = logging.getLogger(__name__)
 service_id = 42
 settings = ServiceEnvironment()
 local_data = CachedFeatures(
