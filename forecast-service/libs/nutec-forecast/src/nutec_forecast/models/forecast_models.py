@@ -13,7 +13,7 @@ import lightgbm as lgb
 class ClientItemAdaptor(ParameterAdaptor):
     """Adaptor for client X item forecasting input
     
-    Specific Adopter for client x item LightGBM models
+    Specific Adaptor for client x item LightGBM models
     """
     def __init__(self):
         #features of very specific to the input of the model. 
@@ -141,9 +141,9 @@ class DirectQuantileForecaster(ForecastModel):
 
         Ininitialize the forecaster to be loaded for quantile predictions
         Args:
-            model_name: the name of models to be loaded where they should match pattern "{model_name}_q{quantile} for each quantile in list"
+            model_name: the name of models to be loaded where the name of the model on disk is "{model_name}_q{quantile} for each quantile in list"
             quantiles: the set of quantiles the models to be loaded and predict
-            horizon: the specifc horizon the model will predict
+            horizon: the specific horizon the model will predict
         """
         super().__init__()
         self.model_name: str = model_name
@@ -162,7 +162,7 @@ class DirectQuantileForecaster(ForecastModel):
         Args:
             path: the directory where models are stored
             loader: a callable function that handles the loading of the specific model_name.
-            Note a model name is passed but file extenstion is left out explixitly to allow the loader to handle the types of models loaded
+            Note* a model name is passed but file extension is left out explicitly to allow the loader to handle the types of models loaded
         """
         if loader is None:
             loader = lgb_loader
@@ -179,7 +179,7 @@ class DirectQuantileForecaster(ForecastModel):
             parameters: Parameter set that matches the input requirements of the model loaded from disk
 
         Returns:
-            Returns a dictionary set of Y outputs from loaded models for each quantile
+            A dictionary set of Y outputs from loaded models for each quantile
             example:
                 {
                 "q10": 1.9,

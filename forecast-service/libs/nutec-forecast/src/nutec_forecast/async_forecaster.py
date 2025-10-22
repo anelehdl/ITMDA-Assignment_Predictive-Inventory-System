@@ -14,9 +14,9 @@ class AsyncForecaster:
 
     Usage:
 
-    forecaster = AsyncForecaster(MyForecaster, my_loader, 5)
+    forecaster = AsyncForecaster(MyForecaster, my_loader, model_count=5)
     forecaster.load("/path/to/model")
-    results = forecaster.predict(my_parameters)
+    results = forecaster.predict(my_adaptor)
     
     """
     def __init__(
@@ -30,7 +30,7 @@ class AsyncForecaster:
         """Initializes the instance on the specific class forecaster.
         
         Args:
-            model_cls: The specifc class that forecaster objects will be created from.
+            model_cls: The specific class that forecaster objects will be created from.
             loader: The loader used in loading model objects from disk
             model_count: How many forecaster objects to create for queued prediction
             args: Args for the created Class initializing
@@ -53,11 +53,11 @@ class AsyncForecaster:
     def load(self, path: str | Path):
         """Loads all queued forecasters models
 
-        Using the initialized loader, all models that are registered to load with be loaded in into each forecaster object.
+        Using the initialized loader, all models that are registered to load will be loaded in into each forecaster object.
         Calling load again will simply reload the models from disk
 
         Args:
-            path: Path for models. Forecasting obejects may have there own requirements for the path, see documentation load
+            path: Path for models. Forecasting objects may have their own requirements for the path, see documentation load
             for each forecaster class
         """
         for model in self.loadable_models:
@@ -68,7 +68,7 @@ class AsyncForecaster:
     ) -> dict[str, Any] | None:
         """Makes a prediction output given input parameters
 
-        Forecaster will fetch an avaialbe forecast model for prediction and make a requests
+        Forecaster will fetch an available forecast model for prediction and make a requests
 
         Args:
 
@@ -78,7 +78,7 @@ class AsyncForecaster:
             RuntimeError: Took to long to find available model and timesout request
 
         Returns:
-            A dictonary str key value pair for each output from model 
+            A dictionary str key value pair for each output from model 
             example
             {
                 "q10": 5,
