@@ -15,10 +15,10 @@ class ParameterAdaptor(ABC):
     """Parameter base class used as input for forecasters
 
     Forecaster models require a set of X inputs to produce a set of Y outputs. Because model input requirements
-    can differ between models, users are required to implement a and adaptor to produce the correct X inputs for a model
+    can differ between models, users are required to implement an adaptor to produce the correct X inputs for a model.
 
     Usage:
-    class MyAdoptor(ParameterAdaptor):
+    class MyAdaptor(ParameterAdaptor):
         
         def __init__(self):
             required_features = ["name", "age"]
@@ -27,20 +27,20 @@ class ParameterAdaptor(ABC):
     "name": "john"
     "age": 42
     }
-    adaptor = MyAdoptor():
+    adaptor = MyAdaptor():
     adaptor.transform(params)
-    forecaster.predict(adaptor)
+    prediction = forecaster.predict(adaptor)
     """
     def __init__(self, features: list[str]):
         """Ininitializer for base class
         
-        Parameters are a set of X features and requires at least 1 input.
+        Parameters are a set of X features and require at least 1 input.
 
         Args:
             features: The required features/keys/columns the passed transform parameters must have
 
         Raises:
-            ValueError: Requires miniumn of 1 feature/key/column 
+            ValueError: Requires minimum of 1 feature/key/column 
         """
 
 
@@ -80,7 +80,7 @@ class ParameterAdaptor(ABC):
         """ Transforms parameters into suitable format for forecaster
             
         Args:
-            parameters: Dictonary or DataFrame holding the set of X inputs to be transformed
+            parameters: Dictionary or pandas DataFrame holding the set of X inputs to be transformed
 
         """
         pass
@@ -92,7 +92,7 @@ class ParameterAdaptor(ABC):
         A forecaster expects X inputs to produce Y outputs. Forecasters can retrieve inputs from this interface
 
         Returns:
-            DataFrame object with suitable data for forecaster
+            DataFrame object with transformed data for forecaster
         """
         pass
 
@@ -105,7 +105,7 @@ class ForecastModel(ABC):
         Loads stored model from disk
 
         Args:
-            path: Path for models. Forecasting obejects may have there own requirements for the path, see documentation load
+            path: Path for models. Forecasting objects may have their own requirements for the path, see documentation load
             for each forecaster class
             loader: The loader used in loading model objects from disk
         """
@@ -115,7 +115,7 @@ class ForecastModel(ABC):
     def predict(self, parameters: ParameterAdaptor) -> dict[str, Any]:
         """Makes a prediction output given input parameters
 
-        Forecaster will use loaded model to make prediction given X input
+        Forecaster will use loaded model to make prediction given set X input parameters
 
         Args:
             parameters: The X input parameters used for the Forecaster.
