@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from typing import Dict, Any
 from nutec_forecast.models import (
     ClientItemAdaptor,
@@ -15,6 +15,7 @@ from service_env import (
 
 import random
 import requests
+import logging
 import os
 from datetime import date
 from prediction_requests import ClientItemPRequest
@@ -28,7 +29,14 @@ class PredictServiceEnviroment:
 
 settings = ServiceEnvironment()
 forecast_settings = PredictServiceEnviroment()
-
+logger = logging.getLogger(f"{__name__}_{forecast_settings.predict_horizon}")
+logger = logging.basicConfig(
+    level=logging.INFO,
+    filename="prediction_service.log",
+    filemode="a",
+    format='%(asctime)s - %(levelname)s - %(message)s',  
+    datefmt='%Y-%m-%d %H:%M:%S'  
+)
 forecaster = AsyncForecaster(
     DirectQuantileForecaster,
     loader=lgb_loader,
@@ -57,6 +65,8 @@ def startup_event():
         }
     )
 
+    logging.info(f"Prediction Service {settings.service_name} registered at id: {reg_id} on {settings.service_addr}:{settings.port}")
+
 
 @app.get("/health")
 def health():
@@ -71,6 +81,7 @@ def get_data_service():
     )
 
     if not services:
+        logger.warning("Data service unavailable")
         raise HTTPException( status_code=503, detail=f"No healthy instances of data service")
 
     svc = random.choice(services)
@@ -107,23 +118,25 @@ def get_cached_features(client_id, item_id):
 
 
 @app.post("/predict", response_model=Dict[str, Any])
-async def forecast_endpoint(request: ClientItemPRequest):
+async def forecast_endpoint(prediction: ClientItemPRequest, request: Request):
     """Endpoint to transform and prepare data for the forecast prediction.
     """
+
+    logger.info(f"Request:/predict   ADDRESS:{request.client.host}")
     try:
         #For easier feature extraction and calculation, data is obtained from a data service
-        cached_features = get_cached_features(request.client_name, request.item)
+        cached_features = get_cached_features(prediction.client_name, prediction.item)
 
         x_input = ClientItemAdaptor()
         params = {
-            "item": request.item,
+            "item": prediction.item,
             "date": date.today(),
-            "cust_code": request.customer_code,
-            "cust_id": request.client_name,
-            "price": request.price,
-            "region": request.region,
-            "area": request.area,
-            "currency": request.currency,
+            "cust_code": prediction.customer_code,
+            "cust_id": prediction.client_name,
+            "price": prediction.price,
+            "region": prediction.region,
+            "area": prediction.area,
+            "currency": prediction.currency,
             **cached_features,
         }
 
@@ -143,4 +156,5 @@ async def forecast_endpoint(request: ClientItemPRequest):
         )
 
     except Exception as e:
+        logger.warning(f"Request: /predict  unknown error: {repr(e)}")
         raise HTTPException(status_code=500, detail=repr(e))
