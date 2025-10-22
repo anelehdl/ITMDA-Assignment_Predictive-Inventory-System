@@ -30,7 +30,9 @@ COPY docker-entrypoint.sh entrypoint.sh
 COPY *.py /app/
 COPY ./models /app/models
 COPY ./data /app/data
-RUN chmod +x entrypoint.sh
+
+RUN sed -i 's/\r$//' entrypoint.sh && chmod +x entrypoint.sh
+RUN find /app/models -type f -name "*.json" -exec sed -i 's/\r$//' {} \;
 
 ENV HOST="localhost"
 ENV PORT="8420"
