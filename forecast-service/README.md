@@ -40,6 +40,10 @@ docker build -t predict-service:latest .
 docker compose up
 ```
 
+## 5. Test Services Health
+
+Services are managed by consul with frequent health checks. View [here](http://localhost:8500/ui)
+
 ## Configuration
 To edit the host and port configuration of each service look at **compose.yml**
 Each service has its own host and port requirement so careful configuration is required when editing
