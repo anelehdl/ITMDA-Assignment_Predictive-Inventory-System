@@ -68,7 +68,7 @@ class AsyncForecaster:
     ) -> dict[str, Any] | None:
         """Makes a prediction output given input parameters
 
-        Forecaster will fetch an available forecast model for prediction and make a requests
+        Forecaster will fetch an avalialbe forecast model for prediction and make a requests
 
         Args:
 
