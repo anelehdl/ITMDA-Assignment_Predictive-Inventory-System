@@ -17,14 +17,25 @@ Make sure you have Docker and Docker compose installed.
 ## Note
 Running docker components requires root(linux) or administator(windows) access
 
-## 2. Build Docker Image
+___
+
+## 2. Fetch and Navigate to service
+```bash
+git clone https://github.com/anelehdl/ITMDA-Assignment_Predictive-Inventory-System.git
+cd ITMDA-Assignment_Predictive-Inventory-System
+git fetch origin forecast-service
+git checkout forecast-service
+cd forecast-service
+```
+
+## 3. Build Docker Image
 Navigate to project directory and run
 ```bash
 docker build -t predict-service:latest .
 ```
 ---
 
-## 3. Run Services
+## 4. Run Services
 ```bash
 docker compose up
 ```
