@@ -42,7 +42,7 @@ docker compose up
 
 ## 5. Test Services Health
 
-Services are managed by consul with frequent health checks. It will take a view seconds for all services to startup. View status of services [here](http://localhost:8500/ui)
+Services are managed by Consul with frequent health checks. It will take a few seconds for all services to startup. View status of services [here](http://localhost:8500/ui)
 
 ## Configuration
 To edit the host and port configuration of each service look at **compose.yml**
