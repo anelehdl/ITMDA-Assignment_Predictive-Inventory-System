@@ -8,7 +8,7 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "admin,staff")]
+    [Authorize(Roles = "admin,staff,client")]
     public class StockMetricsController : ControllerBase
     {
         private readonly IInventoryService _inventoryService;

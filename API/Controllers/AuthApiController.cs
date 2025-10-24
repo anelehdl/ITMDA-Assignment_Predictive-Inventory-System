@@ -69,8 +69,31 @@ public class AuthApiController : ControllerBase
     /// </summary>
 
     [HttpPost("logout")]
-    public IActionResult Logout()
+    public async Task<IActionResult> Logout([FromBody] LogoutRequestDto? request)
     {
-        return Ok(new { message = "Logged out successfully" });
+        // ============================================================
+        // STEP 1: Validate Refresh Token
+        // ============================================================
+        // Allow logout without refresh token (graceful degradation)
+        if (string.IsNullOrEmpty(request?.RefreshToken))
+        {
+            return Ok(new { message = "Logged out successfully (no token to invalidate)" });
+        }
+
+        // ============================================================
+        // STEP 2: Invalidate Refresh Token
+        // ============================================================
+        try
+        {
+            await _authService.LogoutAsync(request.RefreshToken);
+            return Ok(new { message = "Logged out successfully" });
+        }
+        catch (Exception ex)
+        {
+            // Log the error but return success - user experience is more important
+            // than ensuring the token was invalidated
+            Console.WriteLine($"Logout error: {ex.Message}");
+            return Ok(new { message = "Logged out successfully" });
+        }
     }
 }

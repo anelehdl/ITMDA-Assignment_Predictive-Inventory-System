@@ -1,4 +1,5 @@
 ﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Core.Models
 {
@@ -17,5 +18,12 @@ namespace Core.Models
         [MongoDB.Bson.Serialization.Attributes.BsonElement("role_id")]
         [MongoDB.Bson.Serialization.Attributes.BsonRepresentation(BsonType.ObjectId)]
         public ObjectId RoleId { get; set; }
+
+        [MongoDB.Bson.Serialization.Attributes.BsonElement("user_email")]
+        public string UserEmail { get; set; }
+
+        [BsonElement("auth_id")]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public ObjectId? AuthId { get; set; }
     }
 }

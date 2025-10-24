@@ -11,13 +11,22 @@
         padding-top: 30rem;
     }
 
+    .content-wrapper {
+        background: #c3cab4;
+        border-radius: 50px;
+        padding: 3rem;
+        margin: 2rem auto;
+        max-width: 100%;
+    }
+
     .panel {
-        background: var(--bg2);
+        background: linear-gradient(120deg, var(--primary) 0%, var(--secondary) 40%);
         backdrop-filter: blur(20px);
         border: 1px solid var(--bg1);
         border-radius: 20px;
         padding: 2rem;
         margin-bottom: 2rem;
+        color: white;
     }
 
     .back-link {
@@ -28,7 +37,7 @@
     }
 
         .back-link:hover {
-            color: white;
+            color: #88925e;
         }
 
     .client-header {
@@ -117,7 +126,7 @@
     .sku-amount {
         font-size: 1.5rem;
         font-weight: bold;
-        color: var(--accent);
+        color: #6B2C7F4d;
     }
 
     .alert-glass {
@@ -152,107 +161,110 @@
 <div class="details-container">
     <a asp-action="Index" class="back-link">←  Back to Stock Metrics</a>
 
-    @if (ViewBag.Error != null)
-    {
-        <div class="alert-glass">
-            @ViewBag.Error
-        </div>
-    }
 
-    @if (Model != null)
-    {
-        <div class="panel">
-            <div class="client-header">
-                <div class="client-info">
-                    <h1>@Model.Username</h1>
-                    <div class="client-code">User Code: @Model.UserCode</div>
+    <div class="content-wrapper">
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert-glass">
+                @ViewBag.Error
+            </div>
+        }
+
+        @if (Model != null)
+        {
+            <div class="panel">
+                <div class="client-header">
+                    <div class="client-info">
+                        <h1>@Model.Username</h1>
+                        <div class="client-code">User Code: @Model.UserCode</div>
+                    </div>
                 </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">@Model.TotalOrders</div>
+                        <div class="stat-label">Total Orders</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">@Model.TotalLitres.ToString("N0")</div>
+                        <div class="stat-label">Total Litres</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">@Model.AverageDailyUsage.ToString("F2")</div>
+                        <div class="stat-label">Avg Daily Usage (L)</div>
+                    </div>
+                </div>
+
+                @if (Model.LastOrderDate.HasValue)
+                {
+                    <p style="opacity: 0.9;">
+                        Last order placed on <strong>@Model.LastOrderDate.Value.ToString("MMMM dd, yyyy")</strong>
+                    </p>
+                }
             </div>
 
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-number">@Model.TotalOrders</div>
-                    <div class="stat-label">Total Orders</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">@Model.TotalLitres.ToString("N0")</div>
-                    <div class="stat-label">Total Litres</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">@Model.AverageDailyUsage.ToString("F2")</div>
-                    <div class="stat-label">Avg Daily Usage (L)</div>
-                </div>
-            </div>
-
-            @if (Model.LastOrderDate.HasValue)
-            {
-                <p style="opacity: 0.9;">
-                    Last order placed on <strong>@Model.LastOrderDate.Value.ToString("MMMM dd, yyyy")</strong>
-                </p>
-            }
-        </div>
-
-        <div class="panel">
-            <h2 class="mb-3">Product Breakdown</h2>
-            @if (Model.SkuBreakdown != null && Model.SkuBreakdown.Any())
-            {
-                <div class="sku-breakdown">
-                    @foreach (var sku in Model.SkuBreakdown.OrderByDescending(s => s.Value))
-                    {
-                        <div class="sku-card">
-                            <div class="sku-name">@sku.Key</div>
-                            <div class="sku-amount">@sku.Value.ToString("N0")</div>
-                            <div class="stat-label">litres</div>
-                        </div>
-                    }
-                </div>
-            }
-            else
-            {
-                <p style="opacity: 0.8;">No product data available.</p>
-            }
-        </div>
-
-        <div class="panel">
-            <h2 class="mb-3">Recent Orders</h2>
-            @if (Model.RecentOrders != null && Model.RecentOrders.Any())
-            {
-                <table class="orders-table">
-                    <thead>
-                        <tr>
-                            <th>Order Date</th>
-                            <th>Product</th>
-                            <th>SKU</th>
-                            <th>Litres</th>
-                            <th>Days Between Orders</th>
-                            <th>Daily Usage</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var order in Model.RecentOrders)
+            <div class="panel">
+                <h2 class="mb-3">Product Breakdown</h2>
+                @if (Model.SkuBreakdown != null && Model.SkuBreakdown.Any())
+                {
+                    <div class="sku-breakdown">
+                        @foreach (var sku in Model.SkuBreakdown.OrderByDescending(s => s.Value))
                         {
-                            <tr>
-                                <td>@order.OrderDate.ToString("MMM dd, yyyy")</td>
-                                <td>@order.SkuDescription</td>
-                                <td>@order.Sku</td>
-                                <td>@order.Litres L</td>
-                                <td>@order.DaysBetweenOrders days</td>
-                                <td>@order.AverageDailyUse.ToString("F2") L/day</td>
-                            </tr>
+                            <div class="sku-card">
+                                <div class="sku-name">@sku.Key</div>
+                                <div class="sku-amount">@sku.Value.ToString("N0")</div>
+                                <div class="stat-label">litres</div>
+                            </div>
                         }
-                    </tbody>
-                </table>
-            }
-            else
-            {
-                <p class="text-center mt-4" style="opacity: 0.8;">No order history available.</p>
-            }
-        </div>
-    }
-    else
-    {
-        <div class="panel">
-            <p class="text-center" style="opacity: 0.8;">Loading client details...</p>
-        </div>
-    }
+                    </div>
+                }
+                else
+                {
+                    <p style="opacity: 0.8;">No product data available.</p>
+                }
+            </div>
+
+            <div class="panel">
+                <h2 class="mb-3">Recent Orders</h2>
+                @if (Model.RecentOrders != null && Model.RecentOrders.Any())
+                {
+                    <table class="orders-table">
+                        <thead>
+                            <tr>
+                                <th>Order Date</th>
+                                <th>Product</th>
+                                <th>SKU</th>
+                                <th>Litres</th>
+                                <th>Days Between Orders</th>
+                                <th>Daily Usage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var order in Model.RecentOrders)
+                            {
+                                <tr>
+                                    <td>@order.OrderDate.ToString("MMM dd, yyyy")</td>
+                                    <td>@order.SkuDescription</td>
+                                    <td>@order.Sku</td>
+                                    <td>@order.Litres L</td>
+                                    <td>@order.DaysBetweenOrders days</td>
+                                    <td>@order.AverageDailyUse.ToString("F2") L/day</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p class="text-center mt-4" style="opacity: 0.8;">No order history available.</p>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="panel">
+                <p class="text-center" style="opacity: 0.8;">Loading client details...</p>
+            </div>
+        }
+    </div>
 </div>

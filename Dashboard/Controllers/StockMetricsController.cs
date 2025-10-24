@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace Dashboard.Controllers
 {
-    [Authorize(Roles = "admin,staff")]
+    [Authorize(Roles = "admin,staff,client")]
     public class StockMetricsController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
