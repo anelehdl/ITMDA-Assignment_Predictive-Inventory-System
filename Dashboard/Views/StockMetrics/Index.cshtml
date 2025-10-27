@@ -4,20 +4,36 @@
 }
 
 <style>
+    body {
+        background: white;
+        min-height: 100vh;
+    }
+
     .metrics-container {
         padding: 2rem;
         max-width: 1600px;
         margin: 0 auto;
-        padding-top: 30rem;
+        padding-top: 550px;
+    }
+
+    .content-wrapper {
+        background: #c3cab4;
+        border-radius: 50px;
+        padding: 3rem;
+        margin: 2rem auto;
+        max-width: 100%;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
     }
 
     .panel {
-        background: var(--bg2);
         backdrop-filter: blur(20px);
-        border: 1px solid var(--bg1);
+        border: 1px solid rgba(139, 154, 139, 0.4);
         border-radius: 20px;
         padding: 2rem;
         margin-bottom: 2rem;
+        background: linear-gradient(135deg, #8B9A8B, #829167);
+        color: white;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
 
     .back-link {
@@ -28,8 +44,13 @@
     }
 
         .back-link:hover {
-            color: white;
+            color: #829167;
         }
+
+    .page-title {
+        color: #333;
+        margin-bottom: 2rem;
+    }
 
     .stats-grid {
         display: grid;
@@ -39,26 +60,26 @@
     }
 
     .stat-card {
-        background: var(--bg2);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
         padding: 1.5rem;
         border-radius: 15px;
         text-align: center;
         transition: transform 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        min-width: 0;
     }
 
         .stat-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
         }
 
     .stat-number {
         font-size: 2.5rem;
         font-weight: bold;
         margin-bottom: 0.5rem;
-        background: linear-gradient(135deg, white, #ffffffb3);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        pointer-events:none;
+        color: white;
     }
 
     .stat-label {
@@ -66,7 +87,7 @@
         font-size: 0.875rem;
         text-transform: uppercase;
         letter-spacing: 1px;
-        pointer-events:none;
+        color: white;
     }
 
     .client-table {
@@ -79,24 +100,24 @@
         .client-table td {
             padding: 1rem;
             text-align: left;
-            border-bottom: 1px solid var(--bg1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .client-table th {
             font-weight: 600;
-            background: var(--bg2);
+            background: rgba(255, 255, 255, 0.1);
             text-transform: uppercase;
             font-size: 0.875rem;
             letter-spacing: 1px;
         }
 
         .client-table tr:hover {
-            background: var(--bg5);
+            background: rgba(255, 255, 255, 0.05);
         }
 
     .btn-glass {
-        background: var(--bg1);
-        border: 1px solid var(--bg1);
+        background: rgba(123, 75, 148, 0.4);
+        border: 1px solid rgba(123, 75, 148, 0.6);
         color: white;
         padding: 0.5rem 1rem;
         border-radius: 10px;
@@ -108,13 +129,14 @@
     }
 
         .btn-glass:hover {
-            background: var(--bg4);
+            background: rgba(123, 75, 148, 0.6);
             transform: translateY(-2px);
             color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
     .chart-container {
-        background: var(--bg5);
+        background: rgba(255, 255, 255, 0.05);
         padding: 2rem;
         border-radius: 15px;
         margin-top: 2rem;
@@ -128,32 +150,35 @@
     }
 
     .sku-item {
-        background: var(--bg2);
+        background: rgba(255, 255, 255, 0.15);
         padding: 1rem;
         border-radius: 10px;
         text-align: center;
+        border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     .sku-name {
         font-weight: 600;
         margin-bottom: 0.5rem;
         font-size: 0.875rem;
+        color: white;
     }
 
     .sku-amount {
         font-size: 1.5rem;
         font-weight: bold;
-        color: var(--accent);
+        color: white;
     }
 
     .sku-unit {
         font-size: 0.75rem;
         opacity: 0.8;
+        color: white;
     }
 
     .alert-glass {
-        background: var(--alert-d1);
-        border: 1px solid var(--alert-d2);
+        background: rgba(220, 53, 69, 0.3);
+        border: 1px solid rgba(220, 53, 69, 0.5);
         border-radius: 10px;
         padding: 1rem;
         margin-bottom: 1rem;
@@ -162,7 +187,7 @@
 
     .progress-bar {
         height: 8px;
-        background: var(--bg1);
+        background: rgba(255, 255, 255, 0.2);
         border-radius: 4px;
         margin-top: 0.5rem;
         overflow: hidden;
@@ -170,116 +195,118 @@
 
     .progress-fill {
         height: 100%;
-        background: linear-gradient(90deg, var(--primary), var(--accent));
+        background: linear-gradient(90deg, #8B9A8B, #A8BCA8);
         border-radius: 4px;
         transition: width 0.3s ease;
     }
 </style>
 
 <div class="metrics-container">
-    <h1 class="mb-4">Stock Metrics Dashboard</h1>
-    <a asp-controller="Home" asp-action="Index" class="back-link">←  Back to Dashboard</a>
+    <a asp-controller="Home" asp-action="Index" class="back-link">← Back to Dashboard</a>
+    <h1 class="page-title">Stock Metrics Dashboard</h1>
 
-    @if (ViewBag.Error != null)
-    {
-        <div class="alert-glass">
-            @ViewBag.Error
-        </div>
-    }
+    <div class="content-wrapper">
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert-glass">
+                @ViewBag.Error
+            </div>
+        }
 
-    @if (Model != null)
-    {
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-number">@Model.TotalClients</div>
-                <div class="stat-label">Active Clients</div>
+        @if (Model != null)
+        {
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">@Model.TotalClients</div>
+                    <div class="stat-label">Active Clients</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">@Model.TotalOrders</div>
+                    <div class="stat-label">Total Orders</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">@Model.TotalLitres.ToString("N0")</div>
+                    <div class="stat-label">Total Litres</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">@Model.AverageDailyUsageAllClients.ToString("F2")</div>
+                    <div class="stat-label">Avg Daily Usage (L)</div>
+                </div>
             </div>
-            <div class="stat-card">
-                <div class="stat-number">@Model.TotalOrders</div>
-                <div class="stat-label">Total Orders</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">@Model.TotalLitres.ToString("N0")</div>
-                <div class="stat-label">Total Litres</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">@Model.AverageDailyUsageAllClients.ToString("F2")</div>
-                <div class="stat-label">Avg Daily Usage (L)</div>
-            </div>
-        </div>
 
-        <div class="panel">
-            <h2 class="mb-3">SKU Distribution</h2>
-            <div class="sku-list">
-                @foreach (var sku in Model.SkuDistribution.OrderByDescending(s => s.Value))
+            <div class="panel">
+                <h2 class="mb-3">SKU Distribution</h2>
+                <div class="sku-list">
+                    @foreach (var sku in Model.SkuDistribution.OrderByDescending(s => s.Value))
+                    {
+                        <div class="sku-item">
+                            <div class="sku-name">@sku.Key</div>
+                            <div class="sku-amount">@sku.Value.ToString("N0")</div>
+                            <div class="sku-unit">litres</div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2 class="mb-3">Top Clients by Usage</h2>
+
+                @if (Model.TopClients != null && Model.TopClients.Any())
                 {
-                    <div class="sku-item">
-                        <div class="sku-name">@sku.Key</div>
-                        <div class="sku-amount">@sku.Value.ToString("N0")</div>
-                        <div class="sku-unit">litres</div>
-                    </div>
+                    <table class="client-table">
+                        <thead>
+                            <tr>
+                                <th>Client</th>
+                                <th>User Code</th>
+                                <th>Total Orders</th>
+                                <th>Total Litres</th>
+                                <th>Avg Daily Use</th>
+                                <th>Last Order</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var client in Model.TopClients)
+                            {
+                                <tr>
+                                    <td><strong>@client.Username</strong></td>
+                                    <td>@client.UserCode</td>
+                                    <td>@client.TotalOrders</td>
+                                    <td>@client.TotalLitres.ToString("N0") L</td>
+                                    <td>@client.AverageDailyUsage.ToString("F2") L/day</td>
+                                    <td>
+                                        @if (client.LastOrderDate.HasValue)
+                                        {
+                                            @client.LastOrderDate.Value.ToString("MMM dd, yyyy")
+                                        }
+                                        else
+                                        {
+                                            <span style="opacity: 0.6;">N/A</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <a asp-action="ClientDetails" asp-route-clientId="@client.ClientId" class="btn-glass">
+                                            View Details
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p class="text-center mt-4" style="opacity: 0.8;">No client data available.</p>
                 }
             </div>
-        </div>
-
-        <div class="panel">
-            <h2 class="mb-3">Top Clients by Usage</h2>
-
-            @if (Model.TopClients != null && Model.TopClients.Any())
-            {
-                <table class="client-table">
-                    <thead>
-                        <tr>
-                            <th>Client</th>
-                            <th>User Code</th>
-                            <th>Total Orders</th>
-                            <th>Total Litres</th>
-                            <th>Avg Daily Use</th>
-                            <th>Last Order</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var client in Model.TopClients)
-                        {
-                            <tr>
-                                <td><strong>@client.Username</strong></td>
-                                <td>@client.UserCode</td>
-                                <td>@client.TotalOrders</td>
-                                <td>@client.TotalLitres.ToString("N0") L</td>
-                                <td>@client.AverageDailyUsage.ToString("F2") L/day</td>
-                                <td>
-                                    @if (client.LastOrderDate.HasValue)
-                                    {
-                                        @client.LastOrderDate.Value.ToString("MMM dd, yyyy")
-                                    }
-                                    else
-                                    {
-                                        <span style="opacity: 0.6;">N/A</span>
-                                    }
-                                </td>
-                                <td>
-                                    <a asp-action="ClientDetails" asp-route-clientId="@client.ClientId" class="btn-glass">
-                                        View Details
-                                    </a>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            }
-            else
-            {
-                <p class="text-center mt-4" style="opacity: 0.8;">No client data available.</p>
-            }
-        </div>
-    }
-    else
-    {
-        <div class="panel">
-            <p class="text-center" style="opacity: 0.8;">Loading stock metrics...</p>
-        </div>
-    }
+        }
+        else
+        {
+            <div class="panel">
+                <p class="text-center" style="opacity: 0.8;">Loading stock metrics...</p>
+            </div>
+        }
+    </div>
 </div>
 
 @section Scripts {

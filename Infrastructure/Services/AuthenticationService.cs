@@ -47,15 +47,23 @@ namespace Infrastructure.Services
             try
             {
                 // ============================================================
-                // STEP 1: Find Staff by Email
+                // STEP 1: Find User by Email (Check both Staff and Client)
                 // ============================================================
-                //queries staff collection for matching email
+
+                // Try to find in Staff collection first
                 var staff = await _context.StaffCollection
                     .Find(s => s.Email == email)
                     .FirstOrDefaultAsync();
 
-                //if no staff member found, return failure response
-                if (staff == null)
+                // Try to find in Client collection if not found in Staff
+                var client = staff == null
+                    ? await _context.ClientCollection
+                        .Find(c => c.UserEmail == email)  // Note: Client uses UserEmail, not Email
+                        .FirstOrDefaultAsync()
+                    : null;
+
+                // If neither staff nor client found, return failure
+                if (staff == null && client == null)
                 {
                     return new LoginResponseDto
                     {
@@ -67,12 +75,12 @@ namespace Infrastructure.Services
                 // ============================================================
                 // STEP 2: Retrieve Authentication Record
                 // ============================================================
-                //get the hashed password and salt using staff's AuthId
+                ObjectId authId = staff != null ? staff.AuthId : client!.AuthId!.Value;
+
                 var auth = await _context.AuthenticationCollection
-                    .Find(a => a.Id == staff.AuthId)
+                    .Find(a => a.Id == authId)
                     .FirstOrDefaultAsync();
 
-                //if auth record not found (data integrity issue), return failure response
                 if (auth == null)
                 {
                     return new LoginResponseDto
@@ -85,11 +93,12 @@ namespace Infrastructure.Services
                 // ============================================================
                 // STEP 3: Verify Password
                 // ============================================================
-                //hash the password with IPasswordHasher
-                //thinking of updating to use better hashing algo ie bcrypt or IPasswordHasher
-                var verificationResult = _passwordHasher.VerifyHashedPassword(new object(), auth.HashedPassword, password);
+                var verificationResult = _passwordHasher.VerifyHashedPassword(
+                    new object(),
+                    auth.HashedPassword,
+                    password
+                );
 
-                //checks if password verification succeeded
                 if (verificationResult == PasswordVerificationResult.Failed)
                 {
                     return new LoginResponseDto
@@ -102,31 +111,34 @@ namespace Infrastructure.Services
                 // ============================================================
                 // STEP 4: Retrieve Role Information
                 // ============================================================
-                //get the user's role for authorization
+                ObjectId roleId = staff != null ? staff.RoleId : client!.RoleId;
+
                 var role = await _context.RolesCollection
-                    .Find(r => r.Id == staff.RoleId)
+                    .Find(r => r.Id == roleId)
                     .FirstOrDefaultAsync();
 
                 // ============================================================
                 // STEP 5: Generate JWT Token
                 // ============================================================
-                //create JWT token with user claims
-                var token = GenerateJwtToken(staff, role?.Name ?? "Unknown");
-                //generate refresh token
+                string userId = staff != null ? staff.Id.ToString() : client!.Id.ToString();
+                string userEmail = staff != null ? staff.Email : client!.UserEmail;
+                string userName = staff != null ? staff.FirstName : client!.Username;
+
+                var token = GenerateJwtToken(userId, userEmail, userName, role?.Name ?? "Unknown");
                 var refreshToken = GenerateRefreshToken();
                 var refreshHash = HashToken(refreshToken.Token);
-                //store refresh token hash in authentication record
+
                 var refreshEntry = new RefreshToken
                 {
                     TokenId = refreshToken.TokenId,
                     TokenHash = refreshHash,
-                    ExpiresAt = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenExpiryDays), 
+                    ExpiresAt = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenExpiryDays),
                     CreatedAt = DateTime.UtcNow
                 };
-                var update = Builders<Authentication>.Update
-                    .Push(a => a.RefreshTokens, refreshEntry);      //push to array
-                await _context.AuthenticationCollection.UpdateOneAsync(a => a.Id == auth.Id, update);       //update auth record with new refresh token
 
+                var update = Builders<Authentication>.Update
+                    .Push(a => a.RefreshTokens, refreshEntry);
+                await _context.AuthenticationCollection.UpdateOneAsync(a => a.Id == auth.Id, update);
 
                 // ============================================================
                 // STEP 6: Return Success Response
@@ -135,12 +147,12 @@ namespace Infrastructure.Services
                 {
                     Success = true,
                     Message = "Login successful",
-                    UserId = staff.Id.ToString(),
-                    Email = staff.Email,
-                    FirstName = staff.FirstName,
+                    UserId = userId,
+                    Email = userEmail,
+                    FirstName = userName,
                     Role = role?.Name ?? "Unknown",
-                    Token = token, //JWT token for API calls
-                    RefreshToken = refreshToken.Token           //plain refresh token for client to store securely
+                    Token = token,
+                    RefreshToken = refreshToken.Token
                 };
             }
             catch (Exception ex)
@@ -160,7 +172,7 @@ namespace Infrastructure.Services
         ///token contains user claims and is signed with a secret key.
         /// </summary>
 
-        private string GenerateJwtToken(Staff staff, string role)       //could incorperate expiry time here, need to look into it a bit more
+        private string GenerateJwtToken(string userId, string email, string name, string role)       //could incorperate expiry time here, need to look into it a bit more
         {
             //first check to see if configuration values are present
             if (string.IsNullOrEmpty(_jwtSettings.SecretKey))
@@ -178,9 +190,9 @@ namespace Infrastructure.Services
             // ============================================================
             var claims = new[]
             {
-                new Claim(ClaimTypes.NameIdentifier, staff.Id.ToString()),
-                new Claim(ClaimTypes.Email, staff.Email),
-                new Claim(ClaimTypes.GivenName, staff.FirstName),
+                new Claim(ClaimTypes.NameIdentifier, userId),
+                new Claim(ClaimTypes.Email, email),
+                new Claim(ClaimTypes.GivenName, name),
                 new Claim(ClaimTypes.Role, role)
             };
 
@@ -247,7 +259,7 @@ namespace Infrastructure.Services
 
         public async Task<(string Token, string RefreshToken)> RefreshTokenAsync(string refreshToken)
         {
-            if(string.IsNullOrEmpty(refreshToken))
+            if (string.IsNullOrEmpty(refreshToken))
             {
                 throw new ArgumentException("Refresh token is required", nameof(refreshToken));
             }
@@ -257,7 +269,7 @@ namespace Infrastructure.Services
             var auth = await _context.AuthenticationCollection
                 .Find(a => a.RefreshTokens.Any(rt => rt.TokenHash == refreshHash))
                 .FirstOrDefaultAsync();
-            if(auth == null)
+            if (auth == null)
             {
                 throw new SecurityTokenException("Invalid refresh token");
             }
@@ -275,7 +287,7 @@ namespace Infrastructure.Services
             var staff = await _context.StaffCollection
                 .Find(s => s.AuthId == auth.Id)
                 .FirstOrDefaultAsync();
-            if(staff == null)
+            if (staff == null)
             {
                 throw new SecurityTokenException("User not found for the given refresh token");
             }
@@ -285,7 +297,11 @@ namespace Infrastructure.Services
                 .FirstOrDefaultAsync();
 
             //issue new tokens
-            var newAccessToken = GenerateJwtToken(staff, role?.Name ?? "Unknown");
+            var newAccessToken = GenerateJwtToken(
+                staff.Id.ToString(),
+                staff.Email,
+                staff.FirstName,
+                role?.Name ?? "Unknown");
 
             //rotate refresh token
             var (newId, newToken) = GenerateRefreshToken();

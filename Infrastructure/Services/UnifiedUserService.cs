@@ -321,7 +321,9 @@ namespace Infrastructure.Services
             {
                 UserCode = createClient.UserCode,
                 Username = createClient.Username,
-                RoleId = clientRole.Id //automatically assigns "client" role
+                UserEmail = createClient.UserEmail,
+                RoleId = clientRole.Id, //automatically assigns "client" role
+                AuthId = authId
             };
             await _context.ClientCollection.InsertOneAsync(client);
 

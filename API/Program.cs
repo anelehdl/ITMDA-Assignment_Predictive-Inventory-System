@@ -67,7 +67,10 @@ builder.Services.AddCors(options =>
         policy.WithOrigins(
             "https://localhost:7222", //dashboard https
             "http://localhost:5169", //dashboard http
-            "https://localhost:5169") //dashboard alternative https
+            "https://localhost:5169", 
+            "http://localhost:7222",
+            "https://localhost:7218",
+            "http://localhost:5000")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -76,14 +79,7 @@ builder.Services.AddCors(options =>
     {
         policy.AllowAnyHeader()
               .AllowAnyMethod()
-              .AllowAnyOrigin(); //allows any mobile device
-
-        /*Could add:
-         policy.WithOrigins(
-            "http://10.0.2.2:5000",      //Android Emulator
-            "http://192.168.1.100:5000", //local IP for physical devices
-            "https://yourdomain.com")    // production domain
-        */
+              .AllowAnyOrigin();
     });
     options.AddPolicy("AllowAll", policy =>
     {
@@ -118,7 +114,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//only redirects to https for non-http ports
+if(!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseCors("AllowDashboard");
 app.UseCors("AllowMobileApp");
