@@ -1,13 +1,9 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Core.Models
 {
-    public class RefreshToken       //not working fully         --TESTING UPDATE
+    public class RefreshToken       //--working now
     {
         [BsonElement("token_id")]
         public string? TokenId { get; set; }      // serverside id for the token

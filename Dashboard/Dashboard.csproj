@@ -29,4 +29,8 @@
 	  </EmbeddedResource>
 	</ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="TestCasesForAPIDashboard" />
+  </ItemGroup>
+
 </Project>

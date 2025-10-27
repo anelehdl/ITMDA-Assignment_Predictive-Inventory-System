@@ -38,7 +38,7 @@ namespace DummyApp.Infrastructure.Configuration
             services.AddScoped<IRoleService, RoleService>(); //role-based access control        //refactored to interface
             services.AddScoped<IUnifiedUserService, UnifiedUserService>(); //combined client and staff user management (CRUD)            //refactored to interface
             services.AddScoped<IInventoryService, InventoryService>(); //stock metrics and inventory data          //refactored to interface
-
+            services.AddSingleton<IMongoDBContext>(sp => sp.GetRequiredService<MongoDBContext>());          //added for the test cases to mock IMongoDBContext
             return services;
         }
     }

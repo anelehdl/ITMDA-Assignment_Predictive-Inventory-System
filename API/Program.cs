@@ -1,13 +1,6 @@
-using Core.Models;
-using Core.Models.DTO;
 using DummyApp.Infrastructure.Configuration;
-using Infrastructure.Data;
-using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using MongoDB.Driver;
-using System.Net.WebSockets;
-using System.Security.Cryptography;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);

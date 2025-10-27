@@ -5,8 +5,6 @@ using Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace Infrastructure.Services
 {
@@ -23,11 +21,11 @@ namespace Infrastructure.Services
 
     public class UnifiedUserService : IUnifiedUserService
     {
-        private readonly MongoDBContext _context;
+        private readonly IMongoDBContext _context;       //updated to use the interface instead of the concrete class
         private readonly IRoleService _roleService;     //refactored to use interface
         private readonly IPasswordHasher<object> _passwordHasher;       //provided by di
 
-        public UnifiedUserService(MongoDBContext context, IRoleService roleService, IPasswordHasher<object> passwordHasher)
+        public UnifiedUserService(IMongoDBContext context, IRoleService roleService, IPasswordHasher<object> passwordHasher)
         {
             _context = context;
             _roleService = roleService;
@@ -335,7 +333,7 @@ namespace Infrastructure.Services
         /// <summary>
         ///Delete user (works for both Staff and Client)
         ///for staff: also deletes associated authentication record
-        /// </summary>
+        /// </summary>z
 
         public async Task<bool> DeleteUserAsync(string userId, string userType)
         {
@@ -343,7 +341,7 @@ namespace Infrastructure.Services
             if (!ObjectId.TryParse(userId, out var objectId))
                 return false;
 
-
+            //manual testing for this.
             // ============================================================
             // DELETE STAFF USER
             // ============================================================
