@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nutec-forecast"
-version = "2025.0.1"
+version = "1.0.1"
 description = "forecasting lib"
 readme = "README.md"
 authors =[{name="grant"}]
