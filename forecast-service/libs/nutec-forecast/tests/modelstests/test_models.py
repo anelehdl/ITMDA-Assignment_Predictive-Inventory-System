@@ -8,6 +8,9 @@ import numpy as np
 class TestModel:
     pass
 
+def mock_loader(path):
+    with open(path, 'r') as f:
+        pass
 
 class DirectQuantileForecasterTest(unittest.TestCase):
     def test_creates_model_names(self):
@@ -27,6 +30,18 @@ class DirectQuantileForecasterTest(unittest.TestCase):
         self.assertIsNone(forecaster.models["q10"])
         forecaster.load(path, mock_load)
         self.assertEqual(model, forecaster.models["q10"])
+    
+    @patch("builtins.open")
+    def test_load_models_no_path(self, mockfile):
+        forecaster = DirectQuantileForecaster(
+            "horizon_forcast", quantiles=[10], horizon=1
+        )
+        path = "testpath"
+        mockfile.side_effect = FileNotFoundError
+
+        with self.assertRaises(FileNotFoundError):
+            forecaster.load(path, mock_loader)
+        
 
     def test_predict(self):
         mock_params = MagicMock()

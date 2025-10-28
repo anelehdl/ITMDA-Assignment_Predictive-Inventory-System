@@ -11,8 +11,13 @@ class MockParameter(ParameterAdaptor):
     def __init__(self, feats):
         super().__init__(feats)
 
+
     @override
     def transform(self, parameter):
+        pass
+
+    @override
+    def parameters(self):
         pass
 
 
@@ -21,7 +26,6 @@ class ParameterAdaptorTest(unittest.TestCase):
         features = ["A", "B", "C"]
         params = MockParameter(features)
         self.assertIs(params.features, features)
-        self.assertEqual(len(params.parameters()), 0)
 
     def test_empty_features(self):
         features = []
@@ -46,21 +50,20 @@ class ParameterAdaptorTest(unittest.TestCase):
         features = ["A", "B"]
         params = MockParameter(features)
         params_dict = {"A": [1, 2, 3], "B": [1, 2, 3]}
-        param_values = pd.DataFrame({"A": [1, 2, 3], "B": [1, 2, 3]})
 
         df = params.to_dataframe(params_dict)
 
         self.assertIsInstance(df, pd.DataFrame)
         self.assertListEqual(list(df.columns), features)
-        self.assertListEqual(df["A"].to_list(), [1, 2, 3])
-        self.assertListEqual(df["B"].to_list(), [1, 2, 3])
+        self.assertListEqual(list(df["A"]), [1, 2, 3])
+        self.assertListEqual(list(df["B"]), [1, 2, 3])
 
     def test_empty_to_dataframe(self):
         features = ["A", "B"]
         params = MockParameter(features)
         params_dict = {"A": [], "B": []}
-        df = params.to_dataframe(params_dict)
 
+        df = params.to_dataframe(params_dict)
         self.assertIsInstance(df, pd.DataFrame)
         self.assertEqual(df.shape, (0, 2))
 

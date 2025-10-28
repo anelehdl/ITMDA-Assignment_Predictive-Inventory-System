@@ -18,6 +18,7 @@ class UtilTests(unittest.TestCase):
                 "qty_lag1": [1, 2, 3],
                 "qty_lag5": [0.5, 0.6, 0.7],
                 "qty_lag10": [0.1, 0.2, 0.3],
+                "qty_lag20": [0.1, 0.2, 0.3],
                 "rolling_mean_3": [1.1, 1.2, 1.3],
                 "rolling_std_3": [0.1, 0.2, 0.3],
                 "rolling_mean_5": [1.5, 1.6, 1.7],
