@@ -79,3 +79,34 @@ def test_post_time_series_features():
         assert set(data.keys()) == contract_features
 
 
+@pytest.mark.parametrize("payload", [
+    {},  # empty payload
+    {"item": "4750619"},  # missing required fields
+    {"client_name": ""},  # empty value
+    { "price": "fire", "item": "4750619", "client_name": "V007"}  # wrong type
+])
+def test_post_predict_invalid(payload):
+    response = requests.post(f"{BASE_PREDICT}/predict/h5", json=payload)
+    assert response.status_code in {400, 422} 
+
+
+@pytest.mark.parametrize("item_id", [
+    -1,          # negative id
+    0,          # zero
+    "abc",       # non-numeric
+    99999999999  # nonexistent
+])
+def test_get_item_features_invalid(item_id):
+    response = requests.get(f"{BASE_ITEM}/item/{item_id}")
+    assert response.status_code in {400, 404}
+
+
+@pytest.mark.parametrize("payload", [
+    {},  # empty
+    {"item": "4750828"},  # missing client_name
+    {"client_name": "L001 - SA"},  # missing item
+    {"item": "4750828", "client_name": 123}  # wrong type
+])
+def test_post_time_series_features_invalid(payload):
+    response = requests.post(f"{BASE_ITEM}/time-features", json=payload)
+    assert response.status_code in {400, 422}
