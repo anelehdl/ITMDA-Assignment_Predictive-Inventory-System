@@ -62,10 +62,9 @@ class ParameterAdaptorTest(unittest.TestCase):
         features = ["A", "B"]
         params = MockParameter(features)
         params_dict = {"A": [], "B": []}
-
-        df = params.to_dataframe(params_dict)
-        self.assertIsInstance(df, pd.DataFrame)
-        self.assertEqual(df.shape, (0, 2))
+        
+        with self.assertRaises(ValueError) as cm:
+            df = params.to_dataframe(params_dict)
 
 
 class ClientItemParameterTest(unittest.TestCase):
