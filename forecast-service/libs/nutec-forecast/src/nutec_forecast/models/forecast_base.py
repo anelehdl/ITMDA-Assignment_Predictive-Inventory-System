@@ -65,13 +65,26 @@ class ParameterAdaptor(ABC):
 
         Raises:
             ValueError: raw_data does not contain the required_features set by initializer
+            ValueError:  value of keys in Dictionary can not be empty or None (zero is allowed)
         """
+
 
         if isinstance(raw_data, pd.DataFrame):
             self.__validate_rawdata(raw_data)
             return raw_data
+        #
+        for key, value in raw_data.items():
+            if value is None or (isinstance(value, str) and value.strip() == "") :
+                raise ValueError(f"'{key}': Value cannot be None or Empty.")
 
-        df = pd.DataFrame(raw_data, index=[0])
+            if not isinstance(value, list):
+                raw_data[key] = [value]
+            else:
+                if not value:
+                    raise ValueError(f"'{key}': List cannot be empty.")
+
+
+        df = pd.DataFrame(raw_data)
         self.__validate_rawdata(df)
         return df
 
