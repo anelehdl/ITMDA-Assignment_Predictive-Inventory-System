@@ -71,7 +71,7 @@ class ParameterAdaptor(ABC):
             self.__validate_rawdata(raw_data)
             return raw_data
 
-        df = pd.DataFrame(raw_data)
+        df = pd.DataFrame(raw_data, index=[0])
         self.__validate_rawdata(df)
         return df
 
