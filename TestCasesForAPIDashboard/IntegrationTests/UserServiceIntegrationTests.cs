@@ -62,7 +62,7 @@ namespace TestCasesForAPIDashboard.IntegrationTests
             _output.WriteLine("GetAllUsers_ReturnsSuccessStatusCode passed.");
         }
 
-        //gonna have to look at this logic in the mornin
+        
         [Fact]
         public async Task GetStaffUsers_ReturnsSuccessStatusCode()
         {
@@ -71,7 +71,7 @@ namespace TestCasesForAPIDashboard.IntegrationTests
             _client.DefaultRequestHeaders.Authorization =
                 new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", jwt);
             //note: need to provide an actual staff user id for this test to be valid
-            var id = "68efc3a0ab145dd9b7a3b7f6"; //gonna have to look at user id could be mongoid?      --attempting to get my travis@test.com profile id
+            var id = "68efc3a0ab145dd9b7a3b7f7"; //gonna have to look at user id could be mongoid?      --attempting to get my travis@test.com profile id
             var request = new HttpRequestMessage(HttpMethod.Get, $"/api/unifiedusermanagement/users/staff/{id}");         //[HttpGet("users/staff/{id}")]
             // Act
             var response = await _client.SendAsync(request);
@@ -91,8 +91,10 @@ namespace TestCasesForAPIDashboard.IntegrationTests
             var jwt = await GetJwtTokenAsync(); // get jwt token
             _client.DefaultRequestHeaders.Authorization =
                 new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", jwt);
-            var userId = 1; // gonna have to look at user id
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/api/unifiedusermanagement/users/{userId}");
+
+            
+            var userId = "68de3339244eef5f98cc098c"; // gonna have to look at user id
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/api/unifiedusermanagement/users/client/{userId}");
             // Act
             var response = await _client.SendAsync(request);
             // Assert
