@@ -11,14 +11,23 @@
         padding-top: 40rem;
     }
 
+    .content-wrapper {
+        background: #c3cab4;
+        border-radius: 50px;
+        padding: 3rem;
+        margin: 2rem auto;
+        max-width: 100%;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
     .panel {
-        background: linear-gradient(120deg, var(--primary) 0%, var(--secondary) 40%, var(--accent) 80%);
+        background: linear-gradient(135deg, #8B9A8B, #829167);
         backdrop-filter: blur(20px);
         border: 1px solid var(--bg1);
         border-radius: 20px;
         padding: 2rem;
         margin-bottom: 2rem;
         color: white;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
 
     .search-bar {
@@ -187,11 +196,14 @@
     }
 
     .stat-card {
-        background: linear-gradient(120deg, #e7eae1 0%, #c3cab4 40%);
+        background: var(--glass);
         padding: 1.5rem;
         border-radius: 15px;
         text-align: center;
-        transition: all 0.3s ease;
+        transition: transform 0.3s ease;
+        border: 1px solid var(--glass-border);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        min-width: 0;
         
     }
 
@@ -210,6 +222,7 @@
 
         .stat-card:hover{
             transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
         }
 </style>
 
@@ -217,7 +230,7 @@
     <a asp-action="Index" class="back-link">← Back to User Management</a>
 
     <h1 class="mb-4">All Users</h1>
-
+    <div class="content-wrapper">
     @if (TempData["Success"] != null)
     {
         <div class="alert alert-success alert-glass">
@@ -343,5 +356,6 @@
         {
             <p class="text-center mt-4">No users found matching your criteria.</p>
         }
+    </div>
     </div>
 </div>

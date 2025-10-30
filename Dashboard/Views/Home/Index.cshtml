@@ -11,9 +11,7 @@
     }
 
     body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(120deg, #f9f6ed 0%, white 40%);
-        color: #6b3589;
+        font-family: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
         min-height: 100vh;
         background-size: 400% 400%;
         animation: bgShift 15s ease-in-out infinite;
@@ -47,13 +45,25 @@
         right: 0;
         z-index: 1;
         pointer-events: none;
+
     }
 
     .hero-heading {
         font-size: 5rem;
-        text-shadow: 2px 4px 6px var(--bg1);
+        text-shadow: 0px 8px 32px rgb(136, 96, 163);
         transition: opacity 0.5s ease, transform 0.5s ease;
+        background: linear-gradient(135deg, #6B2C7F, #9B2CFF); /* stronger contrast to make it pop more --this style aligns with the other the other colors used*/   
+        background-size: 400% 400%;     /*for the animations*/
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: var(--glass);
+        background-clip: text;
+        color: var(--glass);
+        /*animation*/
+        animation: textShift 10s ease infinite;
     }
+
+
+
 
     .dashboard-content {
         max-width: 80%;
@@ -65,7 +75,7 @@
         margin-top: 200vh;
         transition: all 0.5s ease-in-out;
         transform: translateY(50px);
-        background: #e7eae1;
+        background: #c3cab4;
         border-radius: 100px;
     }
 
@@ -201,6 +211,23 @@
             width: 100%;
             text-align: center;
         }
+    }
+
+    /* Keyframes to move the text */
+    @@keyframes textShift {
+        0%
+    {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+
     }
 </style>
 

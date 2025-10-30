@@ -1,3 +1,4 @@
+using Dashboard.Middleware;
 using Dashboard.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -35,8 +36,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LogoutPath = "/Dashboard/Logout";
         options.AccessDeniedPath = "/Dashboard/AccessDenied"; //redirect if user lacks permissions
 
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(30); //cookie expiration          //aligned with jwt token expiration
-        options.SlidingExpiration = false;          //removed cookie sliding expiration for better security
+        options.ExpireTimeSpan = TimeSpan.FromHours(1); //cookie expiration          //changed for dashboard session
+        options.SlidingExpiration = false;          
 
         options.Cookie.HttpOnly = true; //mitigate XSS
         options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
@@ -47,30 +48,51 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
             OnValidatePrincipal = async context =>
             {
                 var tokenClaim = context.Principal?.FindFirst("Token")?.Value;
-                if (tokenClaim != null)
-                {
-                    try
-                    {
-                        var jwt = new JwtSecurityTokenHandler().ReadJwtToken(tokenClaim);
+                var refreshToken = context.Request.Cookies["refreshToken"];
 
-                        // Add 1-minute grace period for small time drift
-                        if (jwt.ValidTo.AddMinutes(1) <= DateTime.UtcNow)
+                if (!string.IsNullOrEmpty(tokenClaim) && !string.IsNullOrEmpty(refreshToken))
+                {
+                    var jwt = new JwtSecurityTokenHandler().ReadJwtToken(tokenClaim);
+
+                    // Only try refresh if token is expired
+                    if (jwt.ValidTo <= DateTime.UtcNow.AddMinutes(2))       //added 2 min graceperiod
+                    {
+                        var authService = context.HttpContext.RequestServices.GetRequiredService<DashboardAuthService>();
+
+                        try
                         {
-                            context.HttpContext.Items["AuthExpired"] = true;
+                            var (newToken, newRefresh) = await authService.RefreshTokenAsync(refreshToken);
+
+                            // Replace token in claims
+                            var claims = context.Principal.Claims
+                                .Where(c => c.Type != "Token")
+                                .ToList();
+                            claims.Add(new Claim("Token", newToken));
+
+                            var newIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                            context.ReplacePrincipal(new ClaimsPrincipal(newIdentity));
+                            context.ShouldRenew = true;
+
+                            // Update refresh cookie
+                            context.HttpContext.Response.Cookies.Append("refreshToken", newRefresh, new CookieOptions
+                            {
+                                HttpOnly = true,
+                                Secure = true,
+                                SameSite = SameSiteMode.Strict,
+                                Expires = DateTime.UtcNow.AddDays(7)
+                            });
+                        }
+                        catch
+                        {
+                            // Refresh failed logout
                             context.RejectPrincipal();
                             await context.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-                            context.HttpContext.User = new ClaimsPrincipal(new ClaimsIdentity());
+                            context.HttpContext.Response.Cookies.Delete("refreshToken");
                         }
                     }
-                    catch (Exception ex)
-                    {
-                        context.HttpContext.Items["AuthExpired"] = true;
-                        context.RejectPrincipal();
-                        await context.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-                        context.HttpContext.User = new ClaimsPrincipal(new ClaimsIdentity());
-                    }
                 }
-            },
+        }
+            ,
             OnRedirectToLogin = context =>
             {
                 var isApi = context.Request.Path.StartsWithSegments("/api");
@@ -121,6 +143,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
+app.UseMiddleware<JwtRefreshMiddleware>();  // <-- the custom middleware to try to fix the refresh token issue
 app.UseAuthorization();
 
 //Map controller routes for MVC

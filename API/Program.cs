@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 // ============================================================
@@ -128,3 +130,5 @@ app.UseAuthorization(); //checks user roles/permissions
 app.MapControllers(); //routes API requests to controller methods
 
 app.Run();
+
+public partial class Program { };       //used for integration testing the API

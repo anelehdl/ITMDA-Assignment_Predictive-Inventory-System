@@ -17,7 +17,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\API\API.csproj" />
+    <ProjectReference Include="..\API\API.csproj" >
+      <Aliases>APIProgram</Aliases>   <!-- Added for mulitple program files issues for integration tests -->
+    </ProjectReference>
     <ProjectReference Include="..\Core\Core.csproj" />
     <ProjectReference Include="..\Dashboard\Dashboard.csproj" />
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
@@ -26,5 +28,6 @@
   <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
+
 
 </Project>

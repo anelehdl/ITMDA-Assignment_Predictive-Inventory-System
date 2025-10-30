@@ -11,7 +11,7 @@ using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace TestCasesForAPIDashboard
+namespace TestCasesForAPIDashboard.UnitTests
 {
     public class UserServiceTests       //this is where we will be testing the UnifiedUserService
     {
@@ -63,7 +63,7 @@ namespace TestCasesForAPIDashboard
         private void SetupFindAsyncStaff(List<Staff> staffList)
         {
             var mockStaffCursor = CreateMockCursor(staffList);
-            _mockStaffCollection.Setup(c => c.FindAsync<Staff>(
+            _mockStaffCollection.Setup(c => c.FindAsync(
                     It.IsAny<FilterDefinition<Staff>>(),
                     It.IsAny<FindOptions<Staff, Staff>>(),
                     It.IsAny<CancellationToken>()))
@@ -73,7 +73,7 @@ namespace TestCasesForAPIDashboard
         private void SetupFindAsyncClient(List<Client> clientList)
         {
             var mockClientCursor = CreateMockCursor(clientList);
-            _mockClientCollection.Setup(c => c.FindAsync<Client>(
+            _mockClientCollection.Setup(c => c.FindAsync(
                     It.IsAny<FilterDefinition<Client>>(),
                     It.IsAny<FindOptions<Client, Client>>(),
                     It.IsAny<CancellationToken>()))

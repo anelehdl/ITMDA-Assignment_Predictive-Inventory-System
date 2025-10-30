@@ -5,6 +5,7 @@ using Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -25,11 +26,11 @@ namespace Infrastructure.Services
 
     public class AuthenticationService : IAuthenticationService      //dependency injection in startup
     {
-        private readonly MongoDBContext _context;
+        private readonly IMongoDBContext _context;      //using interface for testing also to just fix dependencies
         private readonly JwtSettings _jwtSettings;      //adding jwt settings for key creation, using options pattern
         private readonly IPasswordHasher<object> _passwordHasher;
 
-        public AuthenticationService(MongoDBContext context, IOptions<JwtSettings> jwtOptions, IPasswordHasher<object> passwordHasher)
+        public AuthenticationService(IMongoDBContext context, IOptions<JwtSettings> jwtOptions, IPasswordHasher<object> passwordHasher)
         {
             _context = context;
             _jwtSettings = jwtOptions.Value;
@@ -306,7 +307,7 @@ namespace Infrastructure.Services
             //rotate refresh token
             var (newId, newToken) = GenerateRefreshToken();
             var newHash = HashToken(newToken);
-
+            /* issues here in mongo
             var update = Builders<Authentication>.Update
                 .PullFilter(a => a.RefreshTokens, rt => rt.TokenHash == refreshHash) //remove old token
                 .Push(a => a.RefreshTokens, new RefreshToken
@@ -317,6 +318,22 @@ namespace Infrastructure.Services
                     CreatedAt = DateTime.UtcNow
                 }); //add new token
             await _context.AuthenticationCollection.UpdateOneAsync(a => a.Id == auth.Id, update);
+            */
+            //Remove (pull) the old refresh token
+            var pull = Builders<Authentication>.Update
+                .PullFilter(a => a.RefreshTokens, rt => rt.TokenHash == refreshHash);
+            await _context.AuthenticationCollection.UpdateOneAsync(a => a.Id == auth.Id, pull);
+
+            //Add (push) the new refresh token
+            var push = Builders<Authentication>.Update
+                .Push(a => a.RefreshTokens, new RefreshToken
+                {
+                    TokenId = newId,
+                    TokenHash = newHash,
+                    ExpiresAt = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenExpiryDays),
+                    CreatedAt = DateTime.UtcNow
+                });
+            await _context.AuthenticationCollection.UpdateOneAsync(a => a.Id == auth.Id, push);
 
             return (newAccessToken, newToken);
 

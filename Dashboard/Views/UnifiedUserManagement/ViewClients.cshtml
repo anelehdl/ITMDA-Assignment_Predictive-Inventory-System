@@ -11,14 +11,24 @@
         padding-top: 20rem;
     }
 
+    .content-wrapper {
+        background: #c3cab4;
+        border-radius: 50px;
+        padding: 3rem;
+        margin: 2rem auto;
+        max-width: 100%;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
     .panel {
-        background: linear-gradient(120deg, var(--primary) 0%, var(--secondary) 40%);
+        background: linear-gradient(135deg, #8B9A8B, #829167);
         backdrop-filter: blur(20px);       
         border: 1px solid var(--bg1);
         border-radius: 20px;
         padding: 2rem;
         margin-bottom: 2rem;
         color: white;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
 
     .search-bar {
@@ -229,7 +239,7 @@
     <a asp-action="Index" class="back-link">← Back to User Management</a>
 
     <h1 class="mb-4">Client Management</h1>
-
+    <div class="content-wrapper">
     @if (TempData["Success"] != null)
     {
         <div class="alert alert-success alert-glass">
@@ -299,6 +309,7 @@
         {
             <p class="text-center mt-4">No client users found.</p>
         }
+    </div>
     </div>
 </div>
 
