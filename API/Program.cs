@@ -93,7 +93,7 @@ builder.Services.AddCors(options =>
         policy.WithOrigins(
             "https://localhost:7222", //dashboard https
             "http://localhost:5169", //dashboard http
-            "https://localhost:5169") //dashboard alternative https)
+            "https://localhost:5169") //dashboard alternative https
               .AllowAnyHeader()
               .AllowAnyMethod();
 

@@ -2,6 +2,7 @@
 using Core.Models;
 using Core.Models.DTO;
 using Infrastructure.Data;
+using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
@@ -21,10 +22,12 @@ namespace Infrastructure.Services
     public class InventoryService : IInventoryService
     {
         private readonly MongoDBContext _context;
+        private readonly ILogger<InventoryService> _logger;
 
-        public InventoryService(MongoDBContext context)
+        public InventoryService(MongoDBContext context, ILogger<InventoryService> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
 
@@ -305,6 +308,35 @@ namespace Infrastructure.Services
                 AverageDailyUse = i.AverageDailyUse ?? 0, //handles nulls
                 UserId = i.UserId.ToString()
             }).ToList();
+        }
+
+        public async Task<List<string>> GetDistinctItemCodesAsync()
+        {
+            try
+            {
+                _logger.LogInformation("Getting distinct SKUs from inventory");
+
+                // Get all inventory items
+                var allInventory = await _context.InventoryCollection
+                    .Find(_ => true)
+                    .ToListAsync();
+
+                // Get distinct SKUs and convert to string
+                var distinctItemCodes = allInventory
+                    .Select(inv => inv.Sku.ToString()) // Convert int SKU to string
+                    .Distinct()
+                    .OrderBy(code => code)
+                    .ToList();
+
+                _logger.LogInformation("Found {Count} distinct SKUs", distinctItemCodes.Count);
+
+                return distinctItemCodes;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting distinct SKUs");
+                return new List<string>();
+            }
         }
     }
 }

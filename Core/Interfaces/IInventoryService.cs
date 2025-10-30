@@ -13,5 +13,6 @@ namespace Core.Interfaces
         Task<StockMetricsOverviewDto> GetStockMetricsOverviewAsync();
         Task<ClientInventoryStatsDto?> GetClientInventoryStatsAsync(string clientId);
         Task<List<InventoryDto>> GetInventoryByFilterAsync(InventoryFilterDto filter);
+        Task<List<string>> GetDistinctItemCodesAsync();
     }
 }

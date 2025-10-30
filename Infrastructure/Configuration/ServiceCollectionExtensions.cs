@@ -33,11 +33,29 @@ namespace DummyApp.Infrastructure.Configuration
             //Update Refactoring to use interfaces for better abstraction and testability and reduce use of concrete classes
             //services.AddScoped<AuthenticationService>(); //handles user login/authentication      //refactored to interface below
 
+
+            // ============================================================
+            // PASSWORD HASHING
+            // ============================================================
             services.AddScoped<IPasswordHasher<object>, PasswordHasher<object>>(); //password hashing and verification
+
+            // ============================================================
+            // BUSINESS SERVICES
+            // ============================================================
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<IRoleService, RoleService>(); //role-based access control        //refactored to interface
             services.AddScoped<IUnifiedUserService, UnifiedUserService>(); //combined client and staff user management (CRUD)            //refactored to interface
             services.AddScoped<IInventoryService, InventoryService>(); //stock metrics and inventory data          //refactored to interface
+
+
+            // ============================================================
+            // PREDICTION SERVICE
+            // ============================================================
+            services.AddHttpClient<IPredictionService, PredictionService>(client =>
+            {
+                client.Timeout = TimeSpan.FromSeconds(30); // 30 second timeout for ML predictions
+            });
+            services.AddScoped<IPredictionService, PredictionService>();
 
             return services;
         }

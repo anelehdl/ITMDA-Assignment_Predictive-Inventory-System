@@ -13,7 +13,7 @@
         padding: 2rem;
         max-width: 1600px;
         margin: 0 auto;
-        padding-top: 550px;
+        padding-top: 650px;
     }
 
     .content-wrapper {
@@ -142,39 +142,60 @@
         margin-top: 2rem;
     }
 
-    .sku-list {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    .slider-container {
+        position: relative;
+        display: flex;
+        align-items: center;
         gap: 1rem;
         margin-top: 1rem;
     }
 
+    .sku-slider {
+        flex: 1;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .sku-slider-track {
+        display: flex;
+        gap: 1rem;
+        transition: transform 0.4s ease;
+    }
+
     .sku-item {
         background: rgba(255, 255, 255, 0.15);
-        padding: 1rem;
+        padding: 1.5rem 1rem;
         border-radius: 10px;
         text-align: center;
         border: 1px solid rgba(255, 255, 255, 0.2);
+        flex: 0 0 calc(25% - 0.75rem);
+        min-width: 0;
     }
 
-    .sku-name {
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-        font-size: 0.875rem;
+    .slider-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
         color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        flex-shrink: 0;
     }
 
-    .sku-amount {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: white;
-    }
+        .slider-btn:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
 
-    .sku-unit {
-        font-size: 0.75rem;
-        opacity: 0.8;
-        color: white;
-    }
+        .slider-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
 
     .alert-glass {
         background: rgba(220, 53, 69, 0.3);
@@ -236,15 +257,29 @@
 
             <div class="panel">
                 <h2 class="mb-3">SKU Distribution</h2>
-                <div class="sku-list">
-                    @foreach (var sku in Model.SkuDistribution.OrderByDescending(s => s.Value))
-                    {
-                        <div class="sku-item">
-                            <div class="sku-name">@sku.Key</div>
-                            <div class="sku-amount">@sku.Value.ToString("N0")</div>
-                            <div class="sku-unit">litres</div>
+                <div class="slider-container">
+                    <button class="slider-btn slider-btn-prev" id="prevBtn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
+                    </button>
+                    <div class="sku-slider">
+                        <div class="sku-slider-track" id="skuTrack">
+                            @foreach (var sku in Model.SkuDistribution.OrderByDescending(s => s.Value))
+                            {
+                                <div class="sku-item">
+                                    <div class="sku-name">@sku.Key</div>
+                                    <div class="sku-amount">@sku.Value.ToString("N0")</div>
+                                    <div class="sku-unit">litres</div>
+                                </div>
+                            }
                         </div>
-                    }
+                    </div>
+                    <button class="slider-btn slider-btn-next" id="nextBtn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </button>
                 </div>
             </div>
 
@@ -313,6 +348,50 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Stock Metrics Dashboard Loaded');
+            
+            const track = document.getElementById('skuTrack');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            if (track && prevBtn && nextBtn) {
+                const items = track.children;
+                const totalItems = items.length;
+                const itemsPerView = 4;
+                let currentIndex = 0;
+                const maxIndex = Math.max(0, totalItems - itemsPerView);
+                
+                function updateSlider() {
+                    const itemWidth = items[0]?.offsetWidth || 0;
+                    const gap = 16; // 1rem gap
+                    const offset = currentIndex * (itemWidth + gap);
+                    track.style.transform = `translateX(-${offset}px)`;
+                    
+                    // Update button states
+                    prevBtn.disabled = currentIndex === 0;
+                    nextBtn.disabled = currentIndex >= maxIndex;
+                }
+                
+                prevBtn.addEventListener('click', function() {
+                    if (currentIndex > 0) {
+                        currentIndex--;
+                        updateSlider();
+                    }
+                });
+                
+                nextBtn.addEventListener('click', function() {
+                    if (currentIndex < maxIndex) {
+                        currentIndex++;
+                        updateSlider();
+                    }
+                });
+                
+                // Initialize
+                updateSlider();
+                
+                // Update on window resize
+                window.addEventListener('resize', updateSlider);
+            }
         });
     </script>
+}
 }
