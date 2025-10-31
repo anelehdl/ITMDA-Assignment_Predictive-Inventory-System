@@ -55,7 +55,7 @@ class DirectQuantileForecasterTest(unittest.TestCase):
         expected = np.expm1(output)
         mock_model.predict.return_value = np.array([output])
         forecaster.models["q10"] = mock_model
-        print(forecaster.models)
+
         prediction = forecaster.predict(mock_params)
-        print(prediction)
+      
         self.assertEqual(prediction["q10"], expected)
