@@ -342,7 +342,7 @@ namespace Infrastructure.Services
         }
 
         /// <summary>
-        /// Implementing the interface methods
+        /// Implementing the interface methods          --update this is now legacy will be removing later
         /// </summary>
         //currently they are not being used, but will be needed for user management (CRUD operations)
         //refactoring as not used right now

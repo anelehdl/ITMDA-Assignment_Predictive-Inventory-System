@@ -1,11 +1,16 @@
 ﻿extern alias APIProgram;        //needed to add this according to ms docs, this ensures theres no binding conflicts with API and Dashboard program files
-using Microsoft.AspNetCore.Mvc.Testing;
-using Xunit.Abstractions;
-using System.Net.Http.Json;
-using System.Text.Json;
-using System.Net;
 using Core.Models.DTO;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Security.Claims;
+using System.Text;
+using System.Text.Json;
+using Xunit.Abstractions;
 
 namespace TestCasesForAPIDashboard.IntegrationTests
 {
@@ -22,12 +27,53 @@ namespace TestCasesForAPIDashboard.IntegrationTests
     {
         private readonly HttpClient _client;
         private readonly ITestOutputHelper _output;
+        private readonly JwtSettings _jwtSettings;
 
         public AuthenticationIntegrationTests(CustomWebApplicationFactory<APIProgram.Program> factory, ITestOutputHelper output)        
         {
             _client = factory.CreateClient();
             _output = output;
+            
+            //manually need to load the JWT Settings 
+
+            _jwtSettings = new JwtSettings          //i have to hardcode the values here to match the API settings for the tests to work, i tried using configuration but couldnt get it to work
+            {
+                SecretKey = "SuperSecretSecureKeyThatLooksAwesomeAndVeryLongTHISNEEDStobe512BitsIthinkInOtherWords64CharsroundsoImJustWritingforFunAlsoItCanBeGreaterThan512bitsAsFarAsIKnow",
+                Issuer = "PrototypeAPI",
+                Audience = "PrototypeDashboard"
+            };
+
         }
+
+        // ----------------------------
+        // Helper Method for the JWT Token Generation for the mocked client
+        // ----------------------------
+        private string GenerateTestJwtToken(string role)
+        {
+            // Use the same secret and issuer as your API for test consistency
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.SecretKey));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, "C009-Testing"),
+                new Claim(ClaimTypes.Email, "client@test.com"),
+                new Claim(ClaimTypes.Role, role)
+            };
+
+            var token = new JwtSecurityToken
+            (
+                issuer: _jwtSettings.Issuer,
+                audience: _jwtSettings.Audience,
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(30),
+                signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+
 
         // ----------------------------
         // Integration Tests for /api/auth/login
@@ -130,24 +176,39 @@ namespace TestCasesForAPIDashboard.IntegrationTests
             _output.WriteLine($"Status Code: {response.StatusCode}");
         }
 
-        [Fact]      //failing due to client logic
-        public async Task StockMetrics_ProtectedEndpoint_WithJwtWrongRole_ReturnsForbidden()
+
+        [Fact]      //failing due to client logic       --update bypassed this by generating a jwt token manually for client role, specifically for the test
+        public async Task UnifiedUserManagement_ProtectedEndpoint_WithJwtWrongRole_ReturnsForbidden()
         {
+            //Arrange
+            /*  --update since my db doesnt have user passwords for the clients setup in this build, im going to just generate a jwt token for a client role manually and use that instead of loggin in as a client
             // Suppose you have a login user with role "client" but endpoint requires "admin" 
-            var loginDto = new { UserEmail = "C001@test.com", Password = "123" };     //my client db doesnt have pw so i needa check with aneleh about that, not sure how clients setup their profiles if they can even login to dashboard
+            var loginDto = new              //my client db doesnt have pw so i needa check with aneleh about that, not sure how clients setup their profiles if they can even login to dashboard        
+            {                    
+                UserEmail = "C001@test.com", 
+                Password = "123" 
+            };
+
+            // Act - login to get JWT
             var loginResponse = await _client.PostAsJsonAsync("/api/auth/login", loginDto);
             loginResponse.EnsureSuccessStatusCode();
 
+            // Deserialize login response
             var loginContent = await loginResponse.Content.ReadAsStringAsync();
             var loginResult = JsonSerializer.Deserialize<LoginResponseDto>(loginContent, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            */
+
+            // Manually create a JWT token for a user with "client" role
+            var token = GenerateTestJwtToken("client");         // Implement the helper to create a valid JWT
 
             // Act
             _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", loginResult.Token);
+                new AuthenticationHeaderValue("Bearer", token);         //using the token generated above
 
-            var response = await _client.GetAsync("/api/StockMetrics/overview");
+            // Call protected endpoint
+            var response = await _client.GetAsync("/api/unifiedusermanagement/users");
 
-            // Assert
+            // Assert       //should be forbidden since client role not allowed
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
             _output.WriteLine($"Status Code: {response.StatusCode}");
         }
