@@ -288,51 +288,50 @@
                 </div>
             </form>
 
-            @if (Model != null && Model.Any())
-            {
-                <table class="user-table">
-                    <thead>
+        @if (Model != null && Model.Any())
+        {
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Role</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model)
+                    {
                         <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Role</th>
-                            <th>Actions</th>
+                            <td>@user.FirstName</td>
+                            <td>@user.Email</td>
+                            <td>@user.Phone</td>
+                            <td>
+                                <span class="role-badge @(user.RoleName.ToLower() == "admin" ? "admin" : "")">
+                                    @user.RoleName
+                                </span>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn-glass btn-update"
+                                            onclick="openUpdateModal('@user.Id','@user.FirstName','@user.Email','@user.Phone','@user.RoleId')">
+                                        Update
+                                    </button>
+                                    <button class="btn-glass btn-danger" onclick="confirmDelete('@user.Id', '@user.FirstName')">
+                                        Delete
+                                    </button>
+                                </div>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var user in Model)
-                        {
-                            <tr>
-                                <td>@user.FirstName</td>
-                                <td>@user.Email</td>
-                                <td>@user.Phone</td>
-                                <td>
-                                    <span class="role-badge @(user.RoleName.ToLower() == "admin" ? "admin" : "")">
-                                        @user.RoleName
-                                    </span>
-                                </td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn-glass btn-update"
-                                                onclick="openUpdateModal('@user.Id','@user.FirstName','@user.Email','@user.Phone','@user.RoleId')">
-                                            Update
-                                        </button>
-                                        <button class="btn-glass btn-danger" onclick="confirmDelete('@user.Id', '@user.FirstName')">
-                                            Delete
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            }
-            else
-            {
-                <p class="text-center mt-4">No staff members found.</p>
-            }
-        </div>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p class="text-center mt-4">No staff members found.</p>
+        }
     </div>
 </div>
 

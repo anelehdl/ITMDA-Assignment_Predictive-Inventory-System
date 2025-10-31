@@ -240,13 +240,12 @@
 
     <h1 class="mb-4">Client Management</h1>
 
-    <div class="content-wrapper">
-        @if (TempData["Success"] != null)
-        {
-            <div class="alert alert-success alert-glass">
-                @TempData["Success"]
-            </div>
-        }
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-glass">
+            @TempData["Success"]
+        </div>
+    }
 
         @if (TempData["Error"] != null)
         {
@@ -272,45 +271,44 @@
                 </div>
             </form>
 
-            @if (Model != null && Model.Any())
-            {
-                <table class="user-table">
-                    <thead>
+        @if (Model != null && Model.Any())
+        {
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>User Code</th>
+                        <th>Username</th>
+                        <th>Role</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model)
+                    {
                         <tr>
-                            <th>User Code</th>
-                            <th>Username</th>
-                            <th>Role</th>
-                            <th>Actions</th>
+                            <td>@user.UserCode</td>
+                            <td>@user.Username</td>
+                            <td>
+                                <span class="role-badge">
+                                    @user.RoleName
+                                </span>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn-glass btn-danger" onclick="confirmDelete('@user.Id', '@user.Username')">
+                                        Delete
+                                    </button>
+                                </div>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var user in Model)
-                        {
-                            <tr>
-                                <td>@user.UserCode</td>
-                                <td>@user.Username</td>
-                                <td>
-                                    <span class="role-badge">
-                                        @user.RoleName
-                                    </span>
-                                </td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn-glass btn-danger" onclick="confirmDelete('@user.Id', '@user.Username')">
-                                            Delete
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            }
-            else
-            {
-                <p class="text-center mt-4">No client users found.</p>
-            }
-        </div>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p class="text-center mt-4">No client users found.</p>
+        }
     </div>
 </div>
 

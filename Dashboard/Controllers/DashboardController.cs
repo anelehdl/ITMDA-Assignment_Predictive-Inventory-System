@@ -98,7 +98,9 @@ namespace Dashboard.Controllers
                 new Claim(ClaimTypes.Email, result.Email),
                 new Claim(ClaimTypes.GivenName, result.FirstName),
                 new Claim(ClaimTypes.Name, result.FirstName),
-                new Claim("Token", result.Token)
+                new Claim("Token", result.Token),
+                //stroing refreshtoken
+                //new Claim("RefreshToken", result.RefreshToken)            removed as now stored in secure http only cookie
             };
 
             //add role claim if available
@@ -134,8 +136,24 @@ namespace Dashboard.Controllers
                 new ClaimsPrincipal(claimsIdentity),
                 authProperties);
 
-            //redirect to home page (user is now authenticated)
-            return RedirectToAction("Index", "Home");
+            //adding cookie for jwt refresh in secure http only cookie
+            if (!string.IsNullOrEmpty(result.RefreshToken))
+            {
+                Response.Cookies.Append(
+                    "refreshToken",
+                    result.RefreshToken,
+                    new CookieOptions
+                    {
+                        HttpOnly = true,
+                        Secure = true,
+                        SameSite = SameSiteMode.Strict,
+                        Expires = jwt.ValidTo.AddDays(7) // or your refresh token expiry
+                    }
+                );
+            }
+
+             //redirect to home page (user is now authenticated)
+             return RedirectToAction("Index", "Home");
         }
 
 
@@ -153,6 +171,8 @@ namespace Dashboard.Controllers
             // ============================================================
             //removes cookie and signs out user
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            //remove refresh token cookie
+            Response.Cookies.Delete("refreshToken");
             //redirect to home page after logout
             return RedirectToAction("Index", "Home");
         }

@@ -2,6 +2,7 @@
 using Core.Models.DTO;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 
 /// <summary>
@@ -94,6 +95,40 @@ public class AuthApiController : ControllerBase
             // than ensuring the token was invalidated
             Console.WriteLine($"Logout error: {ex.Message}");
             return Ok(new { message = "Logged out successfully" });
+        }
+    }
+
+    //attempting to fix the refresh token endpoint
+
+    /// <summary>
+    /// POST /api/auth/refresh
+    /// issues a new JWT and refresh token using a valid refresh token
+    /// </summary>
+    [HttpPost("refresh")]
+    public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequestDto request)
+    {
+        if (string.IsNullOrEmpty(request.RefreshToken))
+            return BadRequest(new { message = "Refresh token required" });
+
+        try
+        {
+            var (newAccessToken, newRefreshToken) = await _authService.RefreshTokenAsync(request.RefreshToken);
+
+            return Ok(new
+            {
+                Success = true,                  //added this to fix logout issues that was plaguing my brain for the past day
+                Token = newAccessToken,
+                RefreshToken = newRefreshToken,
+                Message = "Token refreshed successfully"
+            });
+        }
+        catch (SecurityTokenException ex)
+        {
+            return Unauthorized(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = $"Unexpected error: {ex.Message}" });
         }
     }
 }

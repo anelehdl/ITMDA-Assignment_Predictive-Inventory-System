@@ -3,7 +3,7 @@ using MongoDB.Driver;
 
 namespace Infrastructure.Data
 {
-    public class MongoDBContext
+    public class MongoDBContext : IMongoDBContext       //implement the interface
     {
         private readonly IMongoDatabase _database;
         private readonly IMongoDatabase _forecastDatabase;
