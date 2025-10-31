@@ -5,20 +5,30 @@
 }
 
 <style>
-.management-container {
+    .management-container {
         padding: 2rem;
         max-width: 1400px;
         margin: 0 auto;
     }
 
+    .content-wrapper {
+        background: #c3cab4;
+        border-radius: 50px;
+        padding: 3rem;
+        margin: 2rem auto;
+        max-width: 100%;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
     .panel {
-        background: linear-gradient(120deg, var(--primary) 0%, var(--secondary) 40%);
+        background: linear-gradient(135deg, #8B9A8B, #829167);
         backdrop-filter: blur(20px);
         border: 1px solid var(--bg1);
         border-radius: 20px;
         padding: 2rem;
         margin-bottom: 2rem;
         color: white;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
 
     .search-bar {
@@ -151,7 +161,7 @@
         width: 100%;
         height: 100%;
         background: var(--bg6);
-        /*backdrop-filter: blur(10px);*/        /*removed for performance issues*/
+        /*backdrop-filter: blur(10px);*/ /*removed for performance issues*/
     }
 
     .modal-content {
@@ -235,9 +245,9 @@
             color: #88925e;
         }
 
-    .btn-update{
+    .btn-update {
         font-size: 0.875rem;
-        width:fit-content;
+        width: fit-content;
     }
 </style>
 
@@ -246,81 +256,83 @@
 
     <h1 class="mb-4">Staff Management</h1>
 
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success alert-glass">
-            @TempData["Success"]
-        </div>
-    }
-
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger alert-glass">
-            @TempData["Error"]
-        </div>
-    }
-
-    <div class="panel">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2>Staff Members</h2>
-            <button class="btn-glass btn-primary" onclick="openCreateModal()">+ Add New Staff</button>
-        </div>
-
-        <form method="get" asp-action="ViewStaff">
-            <div class="search-bar">
-                <input type="text" name="searchTerm" class="search-input" placeholder="Search by name or email..." value="@ViewBag.CurrentSearch" />
-                <button type="submit" class="btn-glass">Search</button>
-                @if (!string.IsNullOrEmpty(ViewBag.CurrentSearch as string))
-                {
-                    <a asp-action="ViewStaff" class="btn-glass">Clear</a>
-                }
+    <div class="content-wrapper">
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-glass">
+                @TempData["Success"]
             </div>
-        </form>
+        }
 
-        @if (Model != null && Model.Any())
+        @if (TempData["Error"] != null)
         {
-            <table class="user-table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th>Role</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var user in Model)
+            <div class="alert alert-danger alert-glass">
+                @TempData["Error"]
+            </div>
+        }
+
+        <div class="panel">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2>Staff Members</h2>
+                <button class="btn-glass btn-primary" onclick="openCreateModal()">+ Add New Staff</button>
+            </div>
+
+            <form method="get" asp-action="ViewStaff">
+                <div class="search-bar">
+                    <input type="text" name="searchTerm" class="search-input" placeholder="Search by name or email..." value="@ViewBag.CurrentSearch" />
+                    <button type="submit" class="btn-glass">Search</button>
+                    @if (!string.IsNullOrEmpty(ViewBag.CurrentSearch as string))
                     {
-                        <tr>
-                            <td>@user.FirstName</td>
-                            <td>@user.Email</td>
-                            <td>@user.Phone</td>
-                            <td>
-                                <span class="role-badge @(user.RoleName.ToLower() == "admin" ? "admin" : "")">
-                                    @user.RoleName
-                                </span>
-                            </td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn-glass btn-update"
-                                            onclick="openUpdateModal('@user.Id','@user.FirstName','@user.Email','@user.Phone','@user.RoleId')">
-                                        Update
-                                    </button>
-                                    <button class="btn-glass btn-danger" onclick="confirmDelete('@user.Id', '@user.FirstName')">
-                                        Delete
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
+                        <a asp-action="ViewStaff" class="btn-glass">Clear</a>
                     }
-                </tbody>
-            </table>
-        }
-        else
-        {
-            <p class="text-center mt-4">No staff members found.</p>
-        }
+                </div>
+            </form>
+
+            @if (Model != null && Model.Any())
+            {
+                <table class="user-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Role</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model)
+                        {
+                            <tr>
+                                <td>@user.FirstName</td>
+                                <td>@user.Email</td>
+                                <td>@user.Phone</td>
+                                <td>
+                                    <span class="role-badge @(user.RoleName.ToLower() == "admin" ? "admin" : "")">
+                                        @user.RoleName
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-glass btn-update"
+                                                onclick="openUpdateModal('@user.Id','@user.FirstName','@user.Email','@user.Phone','@user.RoleId')">
+                                            Update
+                                        </button>
+                                        <button class="btn-glass btn-danger" onclick="confirmDelete('@user.Id', '@user.FirstName')">
+                                            Delete
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p class="text-center mt-4">No staff members found.</p>
+            }
+        </div>
     </div>
 </div>
 

@@ -8,17 +8,27 @@
         padding: 2rem;
         max-width: 1400px;
         margin: 0 auto;
-        padding-top: 40rem;
+        padding-top: 50rem;
+    }
+
+    .content-wrapper {
+        background: #c3cab4;
+        border-radius: 50px;
+        padding: 3rem;
+        margin: 2rem auto;
+        max-width: 100%;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
     }
 
     .panel {
-        background: linear-gradient(120deg, var(--primary) 0%, var(--secondary) 40%, var(--accent) 80%);
+        background: linear-gradient(135deg, #8B9A8B, #829167);
         backdrop-filter: blur(20px);
         border: 1px solid var(--bg1);
         border-radius: 20px;
         padding: 2rem;
         margin-bottom: 2rem;
         color: white;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
 
     .search-bar {
@@ -66,11 +76,11 @@
             border-radius: 10px;
         }
 
-        .filter-select:hover{
+        .filter-select:hover {
             transform: translateY(-2px);
             background: var(--bg4);
         }
-        
+
 
     .btn-glass {
         background: var(--bg2);
@@ -96,7 +106,6 @@
         width: 100%;
         border-collapse: collapse;
         margin-top: 1rem;
-        
     }
 
         .user-table th,
@@ -187,29 +196,32 @@
     }
 
     .stat-card {
-        background: linear-gradient(120deg, #e7eae1 0%, #c3cab4 40%);
+        background: var(--glass);
         padding: 1.5rem;
         border-radius: 15px;
         text-align: center;
-        transition: all 0.3s ease;
-        
+        transition: transform 0.3s ease;
+        border: 1px solid var(--glass-border);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        min-width: 0;
     }
 
         .stat-card .stat-number {
             font-size: 2.5rem;
             font-weight: bold;
             margin-bottom: 0.5rem;
-            pointer-events:none;
+            pointer-events: none;
         }
 
         .stat-card .stat-label {
             opacity: 0.9;
             font-size: 0.875rem;
-            pointer-events:none;
+            pointer-events: none;
         }
 
-        .stat-card:hover{
+        .stat-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15)
         }
 </style>
 
@@ -218,130 +230,133 @@
 
     <h1 class="mb-4">All Users</h1>
 
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success alert-glass">
-            @TempData["Success"]
-        </div>
-    }
 
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger alert-glass">
-            @TempData["Error"]
-        </div>
-    }
-
-    @if (Model != null)
-    {
-        <div class="stats-container">
-            <div class="stat-card">
-                <div class="stat-number">@Model.Count</div>
-                <div class="stat-label">Total Users</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">@Model.Count(u => u.UserType == "Staff")</div>
-                <div class="stat-label">Staff Members</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">@Model.Count(u => u.UserType == "Client")</div>
-                <div class="stat-label">Clients</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">@Model.Count(u => u.RoleName.ToLower() == "admin")</div>
-                <div class="stat-label">Administrators</div>
-            </div>
-        </div>
-    }
-
-    <div class="panel">
-        <h2 class="mb-3">All System Users</h2>
-
-        <form method="get" asp-action="ViewAll">
-            <div class="search-bar">
-                <input type="text" name="searchTerm" class="search-input"
-                       placeholder="Search by name, email, code, or username..."
-                       value="@ViewBag.CurrentSearch" />
-
-                <select name="userType" class="filter-select">
-                    <option value="">All Types</option>
-                    <option value="Staff" selected="@(ViewBag.CurrentUserType == "Staff")">Staff Only</option>
-                    <option value="Client" selected="@(ViewBag.CurrentUserType == "Client")">Clients Only</option>
-                </select>
-
-                <button type="submit" class="btn-glass">Filter</button>
-
-                @if (!string.IsNullOrEmpty(ViewBag.CurrentSearch as string) || !string.IsNullOrEmpty(ViewBag.CurrentUserType as string))
-                {
-                    <a asp-action="ViewAll" class="btn-glass">Clear All</a>
-                }
-            </div>
-        </form>
-
-        @if (Model != null && Model.Any())
+    <div class="content-wrapper">
+        @if (TempData["Success"] != null)
         {
-            <table class="user-table">
-                <thead>
-                    <tr>
-                        <th>Type</th>
-                        <th>Identifier</th>
-                        <th>Details</th>
-                        <th>Role</th>
-                        <th>Contact</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var user in Model)
+            <div class="alert alert-success alert-glass">
+                @TempData["Success"]
+            </div>
+        }
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-glass">
+                @TempData["Error"]
+            </div>
+        }
+
+        @if (Model != null)
+        {
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-number">@Model.Count</div>
+                    <div class="stat-label">Total Users</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">@Model.Count(u => u.UserType == "Staff")</div>
+                    <div class="stat-label">Staff Members</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">@Model.Count(u => u.UserType == "Client")</div>
+                    <div class="stat-label">Clients</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">@Model.Count(u => u.RoleName.ToLower() == "admin")</div>
+                    <div class="stat-label">Administrators</div>
+                </div>
+            </div>
+        }
+
+        <div class="panel">
+            <h2 class="mb-3">All System Users</h2>
+
+            <form method="get" asp-action="ViewAll">
+                <div class="search-bar">
+                    <input type="text" name="searchTerm" class="search-input"
+                           placeholder="Search by name, email, code, or username..."
+                           value="@ViewBag.CurrentSearch" />
+
+                    <select name="userType" class="filter-select">
+                        <option value="">All Types</option>
+                        <option value="Staff" selected="@(ViewBag.CurrentUserType == "Staff")">Staff Only</option>
+                        <option value="Client" selected="@(ViewBag.CurrentUserType == "Client")">Clients Only</option>
+                    </select>
+
+                    <button type="submit" class="btn-glass">Filter</button>
+
+                    @if (!string.IsNullOrEmpty(ViewBag.CurrentSearch as string) || !string.IsNullOrEmpty(ViewBag.CurrentUserType as string))
                     {
-                        <tr>
-                            <td>
-                                <span class="type-badge @(user.UserType == "Client" ? "client-type" : "")">
-                                    @user.UserType
-                                </span>
-                            </td>
-                            <td>
-                                @if (user.UserType == "Staff")
-                                {
-                                    <strong>@user.FirstName</strong>
-                                }
-                                else
-                                {
-                                    <strong>@user.UserCode</strong>
-                                }
-                            </td>
-                            <td>
-                                @if (user.UserType == "Staff")
-                                {
-                                    @user.Email
-                                }
-                                else
-                                {
-                                    @user.Username
-                                }
-                            </td>
-                            <td>
-                                <span class="role-badge @(user.RoleName.ToLower() == "admin" ? "admin" : "") @(user.RoleName.ToLower() == "client" ? "client" : "")">
-                                    @user.RoleName
-                                </span>
-                            </td>
-                            <td>
-                                @if (user.UserType == "Staff")
-                                {
-                                    @user.Phone
-                                }
-                                else
-                                {
-                                    <span style="opacity: 0.6;">N/A</span>
-                                }
-                            </td>
-                        </tr>
+                        <a asp-action="ViewAll" class="btn-glass">Clear All</a>
                     }
-                </tbody>
-            </table>
-        }
-        else
-        {
-            <p class="text-center mt-4">No users found matching your criteria.</p>
-        }
+                </div>
+            </form>
+
+            @if (Model != null && Model.Any())
+            {
+                <table class="user-table">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Identifier</th>
+                            <th>Details</th>
+                            <th>Role</th>
+                            <th>Contact</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <span class="type-badge @(user.UserType == "Client" ? "client-type" : "")">
+                                        @user.UserType
+                                    </span>
+                                </td>
+                                <td>
+                                    @if (user.UserType == "Staff")
+                                    {
+                                        <strong>@user.FirstName</strong>
+                                    }
+                                    else
+                                    {
+                                        <strong>@user.UserCode</strong>
+                                    }
+                                </td>
+                                <td>
+                                    @if (user.UserType == "Staff")
+                                    {
+                                        @user.Email
+                                    }
+                                    else
+                                    {
+                                        @user.Username
+                                    }
+                                </td>
+                                <td>
+                                    <span class="role-badge @(user.RoleName.ToLower() == "admin" ? "admin" : "") @(user.RoleName.ToLower() == "client" ? "client" : "")">
+                                        @user.RoleName
+                                    </span>
+                                </td>
+                                <td>
+                                    @if (user.UserType == "Staff")
+                                    {
+                                        @user.Phone
+                                    }
+                                    else
+                                    {
+                                        <span style="opacity: 0.6;">N/A</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p class="text-center mt-4">No users found matching your criteria.</p>
+            }
+        </div>
     </div>
 </div>
