@@ -1,0 +1,920 @@
+﻿@{
+    ViewData["Title"] = "Forecasts";
+}
+
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(120deg, var(--accent), white 50%);
+        color: #333;
+        min-height: 100vh;
+        background-size: 400% 400%;
+        animation: bgShift 15s ease-in-out infinite;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-top: 530px;
+    }
+
+    .forecasts-container {
+        padding: 2rem;
+        max-width: 1600px;
+        margin: 0 auto;
+    }
+
+    .content-wrapper {
+        background: #c3cab4;
+        border-radius: 50px;
+        padding: 3rem;
+        margin: 2rem auto;
+        max-width: 100%;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .back-link {
+        color: #333;
+        text-decoration: none;
+        margin-bottom: 1rem;
+        display: inline-block;
+    }
+
+        .back-link:hover {
+            color: #829167;
+        }
+
+    .page-title {
+        color: #333;
+        margin-bottom: 2rem;
+        font-size: 2rem;
+        font-weight: 500;
+    }
+
+    /* Search Panel */
+    .search-panel {
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(139, 154, 139, 0.4);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.2));
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-form {
+        display: flex;
+        gap: 1rem;
+        align-items: end;
+    }
+
+    .form-group {
+        flex: 1;
+    }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #4a5a4a;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            border-radius: 10px;
+            font-size: 0.875rem;
+            background: rgba(255, 255, 255, 0.8);
+            transition: all 0.3s;
+        }
+
+            .form-group input:focus,
+            .form-group select:focus {
+                outline: none;
+                border-color: #8B9A8B;
+                background: white;
+            }
+
+    .btn {
+        padding: 0.75rem 2rem;
+        border: none;
+        border-radius: 10px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #8B9A8B, #829167);
+        color: white;
+    }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(130, 145, 103, 0.4);
+        }
+
+    .btn-secondary {
+        background: rgba(255, 255, 255, 0.5);
+        color: #4a5a4a;
+    }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+    /* Products Grid */
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .product-item {
+        background: rgba(255, 255, 255, 0.15);
+        padding: 1rem;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+        .product-item:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+    .product-code {
+        font-weight: bold;
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+        color: white;
+    }
+
+    .product-name {
+        font-size: 0.875rem;
+        opacity: 0.9;
+        color: white;
+    }
+
+    .product-stock {
+        font-size: 0.75rem;
+        opacity: 0.8;
+        margin-top: 0.5rem;
+        color: white;
+    }
+
+    .no-products {
+        text-align: center;
+        padding: 2rem;
+        color: white;
+        opacity: 0.8;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.2));
+        padding: 1.5rem;
+        border-radius: 15px;
+        text-align: center;
+        transition: transform 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        color: white;
+    }
+
+    .stat-label {
+        opacity: 0.9;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: white;
+    }
+
+    /* Panel */
+    .panel {
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(139, 154, 139, 0.4);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        background: linear-gradient(135deg, #8B9A8B, #829167);
+        color: white;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+        .panel h2 {
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: 500;
+        }
+
+    /* Horizons Grid */
+    .horizons-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .horizon-card {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 1.5rem;
+        border-radius: 15px;
+        text-align: center;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        transition: transform 0.3s ease;
+    }
+
+        .horizon-card:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+    .horizon-label {
+        font-size: 0.875rem;
+        opacity: 0.9;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .horizon-value {
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 0.25rem;
+    }
+
+    .horizon-unit {
+        font-size: 0.75rem;
+        opacity: 0.8;
+    }
+
+    /* Table */
+    .forecast-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+    }
+
+        .forecast-table th,
+        .forecast-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .forecast-table th {
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.1);
+            text-transform: uppercase;
+            font-size: 0.875rem;
+            letter-spacing: 1px;
+        }
+
+        .forecast-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+    /* Badges */
+    .badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .badge-high {
+        background: rgba(255, 255, 255, 0.3);
+        color: white;
+    }
+
+    .badge-medium {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+    }
+
+    .badge-low {
+        background: rgba(255, 255, 255, 0.15);
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .badge-success {
+        background: rgba(40, 167, 69, 0.3);
+        border: 1px solid rgba(40, 167, 69, 0.5);
+        color: white;
+    }
+
+    /* Loading & Empty States */
+    .loading {
+        text-align: center;
+        padding: 3rem;
+        color: white;
+    }
+
+    .spinner {
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-top: 4px solid white;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 1rem;
+    }
+
+    @@keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: white;
+        opacity: 0.8;
+    }
+
+        .empty-state h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state p {
+            font-size: 0.875rem;
+        }
+
+    .alert-glass {
+        background: rgba(220, 53, 69, 0.3);
+        border: 1px solid rgba(220, 53, 69, 0.5);
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        color: white;
+    }
+
+    .products-slider-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .products-slider {
+        flex: 1;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .products-slider-track {
+        display: flex;
+        gap: 1rem;
+        transition: transform 0.4s ease;
+    }
+
+    .products-slider .product-item {
+        flex: 0 0 calc(25% - 0.75rem);
+        min-width: 0;
+    }
+
+    .slider-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+    }
+
+        .slider-btn:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .slider-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .slider-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+
+    @@media (max-width: 768px) {
+        .search-form {
+            flex-direction: column;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .horizons-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .forecasts-container {
+            padding: 1rem;
+        }
+
+        .products-slider .product-item {
+            flex: 0 0 100%;
+        }
+
+        .products-slider .product-item {
+            flex: 0 0 calc(50% - 0.5rem);
+        }
+
+        .products-slider .product-item {
+            flex: 0 0 calc(33.333% - 0.667rem);
+        }
+    }
+</style>
+
+<div class="forecasts-container">
+    <a asp-controller="Home" asp-action="Index" class="back-link">← Back to Dashboard</a>
+    <h1 class="page-title">Demand Forecasts</h1>
+
+    <div class="content-wrapper">
+        <!-- Search Panel -->
+        <div class="search-panel">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="margin: 0; color: #4a5a4a;">Search Forecasts</h3>
+                <button type="button" class="btn btn-secondary" onclick="loadAvailableProducts()">
+                    Load Available Products
+                </button>
+            </div>
+            <form class="search-form" id="searchForm">
+                <div class="form-group">
+                    <label for="productCode">Product Code</label>
+                    <input type="text"
+                           id="productCode"
+                           name="productCode"
+                           placeholder="Enter product code or select from list"
+                           list="productList"
+                           required />
+                    <datalist id="productList">
+                        <!-- Dynamic options will be added here -->
+                    </datalist>
+                </div>
+                <div class="form-group">
+                    <label for="horizon">Forecast Horizon</label>
+                    <select id="horizon" name="horizon">
+                        <option value="all">All Horizons</option>
+                        <option value="1">1 Day</option>
+                        <option value="5">5 Days</option>
+                        <option value="10">10 Days</option>
+                        <option value="20">20 Days</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Get Forecast</button>
+                <button type="button" class="btn btn-secondary" onclick="clearResults()">Clear</button>
+            </form>
+        </div>
+
+        <!-- Available Products Panel -->
+        <div id="productsPanel" style="display: none;">
+            <div class="panel">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h2>Available Products</h2>
+                    <button type="button" class="btn btn-secondary" onclick="hideProducts()" style="padding: 0.5rem 1rem;">
+                        ✕ Close
+                    </button>
+                </div>
+                <div id="productsContent">
+                    <!-- Products will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultsSection" style="display: none;">
+            <!-- Summary Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="avgDemand">--</div>
+                    <div class="stat-label">Avg Predicted Demand</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="maxDemand">--</div>
+                    <div class="stat-label">Max Demand (H20)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="minDemand">--</div>
+                    <div class="stat-label">Min Demand (H1)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="avgConfidence">--</div>
+                    <div class="stat-label">Avg Confidence</div>
+                </div>
+            </div>
+
+            <!-- Horizons Panel -->
+            <div class="panel">
+                <h2>Forecast by Horizon</h2>
+                <div class="horizons-grid" id="horizonsGrid">
+                    <!-- Dynamic content -->
+                </div>
+            </div>
+
+            <!-- Details Panel -->
+            <div class="panel">
+                <h2>Detailed Forecast Data</h2>
+                <table class="forecast-table">
+                    <thead>
+                        <tr>
+                            <th>Horizon</th>
+                            <th>Product Code</th>
+                            <th>Predicted Demand</th>
+                            <th>Confidence</th>
+                            <th>Timestamp</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="detailsTableBody">
+                        <!-- Dynamic content -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loadingSection" style="display: none;">
+            <div class="panel">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Fetching forecast data...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptySection">
+            <div class="panel">
+                <div class="empty-state">
+                    <h3>No Forecast Data</h3>
+                    <p>Enter a product code above to view demand forecasts</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let availableProducts = [];
+
+        // Form submission
+        document.getElementById('searchForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const productCode = document.getElementById('productCode').value.trim();
+            const horizon = document.getElementById('horizon').value;
+
+            if (!productCode) {
+                alert('Please enter a product code');
+                return;
+            }
+
+            await fetchForecast(productCode, horizon);
+        });
+
+        // Load available products from API
+        async function loadAvailableProducts() {
+            try {
+                // Show loading in products panel
+                document.getElementById('productsPanel').style.display = 'block';
+                document.getElementById('productsContent').innerHTML = `
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Loading available products...</p>
+                    </div>
+                `;
+
+                const response = await fetch(`@Url.Action("GetProducts", "Prediction")`);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const products = await response.json();
+                availableProducts = products;
+
+                displayProducts(products);
+
+            } catch (error) {
+                console.error('Error loading products:', error);
+                document.getElementById('productsContent').innerHTML = `
+                    <div class="no-products">
+                        <p>Error loading products: ${error.message}</p>
+                        <p style="font-size: 0.875rem; margin-top: 0.5rem;">
+                            Make sure the data service is running on port 8520
+                        </p>
+                    </div>
+                `;
+            }
+        }
+
+        // Display products in a grid
+                // Display products in a slider
+        function displayProducts(products) {
+            const content = document.getElementById('productsContent');
+
+            if (!products || products.length === 0) {
+                content.innerHTML = `
+                    <div class="no-products">
+                        <p>No products found in the data service</p>
+                        <p style="font-size: 0.875rem; margin-top: 0.5rem;">
+                            The data service might not have any products loaded yet.
+                        </p>
+                        <p style="font-size: 0.875rem;">
+                            Try using common product codes like: INK001, PROD001, ITEM001
+                        </p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Update datalist for autocomplete
+            const datalist = document.getElementById('productList');
+            datalist.innerHTML = products.map(p =>
+                `<option value="${p.productCode}">${p.productName || p.productCode}</option>`
+            ).join('');
+
+            // Create slider structure
+            content.innerHTML = `
+                <p style="margin-bottom: 1rem; opacity: 0.9;">
+                    Click on a product to select it, or type to search
+                </p>
+                <div class="products-slider-container">
+                    <button class="slider-btn" id="productsPrevBtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
+                    </button>
+                    <div class="products-slider">
+                        <div class="products-slider-track" id="productsTrack">
+                            ${products.map(product => `
+                                <div class="product-item" onclick="selectProduct('${product.productCode}')">
+                                    <div class="product-code">${product.productCode}</div>
+                                    ${product.productName ? `<div class="product-name">${product.productName}</div>` : ''}
+                                    ${product.currentStock !== undefined ? `<div class="product-stock">Current Stock: ${product.currentStock}</div>` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <button class="slider-btn" id="productsNextBtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </button>
+                </div>
+            `;
+
+            // Initialize product slider
+            initializeProductSlider();
+        }
+
+        // Initialize the product slider functionality
+        function initializeProductSlider() {
+            const track = document.getElementById('productsTrack');
+            const prevBtn = document.getElementById('productsPrevBtn');
+            const nextBtn = document.getElementById('productsNextBtn');
+
+            if (!track || !prevBtn || !nextBtn) return;
+
+            const items = track.children;
+            const totalItems = items.length;
+            let currentIndex = 0;
+
+            // Determine items per view based on screen size
+            function getItemsPerView() {
+                const width = window.innerWidth;
+                if (width <= 480) return 1;
+                if (width <= 768) return 2;
+                if (width <= 1200) return 3;
+                return 4;
+            }
+
+            let itemsPerView = getItemsPerView();
+            let maxIndex = Math.max(0, totalItems - itemsPerView);
+
+            function updateSlider() {
+                if (items.length === 0) return;
+
+                const itemWidth = items[0].offsetWidth || 0;
+                const gap = 16; // 1rem gap
+                const offset = currentIndex * (itemWidth + gap);
+                track.style.transform = `translateX(-${offset}px)`;
+
+                // Update button states
+                prevBtn.disabled = currentIndex === 0;
+                nextBtn.disabled = currentIndex >= maxIndex;
+            }
+
+            prevBtn.addEventListener('click', function() {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    updateSlider();
+                }
+            });
+
+            nextBtn.addEventListener('click', function() {
+                if (currentIndex < maxIndex) {
+                    currentIndex++;
+                    updateSlider();
+                }
+            });
+
+            // Handle window resize
+            let resizeTimeout;
+            window.addEventListener('resize', function() {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(function() {
+                    itemsPerView = getItemsPerView();
+                    maxIndex = Math.max(0, totalItems - itemsPerView);
+
+                    // Reset if current index is now out of bounds
+                    if (currentIndex > maxIndex) {
+                        currentIndex = maxIndex;
+                    }
+
+                    updateSlider();
+                }, 250);
+            });
+            updateSlider();
+        }
+
+        // Select a product and populate the search field
+        function selectProduct(productCode) {
+            document.getElementById('productCode').value = productCode;
+            hideProducts();
+
+            // Optionally auto-submit
+            // document.getElementById('searchForm').dispatchEvent(new Event('submit'));
+        }
+
+        // Hide products panel
+        function hideProducts() {
+            document.getElementById('productsPanel').style.display = 'none';
+        }
+
+        // Fetch forecast data via controller
+        async function fetchForecast(productCode, horizon) {
+            // Hide products panel
+            hideProducts();
+
+            // Show loading
+            document.getElementById('emptySection').style.display = 'none';
+            document.getElementById('resultsSection').style.display = 'none';
+            document.getElementById('loadingSection').style.display = 'block';
+
+            try {
+                let data;
+
+                if (horizon === 'all') {
+                    // Call controller action for multi-horizon predictions
+                    const response = await fetch(`@Url.Action("GetMultiHorizonPredictions", "Prediction")?productCode=${encodeURIComponent(productCode)}`);
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    data = await response.json();
+                } else {
+                    // Call controller action for single horizon
+                    const response = await fetch(`@Url.Action("GetPrediction", "Prediction")?productCode=${encodeURIComponent(productCode)}&horizon=${horizon}`);
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const singleResult = await response.json();
+                    data = [singleResult];
+                }
+
+                displayResults(data, productCode);
+
+            } catch (error) {
+                console.error('Error fetching forecast:', error);
+                alert('Error fetching forecast data. Please check your connection and try again.');
+                document.getElementById('loadingSection').style.display = 'none';
+                document.getElementById('emptySection').style.display = 'block';
+            }
+        }
+
+        // Display forecast results
+        function displayResults(data, productCode) {
+            document.getElementById('loadingSection').style.display = 'none';
+            document.getElementById('resultsSection').style.display = 'block';
+
+            // Filter successful predictions
+            const successfulData = data.filter(d => d.success);
+
+            if (successfulData.length === 0) {
+                alert('No forecast data available for this product');
+                clearResults();
+                return;
+            }
+
+            // Calculate summary statistics
+            const demands = successfulData.map(d => d.predictedDemand || 0);
+            const confidences = successfulData.map(d => d.confidence || 0);
+
+            const avgDemand = (demands.reduce((a, b) => a + b, 0) / demands.length).toFixed(2);
+            const maxDemand = Math.max(...demands).toFixed(2);
+            const minDemand = Math.min(...demands).toFixed(2);
+            const avgConfidence = (confidences.reduce((a, b) => a + b, 0) / confidences.length).toFixed(0);
+
+            // Update summary cards
+            document.getElementById('avgDemand').textContent = avgDemand;
+            document.getElementById('maxDemand').textContent = maxDemand;
+            document.getElementById('minDemand').textContent = minDemand;
+            document.getElementById('avgConfidence').textContent = avgConfidence + '%';
+
+            // Update horizons grid
+            const horizonsGrid = document.getElementById('horizonsGrid');
+            horizonsGrid.innerHTML = '';
+
+            successfulData.sort((a, b) => a.horizon - b.horizon).forEach(forecast => {
+                const card = document.createElement('div');
+                card.className = 'horizon-card';
+                card.innerHTML = `
+                    <div class="horizon-label">Horizon ${forecast.horizon} Day${forecast.horizon > 1 ? 's' : ''}</div>
+                    <div class="horizon-value">${(forecast.predictedDemand || 0).toFixed(2)}</div>
+                    <div class="horizon-unit">units</div>
+                `;
+                horizonsGrid.appendChild(card);
+            });
+
+            // Update details table
+            const tableBody = document.getElementById('detailsTableBody');
+            tableBody.innerHTML = '';
+
+            successfulData.forEach(forecast => {
+                const row = document.createElement('tr');
+                const confidence = forecast.confidence || 0;
+                const badgeClass = confidence >= 80 ? 'badge-high' : confidence >= 60 ? 'badge-medium' : 'badge-low';
+
+                row.innerHTML = `
+                    <td>${forecast.horizon} Day${forecast.horizon > 1 ? 's' : ''}</td>
+                    <td><strong>${forecast.productCode}</strong></td>
+                    <td>${(forecast.predictedDemand || 0).toFixed(2)} units</td>
+                    <td><span class="badge ${badgeClass}">${confidence.toFixed(0)}%</span></td>
+                    <td>${new Date(forecast.timestamp).toLocaleString()}</td>
+                    <td><span class="badge badge-success">Success</span></td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Clear results and reset form
+        function clearResults() {
+            document.getElementById('productCode').value = '';
+            document.getElementById('horizon').value = 'all';
+            document.getElementById('resultsSection').style.display = 'none';
+            document.getElementById('loadingSection').style.display = 'none';
+            document.getElementById('emptySection').style.display = 'block';
+            hideProducts();
+        }
+
+        // Auto-load products on page load (optional)
+        // window.addEventListener('DOMContentLoaded', () => {
+        //     loadAvailableProducts();
+        // });
+    </script>
+}

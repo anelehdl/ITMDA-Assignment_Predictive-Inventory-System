@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Define colors for Dark Theme -->
+    <color name="colorSurface">#121212</color>     <!-- Dark grey background for dark mode -->
+    <color name="colorOnSurface">#FFFFFFFF</color>   <!-- White text for dark mode -->
+</resources>

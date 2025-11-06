@@ -1,0 +1,270 @@
+﻿@model Core.Models.DTO.ClientInventoryStatsDto
+@{
+    ViewData["Title"] = "Client Inventory Details";
+}
+
+<style>
+    .details-container {
+        padding: 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding-top: 30rem;
+    }
+
+    .content-wrapper {
+        background: #c3cab4;
+        border-radius: 50px;
+        padding: 3rem;
+        margin: 2rem auto;
+        max-width: 100%;
+    }
+
+    .panel {
+        background: linear-gradient(120deg, var(--primary) 0%, var(--secondary) 40%);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--bg1);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        color: white;
+    }
+
+    .back-link {
+        color: var(--back-link);
+        text-decoration: none;
+        margin-bottom: 1rem;
+        display: inline-block;
+    }
+
+        .back-link:hover {
+            color: #88925e;
+        }
+
+    .client-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .client-info h1 {
+        margin-bottom: 0.5rem;
+    }
+
+    .client-code {
+        opacity: 0.8;
+        font-size: 1.1rem;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: var(--bg2);
+        padding: 1.5rem;
+        border-radius: 15px;
+        text-align: center;
+    }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        opacity: 0.9;
+        font-size: 0.875rem;
+    }
+
+    .orders-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+    }
+
+        .orders-table th,
+        .orders-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--bg1);
+        }
+
+        .orders-table th {
+            font-weight: 600;
+            background: var(--bg2);
+        }
+
+        .orders-table tr:hover {
+            background: var(--bg5);
+        }
+
+    .sku-breakdown {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .sku-card {
+        background: var(--bg2);
+        padding: 1rem;
+        border-radius: 10px;
+        text-align: center;
+    }
+
+    .sku-name {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    .sku-amount {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #6B2C7F4d;
+    }
+
+    .alert-glass {
+        background: var(--alert-d1);
+        border: 1px solid var(--alert-d2);
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .warning-badge {
+        background: var(--alert-w1);
+        border: 1px solid var(--alert-w2);
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    .success-badge {
+        background: var(--alert-s3);
+        border: 1px solid var(--alert-s4);
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        display: inline-block;
+    }
+</style>
+
+<div class="details-container">
+    <a asp-action="Index" class="back-link">←  Back to Stock Metrics</a>
+
+
+    <div class="content-wrapper">
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert-glass">
+                @ViewBag.Error
+            </div>
+        }
+
+        @if (Model != null)
+        {
+            <div class="panel">
+                <div class="client-header">
+                    <div class="client-info">
+                        <h1>@Model.Username</h1>
+                        <div class="client-code">User Code: @Model.UserCode</div>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">@Model.TotalOrders</div>
+                        <div class="stat-label">Total Orders</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">@Model.TotalLitres.ToString("N0")</div>
+                        <div class="stat-label">Total Litres</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">@Model.AverageDailyUsage.ToString("F2")</div>
+                        <div class="stat-label">Avg Daily Usage (L)</div>
+                    </div>
+                </div>
+
+                @if (Model.LastOrderDate.HasValue)
+                {
+                    <p style="opacity: 0.9;">
+                        Last order placed on <strong>@Model.LastOrderDate.Value.ToString("MMMM dd, yyyy")</strong>
+                    </p>
+                }
+            </div>
+
+            <div class="panel">
+                <h2 class="mb-3">Product Breakdown</h2>
+                @if (Model.SkuBreakdown != null && Model.SkuBreakdown.Any())
+                {
+                    <div class="sku-breakdown">
+                        @foreach (var sku in Model.SkuBreakdown.OrderByDescending(s => s.Value))
+                        {
+                            <div class="sku-card">
+                                <div class="sku-name">@sku.Key</div>
+                                <div class="sku-amount">@sku.Value.ToString("N0")</div>
+                                <div class="stat-label">litres</div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p style="opacity: 0.8;">No product data available.</p>
+                }
+            </div>
+
+            <div class="panel">
+                <h2 class="mb-3">Recent Orders</h2>
+                @if (Model.RecentOrders != null && Model.RecentOrders.Any())
+                {
+                    <table class="orders-table">
+                        <thead>
+                            <tr>
+                                <th>Order Date</th>
+                                <th>Product</th>
+                                <th>SKU</th>
+                                <th>Litres</th>
+                                <th>Days Between Orders</th>
+                                <th>Daily Usage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var order in Model.RecentOrders)
+                            {
+                                <tr>
+                                    <td>@order.OrderDate.ToString("MMM dd, yyyy")</td>
+                                    <td>@order.SkuDescription</td>
+                                    <td>@order.Sku</td>
+                                    <td>@order.Litres L</td>
+                                    <td>@order.DaysBetweenOrders days</td>
+                                    <td>@order.AverageDailyUse.ToString("F2") L/day</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p class="text-center mt-4" style="opacity: 0.8;">No order history available.</p>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="panel">
+                <p class="text-center" style="opacity: 0.8;">Loading client details...</p>
+            </div>
+        }
+    </div>
+</div>

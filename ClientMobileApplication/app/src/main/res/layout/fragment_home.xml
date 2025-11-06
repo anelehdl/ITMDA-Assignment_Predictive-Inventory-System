@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorSurface"
+    tools:context=".fragment.HomeFragment">
+
+    <!-- Watermark Image in the background, correctly constrained to the center -->
+    <ImageView
+        android:id="@+id/watermark_logo"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:src="@drawable/nutec_logo"
+        android:alpha="0.2"
+        android:scaleType="centerInside"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Welcome text, constrained to the top-center -->
+    <TextView
+        android:id="@+id/welcome_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Welcome!"
+        android:textSize="24sp"
+        android:textColor="@color/colorOnSurface"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!--    android:src="@drawable/ic_launcher_background"-->
+    <!-- Horizontal scrollable bar, constrained below the welcome text -->
+
+    <HorizontalScrollView
+        android:id="@+id/info_scroll"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@color/colorSurface"
+        android:fillViewport="true"
+        android:scrollbars="none"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/welcome_text">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <Button
+                android:id="@+id/btn_history"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/InfoButtonStyle"
+                android:layout_marginEnd="12dp"
+                android:text="History" />
+
+            <Button
+                android:id="@+id/btn_expertise"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/InfoButtonStyle"
+                android:layout_marginEnd="12dp"
+                android:text="Technical Expertise" />
+
+            <Button
+                android:id="@+id/btn_manufacturing"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/InfoButtonStyle"
+                android:layout_marginEnd="12dp"
+                android:text="Manufacturing" />
+
+            <Button
+                android:id="@+id/btn_rnd"
+                style="@style/InfoButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
+                android:text="R&amp;D Capabilities" />
+
+            <Button
+                android:id="@+id/btn_labs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/InfoButtonStyle"
+                android:layout_marginEnd="12dp"
+                android:text="Labs &amp; QC Facilities" />
+
+            <Button
+                android:id="@+id/btn_compliance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/InfoButtonStyle"
+                android:layout_marginEnd="12dp"
+                android:text="Chemical Regulatory Compliance" />
+
+            <Button
+                android:id="@+id/btn_products"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/InfoButtonStyle"
+                android:layout_marginEnd="12dp"
+                android:text="Product Range" />
+
+            <Button
+                android:id="@+id/btn_support"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/InfoButtonStyle"
+                android:layout_marginEnd="12dp"
+                android:text="Tech Support" />
+
+            <Button
+                android:id="@+id/btn_contact"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/InfoButtonStyle"
+                android:text="Connect with Us" />
+
+        </LinearLayout>
+
+    </HorizontalScrollView>
+
+    <!-- Info display text, now inside a ScrollView to allow vertical scrolling -->
+    <ScrollView
+        android:id="@+id/info_scroll_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:scrollbars="vertical"
+        app:layout_constraintTop_toBottomOf="@id/info_scroll"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/info_display_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="16dp"
+            android:textColor="@color/colorOnSurface"
+            android:text="Information will be displayed here."
+            android:textSize="16sp" />
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F6F4"
+    tools:context=".LoginActivity">
+
+    <!-- Your existing layout is preserved inside this LinearLayout -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!--  Logo -->
+        <ImageView
+            android:src="@drawable/nutec_logo"
+            android:contentDescription="Nutec Logo"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginBottom="24dp" />
+
+        <!--  Title -->
+        <TextView
+            android:text="Welcome to Nutec Digital Ink EZ Stock"
+            android:textColor="#829168"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <!--  Username -->
+        <EditText
+            android:id="@+id/username"
+            android:hint="Username"
+            android:background="@drawable/rounded_edittext"
+            android:padding="12dp"
+            android:textColor="#333"
+            android:layout_marginBottom="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!--  Password -->
+        <EditText
+            android:id="@+id/password"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:background="@drawable/rounded_edittext"
+            android:padding="12dp"
+            android:textColor="#333"
+            android:layout_marginBottom="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!--  Login Button -->
+        <Button
+            android:id="@+id/login_button"
+            android:text="Login"
+            android:backgroundTint="#829168"
+            android:textColor="#FFFFFF"
+            android:padding="12dp"
+            android:textStyle="bold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!--  Footer -->
+        <TextView
+            android:text="Nutec Digital Ink © 2025"
+            android:textSize="12sp"
+            android:textColor="#777"
+            android:layout_marginTop="40dp"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <!-- THIS IS THE NEW PROGRESS BAR -->
+    <ProgressBar
+        android:id="@+id/login_progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+</RelativeLayout>

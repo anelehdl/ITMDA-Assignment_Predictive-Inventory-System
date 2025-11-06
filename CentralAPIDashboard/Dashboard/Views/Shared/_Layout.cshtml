@@ -1,0 +1,162 @@
+﻿﻿<style>
+     * {
+         margin: 0;
+         padding: 0;
+         box-sizing: border-box;
+     }
+
+     :root {
+         --primary: #8B9A8B;
+         --secondary: #829167;
+         --accent: #A8BCA8;
+         --glass: rgba(255, 255, 255, 0.1); /*re adding as think it was removed by accident?*/
+         --glass-border: rgba(255, 255, 255, 0.5);
+         --bg1: #ffffff33;
+         --bg2: #ffffff1a;
+         --bg3: #ffffff26;
+         --bg4: #ffffff4d;
+         --bg5: #ffffff0d;
+         --bg6: #00000080;
+         --shadow1: #ffffff40;
+         --shadow2: #00000033;
+         --form-c1: #ffffff99;
+         --back-link: #333;
+         --panel-bg: #ffffffe6;
+         --btn-p1: #7B4B944d;
+         --btn-p2: #7B4B9480;
+         --btn-d1: #dc35454d;
+         --btn-d2: #dc354580;
+         --alert-s1: #28a74533;
+         --alert-s2: #28a74566;
+         --alert-s3: #28a9454d;
+         --alert-s4: #28a74580;
+         --alert-d1: #dc354533;
+         --alert-d2: #dc354566;
+         --alert-w1: #ffc1074d;
+         --alert-w2: #ffc10780;
+         --s-badge1: #6f9bff4d;
+         --s-badge2: #6f9bff80;
+         --c-badge1: #28a7454d;
+         --c-badge2: #28a74580;
+     }
+
+     body {
+         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /*might go with system ui here*/
+         background: linear-gradient(120deg, var(--accent), white);
+         color: #333;
+         min-height: 100vh;
+         background-size: 400% 400%; /* allows for movement to be more smooth */
+         animation: bgShift 15s ease-in-out infinite; /* can increase for smoother transitions */
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         text-align: center;
+         padding-top: 80px;
+     }
+
+     .panel{
+         background: linear-gradient(120deg, var(--primary) 0%, var(--secondary) 40%, var(--accent) 80%);
+     }
+
+     .glass-footer, .glass-nav {
+         background: linear-gradient(120deg, var(--primary) 0%, var(--secondary) 40%, var(--accent) 80%);
+         backdrop-filter: blur(20px);
+         -webkit-backdrop-filter: blur(20px);
+         padding: 20px;
+     }
+
+     .navbar-brand, .nav-link, .user-name {
+         color: white;
+     }
+
+     .user-name {
+         margin-bottom: 0; /*fix weird margin that was added with <p>*/
+     }
+
+
+     @@keyframes bgShift {
+         0% {
+             background-position: 0% 50%;
+         }
+
+         50% {
+             background-position: 100% 50%;
+         }
+
+         100% {
+             background-position: 0% 50%;
+         }
+     }
+
+</style>
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Dashboard_WebDashboard</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Dashboard-WebDashboard.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm fixed-top glass-nav border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand text-light" asp-area="" asp-controller="Home" asp-action="Index">NUtec Dashboard</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <!--adding if statement to check if user is logged in change from login to logout-->
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <form asp-area="" asp-controller="Dashboard" asp-action="Logout" method="post" class="form-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-link nav-link text-light" style="cursor:pointer;">Logout</button>
+                                </form>
+                            </li>
+
+                            <li class="nav-item ms-auto">
+                                <p class="nav-link text-light user-name">Welcome Back @User.Identity.Name</p>
+                            </li>
+
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="" asp-controller="Dashboard" asp-action="Index">Login</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted fixed-bottom glass-footer">
+        <div class="container text-light">
+            &copy; 2025 - Nutec Dashboard - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

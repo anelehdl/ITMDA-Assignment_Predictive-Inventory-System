@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorSurface">
+
+
+
+    <!-- The RecyclerView to display the list -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:clipToPadding="false"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:visibility="gone"
+        tools:listitem="@layout/item_product" />
+
+    <!-- Progress bar shown while loading -->
+    <ProgressBar
+        android:id="@+id/list_progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+
+    <!-- Message shown when the list is empty -->
+    <TextView
+        android:id="@+id/empty_list_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="No items found."
+        android:textSize="16sp"
+        android:visibility="gone"
+        android:textColor="@color/colorOnSurface"/>
+
+</RelativeLayout>
