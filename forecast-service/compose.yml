@@ -8,7 +8,7 @@ services:
   # Data Service
   # -----------------------------
   data-service:
-    image: predict-service:latest
+    image: forecast-python:latest
     container_name: data-service
     environment:
       HOST: 0.0.0.0
@@ -20,12 +20,14 @@ services:
       CONSUL_PORT: 8500 # external Consul port
     ports:
       - "8520:8520"
+    volumes:
+      - ./data:/app/data
 
   # # -----------------------------
   # # Model Service
   # # -----------------------------
   model-service:
-    image: predict-service:latest
+    image: forecast-python:latest
     container_name: model-service
     environment:
       HOST: 0.0.0.0
@@ -41,7 +43,7 @@ services:
   # Predict Services
   # -----------------------------
   predict-h1:
-    image: predict-service:latest
+    image: forecast-python:latest
     container_name: predict-h1
     environment:
       HOST: 0.0.0.0
@@ -54,11 +56,14 @@ services:
       CONSUL_PORT: 8500
     ports:
       - "8421:8421"
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
     depends_on:
       - data-service
 
   predict-h5:
-    image: predict-service:latest
+    image: forecast-python:latest
     container_name: predict-h5
     environment:
       HOST: 0.0.0.0
@@ -71,11 +76,14 @@ services:
       CONSUL_PORT: 8500
     ports:
       - "8425:8425"
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
     depends_on:
       - data-service
 
   predict-h10:
-    image: predict-service:latest
+    image: forecast-python:latest
     container_name: predict-h10
     environment:
       HOST: 0.0.0.0
@@ -88,11 +96,14 @@ services:
       CONSUL_PORT: 8500
     ports:
       - "8430:8430"
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
     depends_on:
       - data-service
 
   predict-h20:
-    image: predict-service:latest
+    image: forecast-python:latest
     container_name: predict-h20
     environment:
       HOST: 0.0.0.0
@@ -105,5 +116,8 @@ services:
       CONSUL_PORT: 8500
     ports:
       - "8440:8440"
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
     depends_on:
       - data-service
