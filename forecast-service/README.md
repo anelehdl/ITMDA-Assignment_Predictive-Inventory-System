@@ -31,7 +31,7 @@ cd forecast-service
 ## 3. Build Docker Image
 Navigate to project directory and run
 ```bash
-docker build -t predict-service:latest .
+docker build -t forecast-python:latest .
 ```
 ---
 
