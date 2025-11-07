@@ -13,5 +13,9 @@ dependencies = [
     "fastapi>=0.99",
     "pydantic",
     "pydantic-settings",
+    "lightgbm==3.3.5",
+    "pandas",
+    "pyarrow",
+    "uvicorn",
     "nutec-forecast @ file:///${PROJECT_ROOT}/libs/nutec-forecast"
 ]
