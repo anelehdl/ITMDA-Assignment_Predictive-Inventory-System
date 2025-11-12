@@ -34,7 +34,7 @@ Enable clients to browse and order products, and allows staff to efficiently man
 
 ## Requirements
 *(To be completed)*
--Docker
+- Docker
 ---
 
 ## How to Launch
