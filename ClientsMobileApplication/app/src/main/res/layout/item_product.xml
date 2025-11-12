@@ -57,7 +57,7 @@
         android:id="@+id/add_to_cart_button"
         android:layout_width="32dp"
         android:layout_height="32dp"
-        android:src="@drawable/ic_cart"
+        android:src="@drawable/ic_add_shopping_cart"
         android:contentDescription="Add to cart"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"

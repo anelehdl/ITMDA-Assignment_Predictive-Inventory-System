@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.eduvos.nutec.pojo.ProductItem;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
@@ -34,10 +35,11 @@ import com.eduvos.nutec.R;
 import com.eduvos.nutec.pojo.ProductOrder;
 import com.eduvos.nutec.api.ApiService;
 import com.eduvos.nutec.api.RetrofitClient;
+import com.eduvos.nutec.manager.CartManager;
+import com.eduvos.nutec.manager.WishlistManager;
+import com.google.android.material.snackbar.Snackbar;
 
-
-
-public class ProductsFragment extends Fragment {
+public class ProductsFragment extends Fragment implements ProductAdapter.OnProductActionClickListener{
 
     private RecyclerView recyclerView;
     private ProductAdapter adapter;
@@ -85,7 +87,7 @@ public class ProductsFragment extends Fragment {
     private void setupRecyclerView() {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         // The adapter always points to the list that is being displayed
-        adapter = new ProductAdapter(displayedProductList);
+        adapter = new ProductAdapter(displayedProductList, this);
         recyclerView.setAdapter(adapter);
     }
 
@@ -217,5 +219,54 @@ public class ProductsFragment extends Fragment {
             recyclerView.setVisibility(View.VISIBLE);
             emptyMessageView.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void onAddToWishlistClick(ProductOrder product) {
+        ProductItem productItem = new ProductItem(
+                product.getSkuDescription(),
+                45
+        );
+        // Use the WishlistManager singleton to add or remove the item
+        boolean added = WishlistManager.getInstance().toggleWishlist(productItem);
+        // Create the confirmation message based on the action
+        String message = added ? product.getSkuDescription() + " added to wishlist" : product.getSkuDescription() + " removed from wishlist";
+
+        Snackbar snackbar = Snackbar.make(requireView(), message, Snackbar.LENGTH_SHORT);
+
+        // Only show the "View Wishlist" action if the item was added
+        if (added) {
+            snackbar.setAction("View Wishlist", v -> {
+                // Navigate to the ListsFragment (or your wishlist screen)
+                requireActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.frame_layout, new ListsFragment())
+                        .addToBackStack(null) // Allows user to return
+                        .commit();
+            });
+        }
+
+        snackbar.show();
+    }
+
+    @Override
+    public void onAddToCartClick(ProductOrder product) {
+        ProductItem productItem = new ProductItem(
+                product.getSkuDescription(),
+                45
+        );
+
+        // Use the CartManager singleton to add the item
+        CartManager.getInstance().addToCart(productItem);
+
+        // Show a Snackbar message with an action to view the cart
+        Snackbar.make(requireView(), product.getSkuDescription() + " added to cart", Snackbar.LENGTH_SHORT)
+                .setAction("View Cart", v -> {
+                    // Navigate to the CartFragment
+                    requireActivity().getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.frame_layout, new CartFragment())
+                            .addToBackStack(null) // Allows user to return
+                            .commit();
+                })
+                .show();
     }
 }
