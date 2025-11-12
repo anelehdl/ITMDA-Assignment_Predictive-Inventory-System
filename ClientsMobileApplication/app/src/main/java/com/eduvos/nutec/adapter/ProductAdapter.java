@@ -4,6 +4,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,10 +16,18 @@ import com.eduvos.nutec.R;
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
 
     private List<ProductOrder> productList;
+    private OnProductActionClickListener listener; // Listener for button clicks
 
-    public ProductAdapter(List<ProductOrder> productList) {
-        this.productList = productList;
+    // Define an interface for click events
+    public interface OnProductActionClickListener {
+        void onAddToCartClick(ProductOrder product);
+        void onAddToWishlistClick(ProductOrder product);
     }
+
+    public ProductAdapter(List<ProductOrder> productList, OnProductActionClickListener listener) {
+        this.productList = productList;
+        this.listener = listener;
+    }//:D
 
     @NonNull
     @Override
@@ -38,6 +48,19 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
         holder.productName.setText(description);
         holder.productSku.setText("SKU: " + sku);
+
+        // Set click listeners for the buttons
+        holder.addToCartButton.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onAddToCartClick(product);
+            }
+        });
+
+        holder.addToWishlistButton.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onAddToWishlistClick(product);
+            }
+        });
     }
 
     @Override
@@ -49,11 +72,15 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     public static class ProductViewHolder extends RecyclerView.ViewHolder {
         TextView productName;
         TextView productSku;
+        Button addToCartButton;
+        ImageButton addToWishlistButton;
 
         public ProductViewHolder(@NonNull View itemView) {
             super(itemView);
             productName = itemView.findViewById(R.id.product_name);
             productSku = itemView.findViewById(R.id.product_sku);
+            addToCartButton = itemView.findViewById(R.id.add_to_cart_button);
+            addToWishlistButton = itemView.findViewById(R.id.add_to_wishlist_button);
         }
     }
 }
