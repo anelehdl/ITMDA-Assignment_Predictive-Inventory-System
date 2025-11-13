@@ -88,29 +88,13 @@ Note* Requires root and execution privilege.
 
 ## Contributors
 
-<div style="display: flex; align-items: center; gap: 20px;">
+## Contributors ✨
 
-  <a href="https://github.com/anelehdl" style="text-align: center; text-decoration: none; color: inherit;">
-    <img src="https://github.com/anelehdl.png" width="40" height="40" style="border-radius:50%; display: block; margin: 0 auto;">
-    <div>Aneleh</div>
-  </a>
+Thanks to the people who helped make this project better:
 
-  <a href="https://github.com/travismusson" style="text-align: center; text-decoration: none; color: inherit;">
-    <img src="https://github.com/travismusson.png" width="50" height="50" style="border-radius:50%; display: block; margin: 0 auto;">
-    <div>Travis</div>
-  </a>
-
-  <a href="https://github.com/TaintedDahlia" style="text-align: center; text-decoration: none; color: inherit;">
-    <img src="https://github.com/TaintedDahlia.png" width="50" height="50" style="border-radius:50%; display: block; margin: 0 auto;">
-    <div>Charlene</div>
-  </a>
-
-  <a href="https://github.com/GrantODP" style="text-align: center; text-decoration: none; color: inherit;">
-    <img src="https://github.com/GrantODP.png" width="50" height="50" style="border-radius:50%; display: block; margin: 0 auto;">
-    <div>Grant</div>
-  </a>
-
-</div>
+| Aneleh | Travis | Charlene | Grant |
+|--------|--------|----------|-------|
+| [![Aneleh](https://github.com/anelehdl.png?size=40)](https://github.com/anelehdl) | [![Travis](https://github.com/travismusson.png?size=50)](https://github.com/travismusson) | [![Charlene](https://github.com/TaintedDahlia.png?size=50)](https://github.com/TaintedDahlia) | [![Grant](https://github.com/GrantODP.png?size=50)](https://github.com/GrantODP) |
 
 
 
