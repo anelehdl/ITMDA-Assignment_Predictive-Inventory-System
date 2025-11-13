@@ -3,7 +3,7 @@
 
 ## Overview
 The **Inventory Management System** is a complete solution for managing product inventory, orders, and customer.  
-It consists of two applications — a **mobile app** for clients and a **web dashboard** for staff — both communicating through a centralized **API**.
+It consists of two applications, a **mobile app** for clients and a **web dashboard** for staff, both communicating through a centralized **API**.
 
 ---
 
@@ -56,7 +56,9 @@ Follow the steps below to run the project successfully:
 - Dashboard: start after the API is running.
 - Make sure both services are running without errors before proceeding.
 
+
 3. Run the Mobile Application
+
 - Open the mobile app project in your preferred IDE (e.g., Android Studio or Visual Studio Code).
 - Start the app on an emulator or physical device.
 - The app should now connect to the running backend services.
