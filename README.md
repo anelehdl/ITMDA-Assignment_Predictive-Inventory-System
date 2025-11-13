@@ -1,5 +1,24 @@
 # ITMDA-Assignment_Predictive-Inventory-System
 
+# Table of Contents
+
+- [Overview](#overview)
+- [Goal](#goal)
+- [Features](#features)
+  - [Client Mobile App](#client-mobile-app)
+  - [Staff Web Dashboard](#staff-web-dashboard)
+  - [System Architecture](#system-architecture)
+- [Requirements](#requirements)
+  - [Backend](#backend)
+    - [Development](#development)
+  - [Mobile App](#mobile-app)
+- [How to Launch](#how-to-launch)
+  - [Backend](#backend-1)
+    - [Windows](#windows)
+    - [Linux](#linux)
+  - [Manual Launch in Separate Terminals](#manual-launch-in-seperate-terminals)
+- [Development](#development-1)
+- [Contributors](#contributors)
 
 ## Overview
 The **Inventory Management System** is a complete solution for managing product inventory, orders, and customer.  
