@@ -52,7 +52,7 @@ Follow the steps below to run the project successfully:
 ```bash
 .\launch.ps1
 ```
-Note* Requires windows system to allow script execution. (See)[https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.security/set-executionpolicy?view=powershell-7.5]
+Note* Requires windows system to allow script execution. [See](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.security/set-executionpolicy?view=powershell-7.5)
 
 #### Linux
 3. Launch the following command (or rightclick and click "Run in Powershell"
