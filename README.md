@@ -60,7 +60,7 @@ Follow the steps below to run the project successfully:
 
 3. Run the Mobile Application
 
-- Open the mobile app project in your preferred IDE (e.g., Android Studio or Visual Studio Code).
+- Open the mobile app project in Android Studio.
 - Start the app on an emulator or physical device.
 - The app should now connect to the running backend services.
 
