@@ -1,0 +1,15 @@
+
+.venv/
+venv/
+**/venv/
+**/.venv/
+
+# Ignore git repository
+.git/
+.gitignore
+
+# Ignore local data/models if not needed in image
+#data/
+#models/
+
+*.log

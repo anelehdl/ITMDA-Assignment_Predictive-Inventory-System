@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="16dp"
+    android:gravity="center_vertical"
+    > <!-- android:background="@drawable/item_border_bottom"  Optional: for a line separator -->
+
+    <!-- Product Name and Price -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_marginStart="16dp">
+
+        <TextView
+            android:id="@+id/cart_product_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Product Name"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorOnSurface" />
+
+        <TextView
+            android:id="@+id/cart_product_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="R120.00"
+            android:textColor="@color/colorOnSurface"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <!-- Quantity Controls -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/button_decrease_quantity"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_remove"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Decrease quantity"/>
+
+        <TextView
+            android:id="@+id/cart_product_quantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorOnSurface"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"/>
+
+        <ImageButton
+            android:id="@+id/button_increase_quantity"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_add"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Increase quantity"/>
+    </LinearLayout>
+
+    <!-- Remove Button -->
+    <ImageButton
+        android:id="@+id/button_remove_from_cart"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:src="@drawable/ic_delete"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:layout_marginStart="16dp"
+        android:contentDescription="Remove from cart"/>
+
+</LinearLayout>

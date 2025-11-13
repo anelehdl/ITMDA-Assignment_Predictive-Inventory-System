@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorSurface"
+    tools:context=".fragment.ProductsFragment">
+
+    <!-- Search and Sort controls container -->
+    <LinearLayout
+        android:id="@+id/controls_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp"
+        android:gravity="center_vertical"
+        android:background="@android:color/white"
+        android:elevation="4dp">
+
+        <!-- Search View for filtering -->
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/products_search_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:queryHint="Search products..."
+            app:iconifiedByDefault="false"
+            android:background="@drawable/search_view_background" />
+
+        <!-- Sort Button (already exists) -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/sort_button"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="Sort"
+            app:icon="@drawable/ic_sort" />
+    </LinearLayout>
+
+    <!-- The RecyclerView to display the list -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/products_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/controls_container"
+        android:clipToPadding="false"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:scrollbars="vertical"
+        android:visibility="gone"
+        tools:listitem="@layout/item_product" /> <!-- Make sure this matches your item layout name -->
+
+    <!-- Progress bar shown while loading -->
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+
+    <!-- Message shown when the list is empty -->
+    <TextView
+        android:id="@+id/empty_list_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="No items found."
+        android:textSize="16sp"
+        android:textColor="@color/colorOnSurface"
+        android:visibility="gone" />
+
+</RelativeLayout>

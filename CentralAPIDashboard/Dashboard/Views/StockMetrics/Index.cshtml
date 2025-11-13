@@ -1,0 +1,405 @@
+﻿@model Core.Models.DTO.StockMetricsOverviewDto
+@{
+    ViewData["Title"] = "Stock Metrics";
+}
+
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(120deg, var(--accent), white 50%);
+        color: #333;
+        min-height: 100vh;
+        background-size: 400% 400%;
+        animation: bgShift 15s ease-in-out infinite;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-top: 5rem;
+    }
+
+    .metrics-container {
+        padding: 2rem;
+        max-width: 1600px;
+        margin: 0 auto;
+        padding-top: 650px;
+    }
+
+    .content-wrapper {
+        background: #c3cab4;
+        border-radius: 50px;
+        padding: 3rem;
+        margin: 2rem auto;
+        max-width: 100%;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .panel {
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(139, 154, 139, 0.4);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        background: linear-gradient(135deg, #8B9A8B, #829167);
+        color: white;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .back-link {
+        color: var(--back-link);
+        text-decoration: none;
+        margin-bottom: 1rem;
+        display: inline-block;
+    }
+
+        .back-link:hover {
+            color: #829167;
+        }
+
+    .page-title {
+        color: #333;
+        margin-bottom: 2rem;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+        padding: 1.5rem;
+        border-radius: 15px;
+        text-align: center;
+        transition: transform 0.3s ease;
+        border: 1px solid var(glass-border);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        min-width: 0;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        color: white;
+    }
+
+    .stat-label {
+        opacity: 0.9;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: white;
+    }
+
+    .client-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+    }
+
+        .client-table th,
+        .client-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .client-table th {
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.1);
+            text-transform: uppercase;
+            font-size: 0.875rem;
+            letter-spacing: 1px;
+        }
+
+        .client-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+    .btn-glass {
+        background: rgba(123, 75, 148, 0.4);
+        border: 1px solid rgba(123, 75, 148, 0.6);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 10px;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        font-size: 0.875rem;
+    }
+
+        .btn-glass:hover {
+            background: rgba(123, 75, 148, 0.6);
+            transform: translateY(-2px);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+    .chart-container {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 2rem;
+        border-radius: 15px;
+        margin-top: 2rem;
+    }
+
+    .slider-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .sku-slider {
+        flex: 1;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .sku-slider-track {
+        display: flex;
+        gap: 1rem;
+        transition: transform 0.4s ease;
+    }
+
+    .sku-item {
+        background: rgba(255, 255, 255, 0.15);
+        padding: 1.5rem 1rem;
+        border-radius: 10px;
+        text-align: center;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        flex: 0 0 calc(25% - 0.75rem);
+        min-width: 0;
+    }
+
+    .slider-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+    }
+
+        .slider-btn:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .slider-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+    .alert-glass {
+        background: rgba(220, 53, 69, 0.3);
+        border: 1px solid rgba(220, 53, 69, 0.5);
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        color: white;
+    }
+
+    .progress-bar {
+        height: 8px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+        margin-top: 0.5rem;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #8B9A8B, #A8BCA8);
+        border-radius: 4px;
+        transition: width 0.3s ease;
+    }
+</style>
+
+<div class="metrics-container">
+    <a asp-controller="Home" asp-action="Index" class="back-link">← Back to Dashboard</a>
+    <h1 class="page-title">Stock Metrics Dashboard</h1>
+
+    <div class="content-wrapper">
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert-glass">
+                @ViewBag.Error
+            </div>
+        }
+
+        @if (Model != null)
+        {
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">@Model.TotalClients</div>
+                    <div class="stat-label">Active Clients</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">@Model.TotalOrders</div>
+                    <div class="stat-label">Total Orders</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">@Model.TotalLitres.ToString("N0")</div>
+                    <div class="stat-label">Total Litres</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">@Model.AverageDailyUsageAllClients.ToString("F2")</div>
+                    <div class="stat-label">Avg Daily Usage (L)</div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2 class="mb-3">SKU Distribution</h2>
+                <div class="slider-container">
+                    <button class="slider-btn slider-btn-prev" id="prevBtn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
+                    </button>
+                    <div class="sku-slider">
+                        <div class="sku-slider-track" id="skuTrack">
+                            @foreach (var sku in Model.SkuDistribution.OrderByDescending(s => s.Value))
+                            {
+                                <div class="sku-item">
+                                    <div class="sku-name">@sku.Key</div>
+                                    <div class="sku-amount">@sku.Value.ToString("N0")</div>
+                                    <div class="sku-unit">litres</div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <button class="slider-btn slider-btn-next" id="nextBtn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2 class="mb-3">Top Clients by Usage</h2>
+
+                @if (Model.TopClients != null && Model.TopClients.Any())
+                {
+                    <table class="client-table">
+                        <thead>
+                            <tr>
+                                <th>Client</th>
+                                <th>User Code</th>
+                                <th>Total Orders</th>
+                                <th>Total Litres</th>
+                                <th>Avg Daily Use</th>
+                                <th>Last Order</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var client in Model.TopClients)
+                            {
+                                <tr>
+                                    <td><strong>@client.Username</strong></td>
+                                    <td>@client.UserCode</td>
+                                    <td>@client.TotalOrders</td>
+                                    <td>@client.TotalLitres.ToString("N0") L</td>
+                                    <td>@client.AverageDailyUsage.ToString("F2") L/day</td>
+                                    <td>
+                                        @if (client.LastOrderDate.HasValue)
+                                        {
+                                            @client.LastOrderDate.Value.ToString("MMM dd, yyyy")
+                                        }
+                                        else
+                                        {
+                                            <span style="opacity: 0.6;">N/A</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <a asp-action="ClientDetails" asp-route-clientId="@client.ClientId" class="btn-glass">
+                                            View Details
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p class="text-center mt-4" style="opacity: 0.8;">No client data available.</p>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="panel">
+                <p class="text-center" style="opacity: 0.8;">Loading stock metrics...</p>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Stock Metrics Dashboard Loaded');
+            
+            const track = document.getElementById('skuTrack');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            if (track && prevBtn && nextBtn) {
+                const items = track.children;
+                const totalItems = items.length;
+                const itemsPerView = 4;
+                let currentIndex = 0;
+                const maxIndex = Math.max(0, totalItems - itemsPerView);
+                
+                function updateSlider() {
+                    const itemWidth = items[0]?.offsetWidth || 0;
+                    const gap = 16; // 1rem gap
+                    const offset = currentIndex * (itemWidth + gap);
+                    track.style.transform = `translateX(-${offset}px)`;
+                    
+                    // Update button states
+                    prevBtn.disabled = currentIndex === 0;
+                    nextBtn.disabled = currentIndex >= maxIndex;
+                }
+                
+                prevBtn.addEventListener('click', function() {
+                    if (currentIndex > 0) {
+                        currentIndex--;
+                        updateSlider();
+                    }
+                });
+                
+                nextBtn.addEventListener('click', function() {
+                    if (currentIndex < maxIndex) {
+                        currentIndex++;
+                        updateSlider();
+                    }
+                });
+                
+                // Initialize
+                updateSlider();
+                
+                // Update on window resize
+                window.addEventListener('resize', updateSlider);
+            }
+        });
+    </script>
+}
+}
