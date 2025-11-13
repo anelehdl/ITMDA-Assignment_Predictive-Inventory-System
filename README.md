@@ -88,10 +88,25 @@ Note* Requires root and execution privilege.
 
 ## Contributors
 
-[![Aneleh](https://github.com/anelehdl.png?size=50)](https://github.com/anelehdl) **Aneleh**  
-[![Travis](https://github.com/travismusson.png?size=50)](https://github.com/travismusson) **Travis**  
-[![Charlene](https://github.com/TaintedDahlia.png?size=50)](https://github.com/TaintedDahlia) **Charlene**  
-[![Grant](https://github.com/GrantODP.png?size=50)](https://github.com/GrantODP) **Grant**
+<a href="https://github.com/anelehdl">
+  <img src="https://github.com/anelehdl.png" width="40" height="40" style="border-radius:50%;" alt="Aneleh">
+  Aneleh
+</a>
+
+<a href="https://github.com/travismusson">
+  <img src="https://github.com/travismusson.png" width="50" height="50" style="border-radius:50%;" alt="Travis">
+  Travis
+</a>
+
+<a href="https://github.com/TaintedDahlia">
+  <img src="https://github.com/TaintedDahlia.png" width="50" height="50" style="border-radius:50%;" alt="Charlene">
+  Charlene
+</a>
+
+<a href="https://github.com/GrantODP">
+  <img src="https://github.com/GrantODP.png" width="50" height="50" style="border-radius:50%;" alt="Grant">
+  Grant
+</a>
 
 
 
