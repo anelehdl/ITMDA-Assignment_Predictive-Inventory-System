@@ -32,7 +32,7 @@ namespace Dashboard.Controllers
         {
             try
             {
-                var client = _httpClientFactory.CreateClient("DummyAPI");
+                var client = _httpClientFactory.CreateClient("CentralAPIDashboard");
 
                 var token = User.Claims.FirstOrDefault(c => c.Type == "Token")?.Value;
                 if (!string.IsNullOrEmpty(token))
@@ -88,7 +88,7 @@ namespace Dashboard.Controllers
         {
             try
             {
-                var client = _httpClientFactory.CreateClient("DummyAPI");
+                var client = _httpClientFactory.CreateClient("CentralAPIDashboard");
 
                 var token = User.Claims.FirstOrDefault(c => c.Type == "Token")?.Value;
                 if (!string.IsNullOrEmpty(token))
@@ -133,7 +133,7 @@ namespace Dashboard.Controllers
         {
             try
             {
-                var client = _httpClientFactory.CreateClient("DummyAPI");
+                var client = _httpClientFactory.CreateClient("CentralAPIDashboard");
 
                 var token = User.Claims.FirstOrDefault(c => c.Type == "Token")?.Value;
                 if (!string.IsNullOrEmpty(token))
@@ -180,7 +180,7 @@ namespace Dashboard.Controllers
         {
             try
             {
-                var client = _httpClientFactory.CreateClient("DummyAPI");
+                var client = _httpClientFactory.CreateClient("CentralAPIDashboard");
 
                 var token = User.Claims.FirstOrDefault(c => c.Type == "Token")?.Value;
                 if (!string.IsNullOrEmpty(token))
@@ -220,7 +220,7 @@ namespace Dashboard.Controllers
         {
             try
             {
-                var client = _httpClientFactory.CreateClient("DummyAPI");
+                var client = _httpClientFactory.CreateClient("CentralAPIDashboard");
 
                 var token = User.Claims.FirstOrDefault(c => c.Type == "Token")?.Value;
                 if (!string.IsNullOrEmpty(token))
@@ -260,7 +260,7 @@ namespace Dashboard.Controllers
         {
             try
             {
-                var client = _httpClientFactory.CreateClient("DummyAPI");
+                var client = _httpClientFactory.CreateClient("CentralAPIDashboard");
 
                 var token = User.Claims.FirstOrDefault(c => c.Type == "Token")?.Value;
                 if (!string.IsNullOrEmpty(token))
@@ -296,7 +296,7 @@ namespace Dashboard.Controllers
         {
             try
             {
-                var client = _httpClientFactory.CreateClient("DummyAPI");
+                var client = _httpClientFactory.CreateClient("CentralAPIDashboard");
 
                 var token = User.Claims.FirstOrDefault(c => c.Type == "Token")?.Value;
                 if (!string.IsNullOrEmpty(token))
@@ -333,7 +333,7 @@ namespace Dashboard.Controllers
         {
             try
             {
-                var client = _httpClientFactory.CreateClient("DummyAPI");
+                var client = _httpClientFactory.CreateClient("CentralAPIDashboard");
 
                 var token = User.Claims.FirstOrDefault(c => c.Type == "Token")?.Value;
                 if (!string.IsNullOrEmpty(token))

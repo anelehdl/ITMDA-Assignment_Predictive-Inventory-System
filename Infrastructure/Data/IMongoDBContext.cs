@@ -10,8 +10,10 @@ namespace Infrastructure.Data
         IMongoCollection<Role> RolesCollection { get; }
         IMongoCollection<Authentication> AuthenticationCollection { get; }
         IMongoCollection<Client> ClientCollection { get; }
+        IMongoCollection<Order> OrdersCollection { get; }
 
         //ForecastDB Collections
         IMongoCollection<Inventory> InventoryCollection { get; }
+        
     }
 }

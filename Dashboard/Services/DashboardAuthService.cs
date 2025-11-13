@@ -19,7 +19,7 @@ namespace Dashboard.Services
         {
             try
             {
-                var client = _httpClientFactory.CreateClient("DummyAPI");
+                var client = _httpClientFactory.CreateClient("CentralAPIDashboard");
 
                 var loginRequest = new LoginRequestDto
                 {
@@ -65,7 +65,7 @@ namespace Dashboard.Services
         {
             try
             {
-                var client = _httpClientFactory.CreateClient("DummyAPI");
+                var client = _httpClientFactory.CreateClient("CentralAPIDashboard");
 
                 var refreshRequest = new { RefreshToken = refreshToken };
                 var json = JsonSerializer.Serialize(refreshRequest);

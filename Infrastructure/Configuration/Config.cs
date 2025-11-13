@@ -21,6 +21,7 @@ public class ForecastCollectionNames
     public string BatchScans { get; set; }
     public string ForecastCache { get; set; }
     public string Prediction { get; set; }
+    public string Orders { get; set; }
 }
 
 public class JwtSettings

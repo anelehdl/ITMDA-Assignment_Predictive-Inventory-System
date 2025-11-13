@@ -1,4 +1,4 @@
-using DummyApp.Infrastructure.Configuration;
+using CentralAPIDashboard.Infrastructure.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;

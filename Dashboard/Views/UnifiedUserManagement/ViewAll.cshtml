@@ -201,7 +201,6 @@
         border-radius: 15px;
         text-align: center;
         transition: all 0.3s ease;
-        
     }
 
         .stat-card .stat-number {
@@ -226,13 +225,13 @@
     <a asp-action="Index" class="back-link">← Back to User Management</a>
 
     <h1 class="mb-4">All Users</h1>
-
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success alert-glass">
-            @TempData["Success"]
-        </div>
-    }
+    <div class="content-wrapper">
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-glass">
+                @TempData["Success"]
+            </div>
+        }
 
         @if (TempData["Error"] != null)
         {
@@ -287,70 +286,71 @@
                 </div>
             </form>
 
-        @if (Model != null && Model.Any())
-        {
-            <table class="user-table">
-                <thead>
-                    <tr>
-                        <th>Type</th>
-                        <th>Identifier</th>
-                        <th>Details</th>
-                        <th>Role</th>
-                        <th>Contact</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var user in Model)
-                    {
+            @if (Model != null && Model.Any())
+            {
+                <table class="user-table">
+                    <thead>
                         <tr>
-                            <td>
-                                <span class="type-badge @(user.UserType == "Client" ? "client-type" : "")">
-                                    @user.UserType
-                                </span>
-                            </td>
-                            <td>
-                                @if (user.UserType == "Staff")
-                                {
-                                    <strong>@user.FirstName</strong>
-                                }
-                                else
-                                {
-                                    <strong>@user.UserCode</strong>
-                                }
-                            </td>
-                            <td>
-                                @if (user.UserType == "Staff")
-                                {
-                                    @user.Email
-                                }
-                                else
-                                {
-                                    @user.Username
-                                }
-                            </td>
-                            <td>
-                                <span class="role-badge @(user.RoleName.ToLower() == "admin" ? "admin" : "") @(user.RoleName.ToLower() == "client" ? "client" : "")">
-                                    @user.RoleName
-                                </span>
-                            </td>
-                            <td>
-                                @if (user.UserType == "Staff")
-                                {
-                                    @user.Phone
-                                }
-                                else
-                                {
-                                    <span style="opacity: 0.6;">N/A</span>
-                                }
-                            </td>
+                            <th>Type</th>
+                            <th>Identifier</th>
+                            <th>Details</th>
+                            <th>Role</th>
+                            <th>Contact</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
-        }
-        else
-        {
-            <p class="text-center mt-4">No users found matching your criteria.</p>
-        }
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <span class="type-badge @(user.UserType == "Client" ? "client-type" : "")">
+                                        @user.UserType
+                                    </span>
+                                </td>
+                                <td>
+                                    @if (user.UserType == "Staff")
+                                    {
+                                        <strong>@user.FirstName</strong>
+                                    }
+                                    else
+                                    {
+                                        <strong>@user.UserCode</strong>
+                                    }
+                                </td>
+                                <td>
+                                    @if (user.UserType == "Staff")
+                                    {
+                                        @user.Email
+                                    }
+                                    else
+                                    {
+                                        @user.Username
+                                    }
+                                </td>
+                                <td>
+                                    <span class="role-badge @(user.RoleName.ToLower() == "admin" ? "admin" : "") @(user.RoleName.ToLower() == "client" ? "client" : "")">
+                                        @user.RoleName
+                                    </span>
+                                </td>
+                                <td>
+                                    @if (user.UserType == "Staff")
+                                    {
+                                        @user.Phone
+                                    }
+                                    else
+                                    {
+                                        <span style="opacity: 0.6;">N/A</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p class="text-center mt-4">No users found matching your criteria.</p>
+            }
+        </div>
     </div>
 </div>

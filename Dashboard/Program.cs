@@ -118,7 +118,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 //HttpClient for communicating with the API
 //Allows Dashboard controller to make API calls
-builder.Services.AddHttpClient("DummyAPI", client =>
+builder.Services.AddHttpClient("CentralAPIDashboard", client =>
 {
     //set base URL of the API
     client.BaseAddress = new Uri("https://localhost:7218");

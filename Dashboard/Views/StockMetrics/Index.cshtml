@@ -5,8 +5,16 @@
 
 <style>
     body {
-        background: white;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(120deg, var(--accent), white 50%);
+        color: #333;
         min-height: 100vh;
+        background-size: 400% 400%;
+        animation: bgShift 15s ease-in-out infinite;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-top: 5rem;
     }
 
     .metrics-container {

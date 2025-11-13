@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace DummyApp.Infrastructure.Configuration
+namespace CentralAPIDashboard.Infrastructure.Configuration
 {
     public static class ServiceCollectionExtensions         //this is here to add infrastructure services to declutter Program.cs
     {
@@ -46,6 +46,7 @@ namespace DummyApp.Infrastructure.Configuration
             services.AddScoped<IRoleService, RoleService>(); //role-based access control        //refactored to interface
             services.AddScoped<IUnifiedUserService, UnifiedUserService>(); //combined client and staff user management (CRUD)            //refactored to interface
             services.AddScoped<IInventoryService, InventoryService>(); //stock metrics and inventory data          //refactored to interface
+            services.AddScoped<IOrderService, OrderService>(); //order processing and management for mobile side
 
 
             // ============================================================
@@ -55,7 +56,9 @@ namespace DummyApp.Infrastructure.Configuration
             {
                 client.Timeout = TimeSpan.FromSeconds(30); // 30 second timeout for ML predictions
             });
+            
             services.AddScoped<IPredictionService, PredictionService>();
+            services.AddSingleton<IMongoDBContext>(sp => sp.GetRequiredService<MongoDBContext>());//added for the test cases to mock IMongoDBContext
 
             return services;
         }

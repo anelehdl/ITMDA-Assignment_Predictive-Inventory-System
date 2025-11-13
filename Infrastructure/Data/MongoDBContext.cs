@@ -52,12 +52,15 @@ namespace Infrastructure.Data
 
         public IMongoCollection<Client> ClientCollection =>
             _database.GetCollection<Client>(_settings.CollectionNames.Client);
-
+        public IMongoCollection<Order> OrdersCollection =>
+            _database.GetCollection<Order>("Orders");
 
 
         // ForecastDB Collections
         public IMongoCollection<Inventory> InventoryCollection =>
             _forecastDatabase.GetCollection<Inventory>(_settings.ForecastCollectionNames.Inventory);
+
+        
 
 
 

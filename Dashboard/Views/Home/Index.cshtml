@@ -51,10 +51,15 @@
     .hero-heading {
         font-size: 5rem;
         transition: opacity 0.5s ease, transform 0.5s ease;
+        background: linear-gradient(135deg, #6B2C7F, #9B2CFF);
+        background-size: 400% 400%; /*for the animations*/
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: var(--glass);
+        background-clip: text;
+        color: #6B2C7F80;
+        /*animation*/
+        animation: textShift 10s ease infinite;
     }
-
-
-
 
     .dashboard-content {
         max-width: 80%;
