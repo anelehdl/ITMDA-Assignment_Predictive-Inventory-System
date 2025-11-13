@@ -50,7 +50,7 @@ Follow the steps below to run the project successfully:
 #### Windows
 3. Launch the following command
 ```bash
-./launch.ps1
+.\launch.ps1
 ```
 Note* Requires windows system to allow script execution. (See)[https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.security/set-executionpolicy?view=powershell-7.5]
 
