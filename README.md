@@ -35,9 +35,9 @@ Enable clients to browse and order products, and allows staff to efficiently man
 ### Backend 
 - [Docker Desktop](https://docs.docker.com/desktop/setup/install)
 - [ASP.NET Core](https://learn.microsoft.com/dotnet/core/install)
-#### Developent requirements
+#### Development
 - [Visual Studio](https://visualstudio.microsoft.com)
-### Mobile App Requirements
+### Mobile App
 - [Android Studio](https://developer.android.com/studio/install)
 ---
 
@@ -61,7 +61,7 @@ Note* Requires windows system to allow script execution. (See)[https://learn.mic
 ```
 Note* Requires root and execution privilege.
 
-
+---
 
 ## Development
 1. Start the Prediction Service
@@ -86,7 +86,12 @@ Note* Requires root and execution privilege.
 - Start the app on an emulator or physical device.
 - The app should now connect to the running backend services.
 
----
+## Contributors
+
+[![Aneleh](https://github.com/anelehdl.png?size=50)](https://github.com/anelehdl)
+[![Travis](https://github.com/travismusson.png?size=50)](https://github.com/travismusson) 
+[![Charlene](https://github.com/TaintedDahlia.png?size=50)](https://github.com/TaintedDahlia)
+[![Grant](https://github.com/GrantODP.png?size=50)](https://github.com/GrantODP)
 
 
 
