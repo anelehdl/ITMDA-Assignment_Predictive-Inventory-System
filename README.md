@@ -31,23 +31,46 @@ Enable clients to browse and order products, and allows staff to efficiently man
 - Centralized authentication and authorization  
 
 ---
-
 ## Requirements
-- Docker Desktop
-- Visual Studio
-- Android Studio
+### Backend 
+- [Docker Desktop](https://docs.docker.com/desktop/setup/install)
+- [ASP.NET Core](https://learn.microsoft.com/dotnet/core/install)
+#### Developent requirements
+- [Visual Studio](https://visualstudio.microsoft.com)
+### Mobile App Requirements
+- [Android Studio](https://developer.android.com/studio/install)
 ---
 
-## How to Launch
+## How to Launch 
+### Backend
 Follow the steps below to run the project successfully:
+1. Open terminal in project root folder.
+2. Ensure docker is running. 
 
+#### Windows
+3. Launch the following command
+```bash
+./launch.ps1
+```
+Note* Requires windows system to allow script execution.
+
+#### Linux
+3. Launch the following command (or rightclick and click "Run in Powershell"
+```bash
+./launch.sh
+```
+Note* Requires root and execution privilege.
+
+
+
+## Development
 1. Start the Prediction Service
 
 - Open Docker Desktop.
 - Ensure the prediction service container is running.
 - If it is not running, start it manually from Docker containers list.
-
-
+(See forecast-service on how to build docker image)
+  
 2. Run the Main Project in Visual Studio
 
 - Open the solution in Visual Studio.
@@ -59,7 +82,7 @@ Follow the steps below to run the project successfully:
 
 3. Run the Mobile Application
 
-- Open the mobile app project in your preferred IDE (e.g., Android Studio or Visual Studio Code).
+- Open the mobile app project in Android Studio.
 - Start the app on an emulator or physical device.
 - The app should now connect to the running backend services.
 
