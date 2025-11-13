@@ -61,6 +61,24 @@ Note* Requires windows system to allow script execution. [See](https://learn.mic
 ```
 Note* Requires root and execution privilege.
 
+### Manual Launch in seperate terminals
+1. Build docker image
+```bash
+docker build -t forecast-python:latest ./forecast-service
+```
+2. Launch API
+```bash
+dotnet run --project ./CentralAPIDashboard/API/ 
+``` 
+4. Launch Dashboard
+```bash
+dotnet run --project ./CentralAPIDashboard/Dashboard/
+``` 
+4. Launch Forecaster
+```bash
+docker compose -f ./forecast-service/compose.yml up -d
+``` 
+
 ---
 
 ## Development
