@@ -127,7 +127,7 @@ Thanks to the people who helped make this project better:
 
 | Aneleh | Travis | Charlene | Grant | Armand | Petrus |
 |--------|--------|----------|-------|--------|--------|
-| [![Aneleh](https://github.com/anelehdl.png?size=40)](https://github.com/anelehdl) | [![Travis](https://github.com/travismusson.png?size=50)](https://github.com/travismusson) | [![Charlene](https://github.com/TaintedDahlia.png?size=50)](https://github.com/TaintedDahlia) | [![Grant](https://github.com/GrantODP.png?size=50)](https://github.com/GrantODP) |
+| [![Aneleh](https://github.com/anelehdl.png?size=50)](https://github.com/anelehdl) | [![Travis](https://github.com/travismusson.png?size=50)](https://github.com/travismusson) | [![Charlene](https://github.com/TaintedDahlia.png?size=50)](https://github.com/TaintedDahlia) | [![Grant](https://github.com/GrantODP.png?size=50)](https://github.com/GrantODP) |
 
 
 
