@@ -29,16 +29,6 @@ DOTNET_PIDS+=($!)
 dotnet run --project ./CentralAPIDashboard/API/ &
 DOTNET_PIDS+=($!)
 
-DASHBOARD_URL="http://localhost:5169"
-
-echo "Waiting for Dashboard to start at $DASHBOARD_URL ..."
-
-while ! curl -s --head "$DASHBOARD_URL" >/dev/null; do
-    sleep 1
-done
-
-echo "Dashboard is running. Opening browser..."
-xdg-open "$DASHBOARD_URL" >/dev/null 2>&1 &
 
 # Build Docker image
 docker build -t forecast-python:latest ./forecast-service
