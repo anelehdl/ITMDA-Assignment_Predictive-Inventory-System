@@ -76,7 +76,7 @@ Note* Requires windows system to allow script execution. [See](https://learn.mic
 ```
 Note* Requires root and execution privilege.
 
-Open at [http://localhost:5169](http://localhost:5169)
+4. Open [http://localhost:5169](http://localhost:5169)
 
 ### Manual Launch in seperate terminals
 1. Build docker image
