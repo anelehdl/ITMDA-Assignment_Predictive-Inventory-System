@@ -32,6 +32,20 @@ $DOTNET_PROCS += $proc1
 $proc2 = Start-Process "dotnet" -ArgumentList "run --project .\CentralAPIDashboard\API" -PassThru
 $DOTNET_PROCS += $proc2
 
+# Change this URL to your actual Dashboard URL/port
+$dashboardUrl = "http://localhost:5169"
+$dashboardHost = "localhost"
+$dashboardPort = 5169
+
+Write-Host "Waiting for Dashboard to start on port $dashboardPort ..."
+
+while (-not (Test-NetConnection -ComputerName $dashboardHost -Port $dashboardPort -InformationLevel Quiet)) {
+    Start-Sleep -Seconds 1
+}
+
+Write-Host "Dashboard is running. Opening browser..."
+Start-Process $dashboardUrl
+
 # Build Docker image
 docker build -t forecast-python:latest .\forecast-service
 
