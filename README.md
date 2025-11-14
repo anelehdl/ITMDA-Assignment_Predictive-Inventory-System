@@ -85,11 +85,11 @@ docker build -t forecast-python:latest ./forecast-service
 ```
 2. Launch API
 ```bash
-dotnet run --project ./CentralAPIDashboard/API/ 
+dotnet run --project ./API/API/ 
 ``` 
 4. Launch Dashboard
 ```bash
-dotnet run --project ./CentralAPIDashboard/Dashboard/
+dotnet run --project ./Dashboard/Dashboard/
 ``` 
 4. Launch Forecaster
 ```bash
